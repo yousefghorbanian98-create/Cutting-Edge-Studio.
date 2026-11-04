@@ -57,4 +57,4 @@ def test_real_native_candidates_and_skips(settings, tmp_path, name, frames, time
         assert result.status == ("candidates" if times else "no-candidates")
         assert result.estimate.frames_analyzed == frames
         assert [c.time_seconds for c in result.estimate.candidates] == times
-    assert not list(settings.cache_dir.glob("scenes-*"))
+    assert not list(settings.cache_dir.glob("managed-scenes-*"))

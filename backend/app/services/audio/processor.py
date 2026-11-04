@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import os
 import sys
-import tempfile
 import threading
 import wave
 from collections.abc import Callable
@@ -22,6 +21,7 @@ from app.services.media.inspection import hash_input, require_unchanged
 from app.services.media.probe import parse_probe
 from app.services.media.progress import ProgressEvent
 from app.services.media.runner import run_command
+from app.services.media.workspaces import ScratchWorkspace
 
 LOG = get_logger(__name__)
 
@@ -112,7 +112,8 @@ class FFmpegRhythmInspector:
         cancel: threading.Event,
         progress: Callable[[float], None],
     ) -> RhythmEstimate:
-        with tempfile.TemporaryDirectory(prefix="rhythm-", dir=self.settings.cache_dir) as folder:
+        with ScratchWorkspace(self.settings.cache_dir, "rhythm") as workspace:
+            folder = workspace.path
             wav, result = Path(folder) / "audio.wav", Path(folder) / "result.json"
 
             def measured(event: ProgressEvent) -> None:
@@ -124,6 +125,7 @@ class FFmpegRhythmInspector:
                 cancel_event=cancel,
                 on_progress=measured,
                 total_seconds=duration,
+                lifecycle=workspace,
             )
             progress(50)  # Extraction completed; no percentage invented during librosa/JIT.
             env = dict(
@@ -137,7 +139,12 @@ class FFmpegRhythmInspector:
             )
             cwd = None if getattr(sys, "frozen", False) else Path(__file__).resolve().parents[3]
             run_command(
-                worker_command(wav, result), timeout=180, cancel_event=cancel, cwd=cwd, env=env
+                worker_command(wav, result),
+                timeout=180,
+                cancel_event=cancel,
+                cwd=cwd,
+                env=env,
+                lifecycle=workspace,
             )
             if result.stat().st_size > 2 * 1024 * 1024:
                 raise ValueError("Rhythm worker output exceeded its safety limit")

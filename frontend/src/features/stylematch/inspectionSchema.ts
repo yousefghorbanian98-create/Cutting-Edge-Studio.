@@ -50,6 +50,7 @@ export const inspectionSchema = z.object({
 }).refine(job => job.state !== 'done' || (job.report !== null && job.percent === 100), {message:'Completed inspection has no committed measured report'})
   .refine(job => !job.report || job.report.scope === scopeForOperation[job.operation],{message:'Report scope disagrees with operation'});
 export const inspectionCapabilitiesSchema = z.object({
+  cache_recovery:z.object({removed:z.number().int().nonnegative(),retained:z.number().int().nonnegative(),scanned:z.number().int().nonnegative(),limited:z.boolean(),message:z.string()}).optional(),
   operation:z.enum(['decode','rhythm','scenes']).default('decode'),
   inspection:z.object({available:z.boolean(),reason:z.string().nullable()}),
   model_analysis:z.object({available:z.literal(false),reason:z.string(),unavailable:z.array(z.string()),models_directory:z.string()}),

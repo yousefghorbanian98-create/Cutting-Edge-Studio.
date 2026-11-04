@@ -4,6 +4,11 @@ export type Direction = 'rtl' | 'ltr';
 type Dict = Record<string, string>;
 
 const fa: Dict = {
+  'inspection.cacheRecovery':'بازیابی فایل‌های موقت هنگام راه‌اندازی',
+  'inspection.cacheRemoved':'پوشهٔ موقت بی‌استفاده پاک شد',
+  'inspection.cacheRetained':'پوشه برای حفظ ایمنی نگه داشته شد؛ جزئیات در گزارش محلی',
+  'inspection.cacheLimited':'بررسی محدود یا ناموفق؛ گزارش تشخیصی محلی را ببینید',
+
   'inspection.mode.scenes': 'کاندیدهای برش (آزمایشی)',
   'scenes.title': 'اندازه\u200cگیری کاندیدهای برش',
   'scenes.scope': 'فقط کاندیدهای scdet از اولین ویدیو: آستانهٔ ۱۰٪، عرض ۳۲۰؛ زمان نسبت به اولین فریم رمزگشایی\u200cشده است. این تحلیل مدل، شات معنایی، DNA یا تدوین نیست.',
@@ -178,6 +183,11 @@ const fa: Dict = {
 };
 
 const en: Dict = {
+  'inspection.cacheRecovery':'Startup scratch recovery',
+  'inspection.cacheRemoved':'inactive scratch folders removed',
+  'inspection.cacheRetained':'folders safely retained; see local diagnostics',
+  'inspection.cacheLimited':'scan limited or unavailable; review local diagnostics',
+
   'inspection.mode.scenes': 'Cut candidates (experimental)',
   'scenes.title': 'Cut candidate measurement',
   'scenes.scope': 'First video stream via scdet: threshold 10%, width 320. Times relative to the first decoded frame. Observed frames only; use decode verification for integrity. NOT model inference, semantic shots, StyleDNA or an edit.',

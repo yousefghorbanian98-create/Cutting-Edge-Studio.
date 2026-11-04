@@ -107,6 +107,9 @@ export function InspectionPanel({projectId,referenceId,sourceIds,blocked,operati
   return <section aria-label={t('title')} className="mt-2 space-y-2" data-testid="inspection-panel">
     <p className="font-semibold">{t('title')}</p>
     <p className="text-[10px]">{t('scope')}</p>
+    {capabilities?.cache_recovery && (capabilities.cache_recovery.removed>0 || capabilities.cache_recovery.retained>0 || capabilities.cache_recovery.limited) ? <p role="status" data-testid="cache-recovery" title={capabilities.cache_recovery.message} className="text-[10px]">
+      {translate(language,'inspection.cacheRecovery')}: {capabilities.cache_recovery.removed} {translate(language,'inspection.cacheRemoved')} · {capabilities.cache_recovery.retained} {translate(language,'inspection.cacheRetained')}{capabilities.cache_recovery.limited ? ` · ${translate(language,'inspection.cacheLimited')}`:''}
+    </p>:null}
     {!valid ? <p role="status">{t('needsInputs')}</p>:null}
     <div className="flex flex-wrap gap-1">
       <Button size="sm" disabled={!valid || !capabilities?.inspection.available || loading || active(job)} onClick={()=>void start()}>{t('start')}</Button>

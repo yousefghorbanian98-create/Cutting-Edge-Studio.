@@ -8,6 +8,7 @@ import threading
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Literal, Protocol
 
 from app.logging import get_logger
 from app.services.media.progress import ProgressEvent, parse_progress_block
@@ -15,6 +16,24 @@ from app.services.media.progress import ProgressEvent, parse_progress_block
 LOG = get_logger(__name__)
 MAX_STDOUT_CHARS = 8 * 1024 * 1024
 MAX_STDERR_BYTES = 64 * 1024
+
+
+class CommandLifecycle(Protocol):
+    """Optional scratch journal hook; callbacks execute within the reaping boundary."""
+
+    def before_spawn(self) -> None: ...
+    def spawned(self, pid: int) -> None: ...
+    def reaped(self) -> None: ...
+
+
+def _notify(
+    lifecycle: CommandLifecycle | None,
+    event: Literal["before_spawn", "spawned", "reaped"],
+    *args: int,
+) -> None:
+    """Notify an optional journal; the runner owns reaping on hook failure."""
+    if lifecycle is not None:
+        getattr(lifecycle, event)(*args)
 
 
 class CommandCancelledError(RuntimeError):
@@ -49,6 +68,7 @@ def run_command(
     cwd: Path | None = None,
     cancel_event: threading.Event | None = None,
     env: dict[str, str] | None = None,
+    lifecycle: CommandLifecycle | None = None,
 ) -> CommandResult:
     """Run a command without a shell, streaming ``-progress`` blocks to ``on_progress``."""
     LOG.info("media.command.start", argv=[str(part) for part in args])
@@ -57,6 +77,7 @@ def run_command(
         raise CommandCancelledError("Media task cancelled")
     # A file, rather than an undrained pipe, prevents stderr back-pressure deadlocks.
     with tempfile.TemporaryFile(mode="w+b") as stderr_file:
+        _notify(lifecycle, "before_spawn")
         process = subprocess.Popen(
             [str(part) for part in args],
             stdout=subprocess.PIPE,
@@ -91,10 +112,12 @@ def run_command(
         if watcher is not None:
             watcher.start()
         try:
+            _notify(lifecycle, "spawned", process.pid)
             stdout = _collect_stdout(process, on_progress, total_seconds)
             returncode = process.wait()
         finally:
             _reap(process, stopped, timer, watcher)
+            _notify(lifecycle, "reaped")
         stderr_file.seek(0, 2)
         stderr_file.seek(max(0, stderr_file.tell() - MAX_STDERR_BYTES))
         stderr = stderr_file.read().decode("utf-8", errors="replace")

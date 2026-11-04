@@ -43,7 +43,7 @@ async function terminal(page,state){
 }
 function children(){
   return fs.readdirSync('/proc').filter(n=>/^\d+$/.test(n)).flatMap(n=>{
-    try{const cmd=fs.readFileSync(`/proc/${n}/cmdline`,'utf8');return cmd.includes('app.services.audio.worker') && cmd.includes('/tmp/ce-r2b2-data/cache/rhythm-')?[{pid:Number(n),cmd}]:[];}
+    try{const cmd=fs.readFileSync(`/proc/${n}/cmdline`,'utf8');return cmd.includes('app.services.audio.worker') && cmd.includes('/tmp/ce-r2b2-data/cache/managed-rhythm-')?[{pid:Number(n),cmd}]:[];}
     catch(error){if(!['ENOENT','ESRCH','EACCES'].includes(error.code))throw error;return [];}
   });
 }
@@ -105,7 +105,7 @@ async function measured(page){
       await page.getByRole('button',{name:'Cancel inspection',exact:true}).click();
       const stop=await terminal(page,'cancelled');
       check('Cancellation reaps genuine librosa worker; no fake report or 100%',stop.id===cancelled.id && stop.report===null && stop.percent<100 && !fs.existsSync(`/proc/${child.pid}`));
-      check('Cancellation cleans temporary PCM/result workspace',fs.readdirSync('/tmp/ce-r2b2-data/cache').filter(n=>n.startsWith('rhythm-')).length===0);
+      check('Cancellation cleans temporary PCM/result workspace',fs.readdirSync('/tmp/ce-r2b2-data/cache').filter(n=>n.startsWith('managed-rhythm-')).length===0);
       const victim=result.assets.find(a=>a.role==='source');const bytes=fs.readFileSync(victim.path);
       try{
         fs.writeFileSync(victim.path,'owned deliberate corrupt container');await start(page);

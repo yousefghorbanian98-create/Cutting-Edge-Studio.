@@ -28,6 +28,7 @@ from app.services.media.inspection import FFmpegInspector, InspectionService
 from app.services.media.jobs import JobRegistry
 from app.services.media.scenes import FFmpegSceneInspector
 from app.services.media.service import MediaService, Prober
+from app.services.media.workspaces import recover_workspaces
 
 LOG = get_logger(__name__)
 
@@ -43,6 +44,7 @@ def create_app(settings: Settings | None = None, prober: Prober | None = None) -
 
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+        app.state.cache_recovery = recover_workspaces(resolved.cache_dir)
         engine = create_db_engine(resolved.database_url)
         init_db(engine)
         app.state.engine = engine

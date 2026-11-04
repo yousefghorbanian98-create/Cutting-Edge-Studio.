@@ -249,7 +249,7 @@ def test_processor_uses_fixed_hardlink_and_real_json_boundary(
         assert result.sha256 == hashlib.sha256(before_bytes).hexdigest()
         assert result.status == ("no-video" if fault else "candidates")
         assert len(calls) == (1 if fault else 2)
-    assert not list(settings.cache_dir.glob("scenes-*"))
+    assert not list(settings.cache_dir.glob("managed-scenes-*"))
     if fault != "mutated":
         assert odd.read_bytes() == before_bytes
     if fault == "link":
@@ -344,4 +344,4 @@ def test_source_replaced_between_hardlink_and_baseline_is_not_misidentified(
         FFmpegSceneInspector(client.app.state.settings).inspect(
             asset, threading.Event(), lambda _: None
         )
-    assert not list(client.app.state.settings.cache_dir.glob("scenes-*"))
+    assert not list(client.app.state.settings.cache_dir.glob("managed-scenes-*"))

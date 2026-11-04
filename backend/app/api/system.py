@@ -8,9 +8,10 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 
-from app.config import APP_VERSION, Settings, get_settings
+from app.config import APP_VERSION
+from app.deps import SettingsDep
 from app.logging import get_logger
 from app.services.media.ffmpeg import FFmpegNotFoundError, resolve_binaries
 
@@ -19,9 +20,8 @@ LOG = get_logger(__name__)
 
 
 @router.get("/diagnostics", summary="Local environment report (never uploaded)")
-def diagnostics() -> dict[str, Any]:
+def diagnostics(request: Request, settings: SettingsDep) -> dict[str, Any]:
     """Everything support needs, computed from the machine that runs the sidecar."""
-    settings: Settings = get_settings()
     data = settings.data_dir
     usage = shutil.disk_usage(data) if data.exists() else shutil.disk_usage(Path(settings.home_dir))
     ffmpeg: dict[str, Any]
@@ -51,5 +51,6 @@ def diagnostics() -> dict[str, Any]:
         },
         "ffmpeg": ffmpeg,
         "models": models,
+        "cache_recovery": request.app.state.cache_recovery,
         "log_file": str(data / "logs" / "cutting-edge.log") if settings.log_to_file else None,
     }

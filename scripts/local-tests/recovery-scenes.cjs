@@ -47,7 +47,7 @@ function children(){
     try{const cmd=fs.readFileSync(`/proc/${n}/cmdline`,'utf8');
       if(!cmd.includes('movie=filename=input:'))return [];
       const cwd=fs.readlinkSync(`/proc/${n}/cwd`);
-      return cwd.startsWith('/tmp/ce-r2c-data/cache/scenes-')?[{pid:Number(n),cmd,cwd}]:[];
+      return cwd.startsWith('/tmp/ce-r2c-data/cache/managed-scenes-')?[{pid:Number(n),cmd,cwd}]:[];
     }catch(error){if(!['ENOENT','ESRCH','EACCES','EINVAL'].includes(error.code))throw error;return [];}
   });
 }
@@ -113,7 +113,7 @@ async function measured(page){
       await page.getByRole('button',{name:'Cancel inspection',exact:true}).click();
       const stop=await terminal(page,'cancelled');
       check('Cancellation reaps genuine native decoder; no fake report or 100%',stop.id===cancelled.id && stop.report===null && stop.percent<100 && !fs.existsSync(`/proc/${child.pid}`));
-      check('Cancellation removes temporary hardlink workspace',fs.readdirSync('/tmp/ce-r2c-data/cache').filter(n=>n.startsWith('scenes-')).length===0);
+      check('Cancellation removes temporary hardlink workspace',fs.readdirSync('/tmp/ce-r2c-data/cache').filter(n=>n.startsWith('managed-scenes-')).length===0);
       const victim=result.assets.find(a=>a.role==='source');const bytes=fs.readFileSync(victim.path);
       try{
         fs.writeFileSync(victim.path,'owned deliberate corrupt container');await start(page);

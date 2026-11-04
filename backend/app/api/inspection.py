@@ -73,13 +73,14 @@ def _routes(operation: Operation) -> APIRouter:
 
     @routes.get("/capabilities")
     def capabilities(
-        project_id: str, session: SessionDep, settings: SettingsDep
+        project_id: str, request: Request, session: SessionDep, settings: SettingsDep
     ) -> dict[str, object]:
         _project(session, project_id)
         reason = _unavailable(settings, operation)
         return {
             "inspection": {"available": reason is None, "reason": reason},
             "operation": operation,
+            "cache_recovery": request.app.state.cache_recovery,
             "model_analysis": {
                 "available": False,
                 "reason": (

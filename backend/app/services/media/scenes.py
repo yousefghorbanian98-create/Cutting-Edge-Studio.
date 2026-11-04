@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import os
-import tempfile
 import threading
 from collections.abc import Callable
 from itertools import pairwise
@@ -19,6 +18,7 @@ from app.services.media.ffmpeg import FFmpegBinaries, probe_command, resolve_bin
 from app.services.media.inspection import hash_input, require_unchanged
 from app.services.media.probe import parse_probe
 from app.services.media.runner import CommandCancelledError, CommandResult, run_command
+from app.services.media.workspaces import ScratchWorkspace
 
 LOG = get_logger(__name__)
 
@@ -139,7 +139,8 @@ class FFmpegSceneInspector:
             raise CommandCancelledError("Shot candidate job cancelled")
         binaries = resolve_binaries(self.settings, allow_path_fallback=False)
         path = Path(asset.path)
-        with tempfile.TemporaryDirectory(prefix="scenes-", dir=self.settings.cache_dir) as folder:
+        with ScratchWorkspace(self.settings.cache_dir, "scenes") as workspace:
+            folder = workspace.path
             try:
                 os.link(path, Path(folder) / "input")
             except OSError as error:
@@ -160,7 +161,11 @@ class FFmpegSceneInspector:
             digest = hash_input(path, cancel)
             probe = probe_command(binaries, path)
             probe[1:1] = ["-protocol_whitelist", "file"]
-            info = parse_probe(native_payload(run_command(probe, timeout=60, cancel_event=cancel)))
+            info = parse_probe(
+                native_payload(
+                    run_command(probe, timeout=60, cancel_event=cancel, lifecycle=workspace)
+                )
+            )
             video = next(
                 (s for s in info.raw.get("streams", []) if s.get("codec_type") == "video"), None
             )
@@ -185,6 +190,7 @@ class FFmpegSceneInspector:
                     cwd=Path(folder),
                     timeout=180,
                     cancel_event=cancel,
+                    lifecycle=workspace,
                 )
                 estimate = measured_candidates(native_payload(result), info.duration)
             after = require_unchanged(path, before, asset.name)

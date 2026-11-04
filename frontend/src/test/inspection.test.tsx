@@ -228,3 +228,14 @@ describe('cut candidate UI — explicit unit fixtures, not native detector accep
     expect(inspectionSchema.safeParse(record).success).toBe(false);
   });
 });
+
+it('shows bounded startup scratch recovery independently of measurement/model success',async()=>{
+  calls.capabilities.mockResolvedValue({...capabilities,cache_recovery:{removed:1,retained:2,scanned:3,limited:true,message:'Unknown/native launch states retained; legacy cache untouched.'}});
+  render(<InspectionPanel {...props}/>);await flush();
+  const notice=screen.getByTestId('cache-recovery');
+  expect(notice).toHaveTextContent('Startup scratch recovery');
+  expect(notice).toHaveTextContent('1 inactive scratch folders removed');
+  expect(notice).toHaveTextContent('2 folders safely retained');
+  expect(notice).toHaveTextContent('scan limited');
+  expect(screen.queryByTestId('inspection-state')).not.toBeInTheDocument();
+});
