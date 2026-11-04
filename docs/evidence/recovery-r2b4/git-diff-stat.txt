@@ -1,0 +1,19 @@
+ backend/app/api/inspection.py                      |   3 +-
+ backend/app/api/system.py                          |   9 +-
+ backend/app/main.py                                |   2 +
+ backend/app/services/audio/processor.py            |  13 +-
+ backend/app/services/media/runner.py               |  23 ++
+ backend/app/services/media/scenes.py               |  12 +-
+ backend/app/services/media/workspaces.py           | 215 ++++++++++++++++
+ backend/tests/test_scenes.py                       |   4 +-
+ backend/tests/test_scenes_native.py                |   2 +-
+ backend/tests/test_workspaces.py                   | 276 +++++++++++++++++++++
+ .../src/features/stylematch/InspectionPanel.tsx    |   3 +
+ .../src/features/stylematch/inspectionSchema.ts    |   1 +
+ frontend/src/lib/i18n.ts                           |  10 +
+ frontend/src/test/inspection.test.tsx              |  11 +
+ scripts/local-tests/recovery-cache-audio.cjs       | 159 ++++++++++++
+ scripts/local-tests/recovery-cache.cjs             | 185 ++++++++++++++
+ scripts/local-tests/recovery-rhythm.cjs            |   4 +-
+ scripts/local-tests/recovery-scenes.cjs            |   4 +-
+ 18 files changed, 918 insertions(+), 18 deletions(-)

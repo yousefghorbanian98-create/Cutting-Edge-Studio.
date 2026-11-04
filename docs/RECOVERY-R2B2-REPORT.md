@@ -232,3 +232,10 @@ real-music/quality inputs, original-timeline alignment, crash/cache/resource har
 approved native packaging and actual Windows execution. R3 rendering/export and competitor
 Windows observations remain separate OPEN/UNKNOWN gates; no full release or installer-ready
 notification is justified yet.
+
+## Subsequent scoped recovery
+
+R2b4 (`6060832`) subsequently recovered **known inactive version-marked** native/PCM
+workspaces after real crashes. Legacy/unmarked/unknown-launch/live content remains untouched;
+no independent native containment or Windows/full-product acceptance is inferred.
+See [RECOVERY-R2B4-REPORT.md](RECOVERY-R2B4-REPORT.md) for actual counts, screenshots and limits.

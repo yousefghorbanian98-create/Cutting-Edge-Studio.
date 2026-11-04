@@ -196,3 +196,10 @@ node scripts/local-tests/recovery-scenes.cjs verify
 External browser libraries, socket guard and previous owned H.264 reference are prerequisites,
 not product resources. A repeated fresh `prepare` requires disposable cache without a prior
 crash orphan; do not call that manual QA preparation an app GC implementation.
+
+## Subsequent scoped recovery
+
+R2b4 (`6060832`) subsequently recovered **known inactive version-marked** native/PCM
+workspaces after real crashes. Legacy/unmarked/unknown-launch/live content remains untouched;
+no independent native containment or Windows/full-product acceptance is inferred.
+See [RECOVERY-R2B4-REPORT.md](RECOVERY-R2B4-REPORT.md) for actual counts, screenshots and limits.

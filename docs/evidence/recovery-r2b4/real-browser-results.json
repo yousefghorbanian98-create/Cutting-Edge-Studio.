@@ -1,0 +1,1434 @@
+{
+  "checks": [
+    {
+      "phase": "prepare",
+      "name": "Four genuine imported assets, explicit reference/source identity",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "prepare",
+      "name": "Experimental local scdet available; model analysis still blocked",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "prepare",
+      "name": "Actual native scdet subprocess; file-stage progress with no premature report",
+      "passed": true,
+      "detail": "{\"pid\":93038,\"percent\":2.5,\"message\":\"Inspecting 1/4: مرجع بدون صوت.mp4\"}"
+    },
+    {
+      "phase": "prepare",
+      "name": "Real cuts at 1s/3s, audio-first video stream, static/no-video and matching original hashes",
+      "passed": true,
+      "detail": "[{\"name\":\"مرجع بدون صوت.mp4\",\"status\":\"no-candidates\",\"frames\":600,\"times\":[]},{\"name\":\"owned-cuts-audio-first.mp4\",\"status\":\"candidates\",\"frames\":120,\"times\":[1,3]},{\"name\":\"owned-static.mp4\",\"status\":\"no-candidates\",\"frames\":60,\"times\":[]},{\"name\":\"owned-audio-only.wav\",\"status\":\"no-video\"}]"
+    },
+    {
+      "phase": "prepare",
+      "name": "Decode and candidate reports cannot be confused",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "prepare",
+      "name": "Reload restores candidate report without another start",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "prepare",
+      "name": "Cancellation reaps genuine native decoder; no fake report or 100%",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "prepare",
+      "name": "Cancellation removes temporary hardlink workspace",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "prepare",
+      "name": "Real ffprobe failure is visible, without estimated results",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "prepare",
+      "name": "Restored bytes do not silently renew old provenance",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "prepare",
+      "name": "New project has no inherited candidate report and cannot start with no inputs",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "prepare",
+      "name": "Cross-project candidate job reads return 404",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "prepare",
+      "name": "No browser JavaScript errors",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "prepare",
+      "name": "No external browser HTTP requests",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "reopen",
+      "name": "Fresh backend/browser restores same durable report",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "reopen",
+      "name": "Actual native PID and backend owner journalled before crash",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "reopen",
+      "name": "No browser JavaScript errors",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "reopen",
+      "name": "No external browser HTTP requests",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "interrupted",
+      "name": "Startup removes proven inactive native scratch but retains unknown ownership",
+      "passed": true,
+      "detail": "{\"removed\":1,\"retained\":1,\"scanned\":2,\"limited\":false,\"message\":\"Only proven inactive marked scratch is removed; legacy cache is untouched.\",\"entries\":[{\"folder\":\"managed-scenes-korc2pv7\",\"result\":\"removed\",\"reason\":\"Inactive owned scratch removed\"},{\"folder\":\"managed-scenes-unknown\",\"result\":\"retained\",\"reason\":\"[Errno 2] No such file or directory: '/tmp/ce-r2d-data/cache/managed-scenes-unknown/.owner.json'\"}]}"
+    },
+    {
+      "phase": "interrupted",
+      "name": "Legacy and unmarked sentinel bytes remain untouched",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "interrupted",
+      "name": "Existing measurement panel surfaces startup cleanup and retention",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "interrupted",
+      "name": "Crash recovery marks orphaned job interrupted, never done",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "interrupted",
+      "name": "Explicit post-crash retry reruns real tools and commits a new report",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "interrupted",
+      "name": "Persian candidate labels and RTL render actual recovered results",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "interrupted",
+      "name": "No browser JavaScript errors",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "interrupted",
+      "name": "No external browser HTTP requests",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "verify",
+      "name": "Final code reruns real native detection with unchanged candidate truth and source hashes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "verify",
+      "name": "No browser JavaScript errors",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "verify",
+      "name": "No external browser HTTP requests",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "external": [],
+  "requests": [
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/health"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/health"
+    },
+    {
+      "phase": "prepare",
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects"
+    },
+    {
+      "phase": "prepare",
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/uploads"
+    },
+    {
+      "phase": "prepare",
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/uploads"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/a4c77fc3988e4bd08181ca47b6f783de/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/uploads"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/3b09089929d448d9b239d54daee5cac9/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/9fa2f127ea8f4131abbff5fc0aec4759/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/uploads"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/20f784428c434fe18faaf88043b42bba/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/inspection/capabilities"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/inspection/latest"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/inspection/capabilities"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/inspection/latest"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/capabilities"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/latest"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/capabilities"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/latest"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/workspace"
+    },
+    {
+      "phase": "prepare",
+      "method": "PUT",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/workspace"
+    },
+    {
+      "phase": "prepare",
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/f050fc7c1d78"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/f050fc7c1d78"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/f050fc7c1d78"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/f050fc7c1d78"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/f050fc7c1d78"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/f050fc7c1d78"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/f050fc7c1d78"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/f050fc7c1d78"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/f050fc7c1d78"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/f050fc7c1d78"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/f050fc7c1d78"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/f050fc7c1d78"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/f050fc7c1d78"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/f050fc7c1d78"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/f050fc7c1d78"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/f050fc7c1d78"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/f050fc7c1d78"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/f050fc7c1d78"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/f050fc7c1d78"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/f050fc7c1d78"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/f050fc7c1d78"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/f050fc7c1d78"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/f050fc7c1d78"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/inspection/capabilities"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/inspection/latest"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/inspection/capabilities"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/inspection/latest"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/capabilities"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/latest"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/capabilities"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/latest"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/workspace"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/assets"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/health"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/health"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/20f784428c434fe18faaf88043b42bba/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/inspection/capabilities"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/inspection/latest"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/inspection/capabilities"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/inspection/latest"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/capabilities"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/latest"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/capabilities"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/latest"
+    },
+    {
+      "phase": "prepare",
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs"
+    },
+    {
+      "phase": "prepare",
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/59ae932195fc/cancel"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/59ae932195fc"
+    },
+    {
+      "phase": "prepare",
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/2025f550275c"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/2025f550275c"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/2025f550275c"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/2025f550275c"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/2025f550275c"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/2025f550275c"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/2025f550275c"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/2025f550275c"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/2025f550275c"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/2025f550275c"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/2025f550275c"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/2025f550275c"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/2025f550275c"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/2025f550275c"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/2025f550275c"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/2025f550275c"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/2025f550275c"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/2025f550275c"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/2025f550275c"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/2025f550275c"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/2025f550275c"
+    },
+    {
+      "phase": "prepare",
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/a2295a9dc6c0"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/a2295a9dc6c0"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/a2295a9dc6c0"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/a2295a9dc6c0"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/a2295a9dc6c0"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/a2295a9dc6c0"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/a2295a9dc6c0"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/a2295a9dc6c0"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/a2295a9dc6c0"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/a2295a9dc6c0"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/a2295a9dc6c0"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/a2295a9dc6c0"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/a2295a9dc6c0"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/a2295a9dc6c0"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/a2295a9dc6c0"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/a2295a9dc6c0"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/a2295a9dc6c0"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/a2295a9dc6c0"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/a2295a9dc6c0"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/a2295a9dc6c0"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/a2295a9dc6c0"
+    },
+    {
+      "phase": "prepare",
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/f651949469014b9393d335272edcf7c5/workspace"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/f651949469014b9393d335272edcf7c5/scenes/capabilities"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/f651949469014b9393d335272edcf7c5/scenes/latest"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/f651949469014b9393d335272edcf7c5/scenes/capabilities"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/f651949469014b9393d335272edcf7c5/scenes/latest"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects"
+    },
+    {
+      "phase": "prepare",
+      "method": "PUT",
+      "url": "http://127.0.0.1:1421/api/v1/projects/f651949469014b9393d335272edcf7c5/workspace"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/workspace"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/assets"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/capabilities"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/latest"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/capabilities"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/latest"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/health"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/health"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/workspace"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/assets"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/20f784428c434fe18faaf88043b42bba/content"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/inspection/capabilities"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/inspection/latest"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/inspection/capabilities"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/inspection/latest"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/capabilities"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/latest"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/capabilities"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/latest"
+    },
+    {
+      "phase": "reopen",
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/health"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/health"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/workspace"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/assets"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/20f784428c434fe18faaf88043b42bba/content"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/inspection/capabilities"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/inspection/latest"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/inspection/capabilities"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/inspection/latest"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/capabilities"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/latest"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/capabilities"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/latest"
+    },
+    {
+      "phase": "interrupted",
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/5a1ac3867c0a"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/5a1ac3867c0a"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/5a1ac3867c0a"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/5a1ac3867c0a"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/5a1ac3867c0a"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/5a1ac3867c0a"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/5a1ac3867c0a"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/5a1ac3867c0a"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/5a1ac3867c0a"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/5a1ac3867c0a"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/5a1ac3867c0a"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/5a1ac3867c0a"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/5a1ac3867c0a"
+    },
+    {
+      "phase": "verify",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/health"
+    },
+    {
+      "phase": "verify",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/health"
+    },
+    {
+      "phase": "verify",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects"
+    },
+    {
+      "phase": "verify",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/workspace"
+    },
+    {
+      "phase": "verify",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/assets"
+    },
+    {
+      "phase": "verify",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/20f784428c434fe18faaf88043b42bba/content"
+    },
+    {
+      "phase": "verify",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/inspection/capabilities"
+    },
+    {
+      "phase": "verify",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/inspection/latest"
+    },
+    {
+      "phase": "verify",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/inspection/capabilities"
+    },
+    {
+      "phase": "verify",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/inspection/latest"
+    },
+    {
+      "phase": "verify",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/capabilities"
+    },
+    {
+      "phase": "verify",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/latest"
+    },
+    {
+      "phase": "verify",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/capabilities"
+    },
+    {
+      "phase": "verify",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/latest"
+    },
+    {
+      "phase": "verify",
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs"
+    },
+    {
+      "phase": "verify",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/56c7aa696f54"
+    },
+    {
+      "phase": "verify",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/56c7aa696f54"
+    },
+    {
+      "phase": "verify",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/56c7aa696f54"
+    },
+    {
+      "phase": "verify",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/56c7aa696f54"
+    },
+    {
+      "phase": "verify",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/56c7aa696f54"
+    },
+    {
+      "phase": "verify",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/56c7aa696f54"
+    },
+    {
+      "phase": "verify",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/56c7aa696f54"
+    },
+    {
+      "phase": "verify",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/56c7aa696f54"
+    },
+    {
+      "phase": "verify",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/56c7aa696f54"
+    },
+    {
+      "phase": "verify",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/56c7aa696f54"
+    },
+    {
+      "phase": "verify",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/56c7aa696f54"
+    },
+    {
+      "phase": "verify",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes/jobs/56c7aa696f54"
+    }
+  ],
+  "limits": [
+    "Diagnostic Linux LGPL shared tools, NOT approved Windows shipping runtime.",
+    "Native threshold cut candidates only, NOT semantic shots, pretrained inference, StyleDNA or export.",
+    "Percentages are observed hash/probe/file stages, NOT detector iterations or ETA.",
+    "Known inactive marked scratch is recoverable; unknown launches/legacy cache/live native processes are retained. Independent native-child supervision remains OPEN."
+  ],
+  "assets": [
+    {
+      "id": "a4c77fc3988e4bd08181ca47b6f783de",
+      "project_id": "10c9d9360918417da8007b232a7a2c49",
+      "name": "owned-cuts-audio-first.mp4",
+      "size_bytes": 6741,
+      "available": true,
+      "path": "/tmp/ce-r2d-data/projects/10c9d9360918417da8007b232a7a2c49/imports/8b2b7988831847af8956f36f891f4310.mp4",
+      "role": "source",
+      "kind": "video",
+      "duration": 4,
+      "fps": 30,
+      "width": 160,
+      "height": 96,
+      "video_codec": "mpeg4",
+      "audio_codec": "aac",
+      "has_audio": true,
+      "created_at": "2026-11-04T23:24:58.707158Z",
+      "updated_at": "2026-11-04T23:24:58.707162Z"
+    },
+    {
+      "id": "3b09089929d448d9b239d54daee5cac9",
+      "project_id": "10c9d9360918417da8007b232a7a2c49",
+      "name": "owned-static.mp4",
+      "size_bytes": 2887,
+      "available": true,
+      "path": "/tmp/ce-r2d-data/projects/10c9d9360918417da8007b232a7a2c49/imports/787a6e30c10a4daea4ca291ace69ab69.mp4",
+      "role": "source",
+      "kind": "video",
+      "duration": 2,
+      "fps": 30,
+      "width": 160,
+      "height": 96,
+      "video_codec": "mpeg4",
+      "audio_codec": null,
+      "has_audio": false,
+      "created_at": "2026-11-04T23:24:58.741584Z",
+      "updated_at": "2026-11-04T23:24:58.741586Z"
+    },
+    {
+      "id": "9fa2f127ea8f4131abbff5fc0aec4759",
+      "project_id": "10c9d9360918417da8007b232a7a2c49",
+      "name": "owned-audio-only.wav",
+      "size_bytes": 88244,
+      "available": true,
+      "path": "/tmp/ce-r2d-data/projects/10c9d9360918417da8007b232a7a2c49/imports/abff6200831b433682221df13455987e.wav",
+      "role": "source",
+      "kind": "audio",
+      "duration": 2,
+      "fps": 0,
+      "width": 0,
+      "height": 0,
+      "video_codec": null,
+      "audio_codec": "pcm_s16le",
+      "has_audio": true,
+      "created_at": "2026-11-04T23:24:58.919781Z",
+      "updated_at": "2026-11-04T23:24:58.919784Z"
+    },
+    {
+      "id": "20f784428c434fe18faaf88043b42bba",
+      "project_id": "10c9d9360918417da8007b232a7a2c49",
+      "name": "مرجع بدون صوت.mp4",
+      "size_bytes": 317426,
+      "available": true,
+      "path": "/tmp/ce-r2d-data/references/10c9d9360918417da8007b232a7a2c49/9a4e0308284448dfae90783987de8144.mp4",
+      "role": "reference",
+      "kind": "video",
+      "duration": 20,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920,
+      "video_codec": "h264",
+      "audio_codec": null,
+      "has_audio": false,
+      "created_at": "2026-11-04T23:24:59.146851Z",
+      "updated_at": "2026-11-04T23:24:59.146854Z"
+    }
+  ],
+  "project": "10c9d9360918417da8007b232a7a2c49",
+  "route": "/api/v1/projects/10c9d9360918417da8007b232a7a2c49/scenes",
+  "firstJob": "f050fc7c1d78",
+  "firstWorker": {
+    "pid": 93038,
+    "cmd": "/tmp/ce-r2c-home/binaries/ffmpeg/bin/ffprobe\u0000-v\u0000error\u0000-threads\u00001\u0000-f\u0000lavfi\u0000-i\u0000movie=filename=input:stream_index=0:dec_threads=1:format_opts=protocol_whitelist=file,scale=320:-2,scdet=threshold=10\u0000-show_frames\u0000-show_entries\u0000frame=pts_time:frame_tags=lavfi.scd.score,lavfi.scd.time\u0000-of\u0000json=compact=1\u0000",
+    "cwd": "/tmp/ce-r2d-data/cache/managed-scenes-rxnmoguw"
+  },
+  "completed": {
+    "operation": "scenes",
+    "id": "56c7aa696f54",
+    "project_id": "10c9d9360918417da8007b232a7a2c49",
+    "reference_asset_id": "20f784428c434fe18faaf88043b42bba",
+    "source_asset_ids": [
+      "a4c77fc3988e4bd08181ca47b6f783de",
+      "3b09089929d448d9b239d54daee5cac9",
+      "9fa2f127ea8f4131abbff5fc0aec4759"
+    ],
+    "state": "done",
+    "percent": 100,
+    "message": "Measurements saved; model analysis not performed",
+    "error": null,
+    "stale": false,
+    "report": {
+      "version": 1,
+      "scope": "shot-candidates-only",
+      "method": "ffprobe-lavfi+scdet",
+      "files": [
+        {
+          "asset_id": "20f784428c434fe18faaf88043b42bba",
+          "role": "reference",
+          "name": "مرجع بدون صوت.mp4",
+          "sha256": "608c99b934d917e644a708fee9d06e8aae57fd2b58f9c72c6b8ef9384701e9f3",
+          "size_bytes": 317426,
+          "mtime_ns": "1793834699105237641",
+          "duration": 20,
+          "has_audio": false,
+          "has_video": true,
+          "status": "no-candidates",
+          "estimate": {
+            "method": "ffmpeg.scdet",
+            "time_origin": "first-decoded-video-frame",
+            "threshold_percent": 10,
+            "scaled_width": 320,
+            "frames_analyzed": 600,
+            "first_frame_pts_seconds": 0,
+            "decoded_span_seconds": 19.966667,
+            "candidates": []
+          }
+        },
+        {
+          "asset_id": "a4c77fc3988e4bd08181ca47b6f783de",
+          "role": "source",
+          "name": "owned-cuts-audio-first.mp4",
+          "sha256": "3ca80a124dde2a080ef70aba3b95ae62bb800eb5843c2becdc8446dbade1765b",
+          "size_bytes": 6741,
+          "mtime_ns": "1793834727733382238",
+          "duration": 4,
+          "has_audio": true,
+          "has_video": true,
+          "status": "candidates",
+          "estimate": {
+            "method": "ffmpeg.scdet",
+            "time_origin": "first-decoded-video-frame",
+            "threshold_percent": 10,
+            "scaled_width": 320,
+            "frames_analyzed": 120,
+            "first_frame_pts_seconds": 0,
+            "decoded_span_seconds": 3.966667,
+            "candidates": [
+              {
+                "frame_index": 30,
+                "time_seconds": 1,
+                "score_percent": 42.499
+              },
+              {
+                "frame_index": 90,
+                "time_seconds": 3,
+                "score_percent": 42.499
+              }
+            ]
+          }
+        },
+        {
+          "asset_id": "3b09089929d448d9b239d54daee5cac9",
+          "role": "source",
+          "name": "owned-static.mp4",
+          "sha256": "717bb4417d56db26bcdcb38341a6f1c0fa9e2be63c872be3ef1b9c6e81379b2b",
+          "size_bytes": 2887,
+          "mtime_ns": "1793834698721235702",
+          "duration": 2,
+          "has_audio": false,
+          "has_video": true,
+          "status": "no-candidates",
+          "estimate": {
+            "method": "ffmpeg.scdet",
+            "time_origin": "first-decoded-video-frame",
+            "threshold_percent": 10,
+            "scaled_width": 320,
+            "frames_analyzed": 60,
+            "first_frame_pts_seconds": 0,
+            "decoded_span_seconds": 1.966667,
+            "candidates": []
+          }
+        },
+        {
+          "asset_id": "9fa2f127ea8f4131abbff5fc0aec4759",
+          "role": "source",
+          "name": "owned-audio-only.wav",
+          "sha256": "5ba66f0b9a8dd400b3037d65e5febd0620a46b9f03b9f913e00e02fca7830685",
+          "size_bytes": 88244,
+          "mtime_ns": "1793834698897236590",
+          "duration": 2,
+          "has_audio": true,
+          "has_video": false,
+          "status": "no-video",
+          "estimate": null
+        }
+      ],
+      "unavailable": [
+        "TransNetV2 inference",
+        "semantic shot labels",
+        "pose/action inference",
+        "StyleDNA",
+        "EDL"
+      ]
+    }
+  },
+  "crashJob": "9727344b9317",
+  "crashWorker": {
+    "pid": 94075,
+    "cmd": "/tmp/ce-r2c-home/binaries/ffmpeg/bin/ffprobe\u0000-v\u0000error\u0000-threads\u00001\u0000-f\u0000lavfi\u0000-i\u0000movie=filename=input:stream_index=0:dec_threads=1:format_opts=protocol_whitelist=file,scale=320:-2,scdet=threshold=10\u0000-show_frames\u0000-show_entries\u0000frame=pts_time:frame_tags=lavfi.scd.score,lavfi.scd.time\u0000-of\u0000json=compact=1\u0000",
+    "cwd": "/tmp/ce-r2d-data/cache/managed-scenes-korc2pv7"
+  },
+  "crashOwnership": {
+    "format": "cutting-edge.scratch.v1",
+    "kind": "scenes",
+    "folder": "managed-scenes-korc2pv7",
+    "owner": {
+      "pid": 93978,
+      "created": 1793834801.9
+    },
+    "launching": false,
+    "child": {
+      "pid": 94075,
+      "created": 1793834810.36
+    }
+  },
+  "sentinels": {
+    "unknown": "/tmp/ce-r2d-data/cache/managed-scenes-unknown",
+    "legacy": "/tmp/ce-r2d-data/cache/scenes-legacy"
+  },
+  "crashObservation": {
+    "elapsed_ms": 201,
+    "native_alive_after_parent_kill": false,
+    "orphan_workspace_present": true,
+    "qa_cleanup_native_process": false
+  },
+  "startupRecovery": {
+    "removed": 1,
+    "retained": 1,
+    "scanned": 2,
+    "limited": false,
+    "message": "Only proven inactive marked scratch is removed; legacy cache is untouched.",
+    "entries": [
+      {
+        "folder": "managed-scenes-korc2pv7",
+        "result": "removed",
+        "reason": "Inactive owned scratch removed"
+      },
+      {
+        "folder": "managed-scenes-unknown",
+        "result": "retained",
+        "reason": "[Errno 2] No such file or directory: '/tmp/ce-r2d-data/cache/managed-scenes-unknown/.owner.json'"
+      }
+    ]
+  },
+  "sourceFilesAtFinalVerification": {
+    "backend/app/services/media/workspaces.py": "a11390a7f0914742abb7fdd1c52e2b4ff3e3aaf211dba4a27b47c8c09e23143b",
+    "backend/app/services/media/runner.py": "f126444876b83d0650027d7dc5cedac162d42d0d1b7ee9d84dc1fd5323c66c0e",
+    "backend/app/services/media/scenes.py": "4de4dad4eae1b7a6d7985eb8048c6e4658bff5ddc2523b8725ef139fc708d7dd",
+    "frontend/src/features/stylematch/InspectionPanel.tsx": "06850a2f4f5c4b107d8c2e11fc0042a99d0b2f7ec986f2ec88367cd32d551de9"
+  }
+}

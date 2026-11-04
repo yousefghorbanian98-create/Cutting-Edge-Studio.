@@ -1,0 +1,17 @@
+{
+  "same_rows": {
+    "projects": true,
+    "media_assets": true,
+    "bookmarks": true,
+    "artifacts": true
+  },
+  "test_imports_to_primary": false,
+  "primary_cache_recovery": {
+    "removed": 0,
+    "retained": 0,
+    "scanned": 0,
+    "limited": false,
+    "message": "Only proven inactive marked scratch is removed; legacy cache is untouched.",
+    "entries": []
+  }
+}

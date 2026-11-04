@@ -31,6 +31,12 @@ semantic shot/model/StyleDNA acceptance. SIGKILL left a hardlink cache orphan; c
 adapter execution, native packaging and full release remain OPEN. Prior e62f847 strict-native +
 NSIS light push 41926876782 succeeded; that is not full installer acceptance.
 
+R2b4 now recovers known inactive **marked** workspaces after actual scene/audio crashes: code
+`6060832`, 310 optional/native tests (93.66%), 304 base + 6 skips, 168 frontend and 54/54 browser
+checks. See [RECOVERY-R2B4-REPORT.md](RECOVERY-R2B4-REPORT.md). Legacy/unknown/live/launch-gap
+cache is retained, not swept. Independent native containment, real Windows adapter/GC/resource
+routing, models/render and full offline release remain OPEN; 260/260 is still only authored.
+
 ## P0 — Foundation & Setup (week 1, 20 steps)
 
 | Step | Item | Status | Evidence |

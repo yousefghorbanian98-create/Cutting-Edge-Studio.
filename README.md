@@ -9,7 +9,8 @@ Target core feature: **Style Match** — analyse a reference edit's DNA and appl
 > Start with [the recovery roadmap](docs/RECOVERY-ROADMAP.md),
 > [audio job evidence](docs/RECOVERY-R2B2-REPORT.md) and
 > [native-tool qualification](docs/NATIVE-MEDIA-PREP-REPORT.md) and
-> [cut-candidate evidence/limits](docs/RECOVERY-R2B3-REPORT.md).
+> [cut-candidate evidence/limits](docs/RECOVERY-R2B3-REPORT.md) and
+> [conservative scratch recovery](docs/RECOVERY-R2B4-REPORT.md).
 
 - Protocol: **v2.5.1** (`docs/PROTOCOL-v2.5.1.md`)
 - Decisions & resolved contradictions: `docs/PROTOCOL-ISSUES.md`

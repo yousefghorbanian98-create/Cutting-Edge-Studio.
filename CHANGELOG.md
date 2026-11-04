@@ -3,6 +3,13 @@
 All notable changes to Cutting Edge v2. Format: [Keep a Changelog](https://keepachangelog.com/),
 versioning: [SemVer](https://semver.org/).
 
+## Recovery R2b4 — 2026-11-05
+
+- Reused psutil/tempfile/Pydantic for bounded startup recovery of proven inactive, version-marked scene/PCM scratch; journal backend/native PID creation times around Popen/reaping. Never sweep legacy, live, unknown launch, linked or unexpected content.
+- Reused the existing measurement panel for English/Persian startup counts and fixed diagnostics to report the running app's actual profile.
+- Actual native and audio SIGKILL/restart recovered known hardlink and 530,510-byte PCM workspaces while unknown/legacy sentinels remained; 54/54 browser checks, 310 optional/native backend tests (93.66%), 168 frontend/build PASS. Original primary DB rows preserved.
+- No new dependency/download or independent native-child guard. Windows adapter/GC, native containment/resources/transport, models/render and full offline release remain OPEN; see `docs/RECOVERY-R2B4-REPORT.md`.
+
 ## Recovery R2b3 — 2026-11-05
 
 - Reused native FFmpeg scdet/ffprobe JSON for default-disabled cut-candidate measurements, not pretrained/semantic shots or StyleDNA.
