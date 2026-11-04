@@ -1,0 +1,60 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "CuttingEdgeV2",
+  "version": "1.0.0",
+  "identifier": "com.cuttingedge.v2",
+  "build": {
+    "beforeDevCommand": "npm --prefix ../frontend run dev",
+    "beforeBuildCommand": "npm --prefix ../frontend run build",
+    "devUrl": "http://localhost:1420",
+    "frontendDist": "../frontend/dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Cutting Edge v2",
+        "width": 1920,
+        "height": 1080,
+        "minWidth": 1280,
+        "minHeight": 720,
+        "resizable": true,
+        "fullscreen": false,
+        "visible": true
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' ipc: http://ipc.localhost"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis"],
+    "category": "Video",
+    "shortDescription": "Offline sports video editor",
+    "longDescription": "Cutting Edge v2 — offline, OSS-first sports video editor for bodybuilding and volleyball creators.",
+    "copyright": "MIT",
+    "externalBin": ["binaries/cutting-edge-backend"],
+    "resources": [
+      "../licenses/*",
+      "../docs/*.md"
+    ],
+    "windows": {
+      "nsis": {
+        "installMode": "perMachine",
+        "languages": ["English", "Persian"],
+        "displayLanguageSelector": true
+      },
+      "webviewInstallMode": {
+        "type": "fixedRuntime",
+        "path": "./webview2-fixed-runtime/"
+      }
+    }
+  },
+  "plugins": {
+    "updater": {
+      "active": false,
+      "endpoints": [],
+      "dialog": false
+    }
+  }
+}

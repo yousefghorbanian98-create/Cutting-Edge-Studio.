@@ -1,0 +1,23 @@
+{
+  "_comment": "Every remote artifact is pinned by URL + SHA-256. The build script refuses to run while a hash is null: no unpinned downloads, ever.",
+  "ffmpeg": {
+    "url": "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-lgpl-shared.zip",
+    "sha256": null,
+    "license": "LGPL-2.1-or-later (dynamic linking only; libx264/GPL builds are forbidden)",
+    "target": "binaries/ffmpeg"
+  },
+  "webview2_fixed_runtime": {
+    "url": "https://developer.microsoft.com/en-us/microsoft-edge/webview2/",
+    "sha256": null,
+    "license": "Microsoft proprietary redistribution (fixed-version runtime, offline)",
+    "target": "src-tauri/webview2-fixed-runtime"
+  },
+  "models": {
+    "mediapipe_pose": { "url": "bundled-in-mediapipe-wheel", "sha256": null, "license": "Apache-2.0" },
+    "clip_vit_b32_onnx": { "url": "https://github.com/.../clip-vit-b32.onnx", "sha256": null, "license": "MIT" },
+    "yolox_s": { "url": "https://github.com/Megvii-BaseDetection/YOLOX/releases/", "sha256": null, "license": "Apache-2.0 code / MIT weights" },
+    "faster_whisper_base": { "url": "https://huggingface.co/Systran/faster-whisper-base", "sha256": null, "license": "MIT" },
+    "piper_voice_fa": { "url": "https://huggingface.co/rhasspy/piper-voices", "sha256": null, "license": "per-voice (audit required)" },
+    "transnet_v2_onnx": { "url": "https://github.com/soCzech/TransNetV2", "sha256": null, "license": "MIT" }
+  }
+}
