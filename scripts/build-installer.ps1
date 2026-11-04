@@ -46,6 +46,27 @@ $delivery = Join-Path $root 'delivery'
 New-Item -ItemType Directory -Force -Path $delivery | Out-Null
 $binariesDir = Join-Path $root 'src-tauri/binaries'
 
+function Assert-NativeSuccess {
+    param([string]$Label)
+    if ($LASTEXITCODE -ne 0) {
+        Write-Output "::error title=Build step failed::$Label exited with code $LASTEXITCODE"
+        throw "$Label failed with exit code $LASTEXITCODE"
+    }
+}
+
+function Invoke-Step {
+    param([string]$Label, [scriptblock]$Action)
+    Write-Host "::group::$Label"
+    try {
+        & $Action
+    } catch {
+        Write-Host '::endgroup::'
+        Write-Output "::error title=Build step failed::$Label -> $($_.Exception.Message)"
+        throw
+    }
+    Write-Host '::endgroup::'
+}
+
 function Assert-Prerequisites {
     foreach ($tool in @('node', 'npm', 'cargo', 'python')) {
         if (-not (Get-Command $tool -ErrorAction SilentlyContinue)) {
@@ -117,12 +138,15 @@ if ($WithoutPinnedBinaries) {
     }
 }
 
-Write-Host '[1/4] frontend'
-Push-Location (Join-Path $root 'frontend')
-try {
-    npm ci
-    npm run build
-} finally { Pop-Location }
+Invoke-Step '[1/4] frontend' {
+    Push-Location (Join-Path $root 'frontend')
+    try {
+        npm ci
+        Assert-NativeSuccess 'npm ci'
+        npm run build
+        Assert-NativeSuccess 'npm run build'
+    } finally { Pop-Location }
+}
 
 Write-Host '[2/4] python sidecar'
 $sidecarTarget = Join-Path $binariesDir ("cutting-edge-backend-" + (Get-TargetTriple) + ".exe")
@@ -134,6 +158,7 @@ try {
     & $py -m pip install -r requirements.txt
     & $py -m pip install pyinstaller==6.22.3
     & (Join-Path (Get-Location) '.venv/Scripts/pyinstaller.exe') --noconfirm --clean packaging/sidecar.spec
+    Assert-NativeSuccess 'pyinstaller'
 } finally { Pop-Location }
 
 $builtSidecar = Join-Path $root 'backend/dist/cutting-edge-backend.exe'
@@ -147,6 +172,7 @@ Write-Host '[3/4] tauri shell'
 Push-Location (Join-Path $root 'src-tauri')
 try {
     cargo build --release
+    Assert-NativeSuccess 'cargo build'
 } finally { Pop-Location }
 
 if ($SkipInstaller) {
@@ -167,6 +193,7 @@ try {
     Push-Location (Join-Path $root 'src-tauri')
     try {
         npx --yes @tauri-apps/cli@2 build --bundles nsis
+        Assert-NativeSuccess 'tauri build'
     } finally { Pop-Location }
 } finally {
     Set-Content -Path $tauriConfPath -Value $confBackup -Encoding utf8
