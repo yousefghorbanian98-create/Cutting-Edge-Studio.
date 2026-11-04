@@ -272,3 +272,17 @@ def test_tauri_frontend_hooks_resolve_from_project_root() -> None:
         command = config["build"][hook].split()
         assert command[:3] == ["npm", "--prefix", "frontend"]
         assert (REPO / command[2] / "package.json").is_file()
+
+
+def test_nsis_uses_upstream_farsi_language_identifier() -> None:
+    """NSIS supplies Farsi.nlf, not Persian.nlf; keep both installer languages."""
+    config = json.loads((REPO / "src-tauri" / "tauri.conf.json").read_text())
+    assert config["bundle"]["windows"]["nsis"]["languages"] == ["English", "Farsi"]
+
+
+def test_package_metadata_reuses_audited_runtime_requirements() -> None:
+    """Do not resurrect outdated dependency pins through pip install of this package."""
+    config = tomllib.loads((BACKEND / "pyproject.toml").read_text())
+    assert "dependencies" not in config["project"]
+    assert "dependencies" in config["project"]["dynamic"]
+    assert config["tool"]["setuptools"]["dynamic"]["dependencies"]["file"] == ["requirements.txt"]

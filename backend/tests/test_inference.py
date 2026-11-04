@@ -131,3 +131,31 @@ def test_model_specs_are_wired_to_local_paths(tmp_path) -> None:
     clip = clip_onnx_spec(tmp_path / "clip.onnx")
     assert (pose.name, pose.priority) == ("mediapipe-pose", 10)
     assert clip.dependency == "onnxruntime"
+
+
+@pytest.mark.parametrize("name", InferenceRegistry().order)
+def test_unwired_default_specs_cannot_report_a_loaded_model(name, caplog) -> None:
+    registry = InferenceRegistry()
+    with pytest.raises(ModelUnavailableError, match="no wired local loader"):
+        registry.load(name)
+    assert registry.resident() == []
+    assert "inference.loader.unwired" in caplog.text
+
+
+def test_lower_priority_request_cannot_exceed_resident_limit(caplog) -> None:
+    calls = []
+    registry = InferenceRegistry(
+        specs=[spec("pose", 10, lambda: object()), spec("clip", 20, lambda: calls.append(1))]
+    )
+    pose = registry.load("pose")
+    with pytest.raises(ModelUnavailableError, match="resident limit"):
+        registry.load("clip")
+    assert registry.resident() == ["pose"]
+    assert registry.load("pose") is pose
+    assert calls == []
+    assert "inference.capacity.unavailable" in caplog.text
+
+
+def test_directory_cannot_masquerade_as_a_local_model(tmp_path) -> None:
+    with pytest.raises(FileNotFoundError):
+        local_model_path(tmp_path)

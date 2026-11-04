@@ -7,10 +7,14 @@ module are pure and fully unit-tested.
 
 from __future__ import annotations
 
-import math
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+
+import numpy as np
+from scipy.linalg import norm
+from scipy.spatial.distance import cosine
+from scipy.special import softmax as scipy_softmax
 
 from app.services.inference.registry import ModelSpec
 
@@ -25,22 +29,18 @@ class ZeroShotResult:
 
 def l2_normalize(vector: list[float]) -> list[float]:
     """Unit-length copy of ``vector`` (all-zero vectors are returned unchanged)."""
-    norm = math.sqrt(sum(value * value for value in vector))
-    if norm == 0:
-        return list(vector)
-    return [value / norm for value in vector]
+    values = np.asarray(vector, dtype=float)
+    magnitude = norm(values)
+    return list(vector) if magnitude == 0 else (values / magnitude).tolist()
 
 
 def cosine_similarity(left: list[float], right: list[float]) -> float:
     """Cosine similarity in [-1, 1]; mismatched or empty inputs give 0."""
     if not left or len(left) != len(right):
         return 0.0
-    dot = sum(a * b for a, b in zip(left, right, strict=True))
-    norm_left = math.sqrt(sum(value * value for value in left))
-    norm_right = math.sqrt(sum(value * value for value in right))
-    if norm_left == 0 or norm_right == 0:
+    if norm(left) == 0 or norm(right) == 0:
         return 0.0
-    return dot / (norm_left * norm_right)
+    return float(1.0 - cosine(left, right))
 
 
 def softmax(scores: list[float], temperature: float = 1.0) -> list[float]:
@@ -48,10 +48,9 @@ def softmax(scores: list[float], temperature: float = 1.0) -> list[float]:
     if not scores:
         return []
     scale = max(temperature, 1e-6)
-    peak = max(scores)
-    exponents = [math.exp((score - peak) / scale) for score in scores]
-    total = sum(exponents)
-    return [value / total for value in exponents]
+    values = np.asarray(scores, dtype=float)
+    # Preserve temperature scaling without overflowing large equal finite logits.
+    return scipy_softmax((values - values.max()) / scale).tolist()
 
 
 def rank_prompts(
@@ -121,7 +120,7 @@ def local_model_path(root: Path, *parts: str) -> Path:
     Guards Auto-Failure #5: adapters never fall back to a download URL.
     """
     path = root.joinpath(*parts)
-    if not path.exists():
+    if not path.is_file():
         msg = (
             f"model file missing: {path}. Models are bundled at build time and never "
             f"downloaded at runtime — run scripts/build-installer.ps1 on the build machine."

@@ -94,8 +94,15 @@ class InferenceRegistry:
                 f"model '{name}' needs the OSS extra '{spec.dependency}', which is not installed. "
                 f"Install it on the build machine (bundled at packaging time)."
             )
+            LOG.error("inference.dependency.unavailable", model=name, error=str(error))
             raise ModelUnavailableError(msg) from error
 
+        if handle is None:
+            LOG.error("inference.loader.unwired", model=name)
+            raise ModelUnavailableError(
+                f"Model '{name}' has no wired local loader; inference was not performed. "
+                "Configure a verified pretrained artifact and adapter on the build machine."
+            )
         self._resident[name] = _Resident(spec=spec, handle=handle)
         LOG.info("inference.loaded", model=name, approx_mb=spec.approx_mb)
         return handle
@@ -115,6 +122,13 @@ class InferenceRegistry:
                 continue
             self._resident.pop(victim.spec.name, None)
             LOG.info("inference.evicted", model=victim.spec.name, for_model=incoming.name)
+
+        if len(self._resident) >= self._max_resident:
+            LOG.error("inference.capacity.unavailable", model=incoming.name)
+            raise ModelUnavailableError(
+                f"Cannot load '{incoming.name}': higher-priority models occupy the resident "
+                "limit. Unload them before retrying; no extra model was loaded."
+            )
 
     def unload(self, name: str) -> bool:
         removed = self._resident.pop(name, None)
