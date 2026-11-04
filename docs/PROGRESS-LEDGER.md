@@ -4,7 +4,7 @@ Legend: **GREEN** = verified with evidence in this environment ·
 **PENDING-ENV** = authored and reviewed, execution requires the Owner's Windows/Rust machine ·
 **BLOCKED** = cannot proceed.
 
-Progress: **50 / 260 steps = 19.2 %** · Phases **P0, P1** delivered.
+Progress: **72 / 260 steps = 27.7 %** · Phases **P0, P1, P2** delivered.
 
 ## P0 — Foundation & Setup (week 1, 20 steps)
 
@@ -81,7 +81,46 @@ npm run build  → dist/assets/index-*.js 366.83 kB (gzip 120.29 kB), CSS 39.00 
 axe-core       → 3 configurations, 0 violations
 ```
 
-## Next: P2 — Timeline Engine (22 steps)
-`react-timeline-editor` MVP (100–200 clips smooth), Zustand timeline store, hotkeys,
-snapping, bookmarks (hotkey M), and the P3 media pipeline contract.
+## P2 — Timeline Engine (week 3, 22 steps)
+
+| Step | Item | Status | Evidence |
+|---|---|---|---|
+| P2-S01 | Pure timeline math module (no React, no store) | GREEN | `features/timeline/timelineMath.ts` |
+| P2-S02 | Snapping: clip edges, bookmarks, zero, grid fallback | GREEN | `snapTime` + 4 unit tests |
+| P2-S03 | Overlap-free placement (ripple to first free slot) | GREEN | `findFreeSlot` + tests |
+| P2-S04 | Split math with inPoint continuity | GREEN | `splitClipAt` + tests |
+| P2-S05 | Trim math (min duration, zero boundary) | GREEN | `trimClipEdge` + tests |
+| P2-S06 | Timecode, adaptive ruler ticks, fit-to-viewport zoom | GREEN | `timecode`, `rulerTicks`, `fitZoom` |
+| P2-S07 | Timeline store (Zustand + Immer) | GREEN | `features/timeline/timelineStore.ts` |
+| P2-S08 | add / move / trim actions with locked-track guards | GREEN | store tests |
+| P2-S09 | Split-at-playhead action | GREEN | `splitAtPlayhead` |
+| P2-S10 | Selection (single + additive) and delete | GREEN | store tests |
+| P2-S11 | Undo/redo history (50 entries, redo cleared on edit) | GREEN | store tests |
+| P2-S12 | Bookmarks CRUD + hotkey M | GREEN | store + panel tests |
+| P2-S13 | View state: zoom range 8–400, snap toggle, playback | GREEN | store tests |
+| P2-S14 | Adapter store ⇄ editor rows (no library types leak) | GREEN | `timelineAdapter.ts` + 4 tests |
+| P2-S15 | Editor integration (`@xzdarcy/react-timeline-editor`, MIT) | GREEN | `TimelinePanel.tsx` |
+| P2-S16 | Custom ruler, playhead slider and bookmark overlay | GREEN | `TimelinePanel.tsx` |
+| P2-S17 | Toolbar: play, split, delete, undo/redo, snap, zoom, timecode | GREEN | panel tests |
+| P2-S18 | Hotkeys: Space, M, S, Delete, Ctrl+Z, Ctrl+Shift+Z, arrows | GREEN | `react-hotkeys-hook` + tests |
+| P2-S19 | Media → timeline bridge ("add to timeline" per clip) | GREEN | `MediaPanel.tsx` |
+| P2-S20 | Bundle code-splitting (react / radix / timeline / motion) | GREEN | `vite.config.ts` — no >500 kB chunk warning |
+| P2-S21 | Test suite for P2 | GREEN | math 24 · adapter 4 · store 18 · panel 8 |
+| P2-S22 | Docs, ledger, license update, risk R-1 | GREEN | this file, `licenses/THIRD-PARTY.md` |
+
+### P2 evidence snapshot
+```
+npm run test  → Test Files 14 passed (14) · Tests 101 passed (101)
+npm run lint   → clean            npx tsc -b → clean
+npm run build  → index 165.49 kB (gzip 53.99) · radix 228.94 (74.93) · timeline 248.10 (67.50) · motion 113.40 (37.47)
+```
+
+### P2 risk recorded
+`react-timeline-editor` is **unpublished on npm** (E404, 2022-06-18). Switched to the maintained
+successor `@xzdarcy/react-timeline-editor@1.0.0` (same author/repo, MIT, React ≥18).
+Fallback if it misbehaves: `dnd-timeline` (MIT). See `docs/PROTOCOL-ISSUES.md` R-1.
+
+## Next: P3 — Media Pipeline (18 steps)
+FFmpeg resolver (LGPL build) + ffprobe metadata, thumbnail strips, proxy generation,
+import/export contracts, progress events over the local websocket/SSE, and disk-space guards.
 

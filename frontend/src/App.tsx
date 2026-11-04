@@ -5,6 +5,7 @@ import { StatusBar } from './components/layout/StatusBar';
 import { CommandPalette, SkipLink, Toaster, type CommandAction } from './components/ui';
 import { MediaPanel } from './features/media/MediaPanel';
 import { StyleMatchWizard } from './features/stylematch/StyleMatchWizard';
+import { TimelinePanel } from './features/timeline/TimelinePanel';
 import { api } from './lib/api';
 import { translate } from './lib/i18n';
 import { useAppStore } from './store/useAppStore';
@@ -68,7 +69,7 @@ export default function App() {
             </div>
           </Panel>
           <Panel title={translate(language, 'panel.timeline')} className="h-[280px] shrink-0">
-            <p className="text-xs text-[var(--text-secondary)]">{translate(language, 'timeline.empty')}</p>
+            <TimelinePanel />
           </Panel>
         </div>
         <Panel title={translate(language, 'panel.properties')} as="aside" className="w-[320px] shrink-0">

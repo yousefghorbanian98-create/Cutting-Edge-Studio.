@@ -18,7 +18,7 @@ export function StatusBar() {
 
   return (
     <footer className="flex h-7 shrink-0 items-center gap-3 border-t border-white/5 bg-bg-secondary px-3 text-[11px] text-text-secondary">
-      <span className="flex items-center gap-1.5" role="status" aria-live="polite">
+      <span className="flex items-center gap-1.5" role="status" aria-live="polite" aria-label="backend status">
         <span className={`h-2 w-2 rounded-full ${dot}`} aria-hidden="true" />
         {label}
       </span>

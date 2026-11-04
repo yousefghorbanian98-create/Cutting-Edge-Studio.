@@ -45,6 +45,11 @@ CC-BY-SA (as code) · SSPL · BUSL · proprietary · non-commercial weights.
 | @dnd-kit/core · sortable · utilities | 6.3.1 · 10.0.0 · 3.2.2 | MIT | Media list reordering |
 | @fontsource/vazirmatn · inter · jetbrains-mono | 5.1.1 | OFL-1.1 | Bundled fonts (no CDN) |
 | axe-core | 4.10.2 | MPL-2.0 | Accessibility test runner (dev only) |
+| @xzdarcy/react-timeline-editor | 1.0.0 | MIT | Timeline MVP (successor of the unpublished `react-timeline-editor`) |
+| @xzdarcy/timeline-engine | 1.x | ISC | Timeline engine behind the editor |
+| react-virtualized | 9.x | MIT | Row/scroll virtualization for the timeline |
+| react-hotkeys-hook | 4.6.1 | MIT | Keyboard shortcuts |
+| immer | 10.1.1 | MIT | Immutable timeline edits |
 | Tauri | 2.x | MIT / Apache-2.0 | Desktop shell |
 | tauri-plugin-shell | 2.x | MIT / Apache-2.0 | Sidecar spawning |
 

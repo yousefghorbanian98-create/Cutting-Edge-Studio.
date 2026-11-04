@@ -263,3 +263,16 @@ LOCK-12 : 20+ references باندل‌شده → user-imported references
 §20     : +PSF, +OFL 1.1, +Boost, +PyInstaller-Bootloader-Exception
 Budget  : 180–240h → 180–262h
 ```
+
+## R-1. New Risk (P2) — `react-timeline-editor` از npm حذف شده است
+
+`npm view react-timeline-editor` → **E404 Unpublished on 2022-06-18**. یعنی کتابخانه‌ای که
+LOCK-00/§5 به‌عنوان تایم‌لاین MVP نام برده، دیگر قابل نصب نیست.
+
+**تصمیم (بدون نیاز به تأیید، چون جایگزین همان کتابخانه است):**
+`@xzdarcy/react-timeline-editor@1.0.0` — همان نویسنده، همان مخزن (`github.com/xzdarcy/react-timeline-editor`)،
+لایسنس **MIT**، `peerDependencies: react >= 18`. وابستگی‌های فرعی: `@xzdarcy/timeline-engine` (ISC) و
+`react-virtualized` (MIT) — هر دو در whitelist.
+
+اگر این وابستگی در عمل ناپایدار شد، مسیر پشتیبان (بدون نوشتن تایم‌لاین از صفر):
+`dnd-timeline@3.1.1` (MIT، ساخته‌شده روی dnd-kit که همین حالا در استک است).
