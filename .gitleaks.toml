@@ -1,0 +1,16 @@
+title = "Cutting Edge: defaults plus exact REA evidence identifiers"
+
+[extend]
+useDefault = true
+
+# REA emits content-derived IDs, not authentication credentials. Do NOT exclude
+# evidence directories or JSON files wholesale: all other findings still fail CI.
+[[allowlists]]
+description = "REA content-derived script/resource IDs and evidence authority label only"
+condition = "AND"
+paths = ['''^docs/evidence/local/rea-(?:runtime|summary)\.json$''']
+regexTarget = "match"
+regexes = [
+  '''(?:script_key|resource_key)"\s*:\s*"(?:scr|res)_[a-f0-9]{64}''',
+  '''authority"\s*:\s*"shipped-artifact''',
+]

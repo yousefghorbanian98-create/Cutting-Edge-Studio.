@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { api } from '../../lib/api';
 import { type CandidateFile, kindOf, validateFiles } from '../../lib/files';
 
 export interface MediaClip {
@@ -8,6 +9,11 @@ export interface MediaClip {
   path: string;
   kind: 'video' | 'audio';
   role: 'source' | 'reference';
+  assetId?: string;
+  duration?: number;
+  width?: number;
+  height?: number;
+  fps?: number;
 }
 
 export interface ImportOutcome {
@@ -17,6 +23,12 @@ export interface ImportOutcome {
 
 interface MediaState {
   clips: MediaClip[];
+  projectId: string | null;
+  importing: boolean;
+  selectedId: string | null;
+  selectClip: (id: string) => void;
+  importFiles: (files: readonly File[], role?: MediaClip['role']) => Promise<ImportOutcome>;
+  deleteImported: (id: string) => Promise<void>;
   /** Import files, de-duplicating by path. Returns what happened (no silent drops). */
   addFiles: (files: readonly CandidateFile[], role?: MediaClip['role']) => ImportOutcome;
   removeClip: (id: string) => void;
@@ -33,6 +45,58 @@ function nextId(): string {
 
 export const useMediaStore = create<MediaState>((set, get) => ({
   clips: [],
+  projectId: null,
+  importing: false,
+  selectedId: null,
+  selectClip: (id) => set({ selectedId: id }),
+  importFiles: async (files, role = 'source') => {
+    // Serial imports keep memory/disk pressure bounded and prevent duplicate project creation.
+    if (get().importing) throw new Error('An import is already in progress');
+    set({ importing: true });
+    const outcome: ImportOutcome = { added: [], rejected: [] };
+    try {
+      for (const file of files) {
+        const { rejected } = validateFiles([{ name: file.name, size: file.size, path: file.name }]);
+        if (rejected.length) {
+          outcome.rejected.push({ name: file.name, reason: rejected[0]?.reason ?? 'extension' });
+          continue;
+        }
+        if (get().clips.some(c => c.name === file.name && c.size === file.size && c.role === role)) {
+          outcome.rejected.push({ name: file.name, reason: 'duplicate' });
+          continue;
+        }
+        try {
+          let projectId = get().projectId;
+          if (!projectId) {
+            projectId = (await api.createProject()).id;
+            set({ projectId });
+          }
+          const asset = await api.uploadAsset(projectId, file, role);
+          const clip: MediaClip = {
+            id: asset.id, assetId: asset.id, path: asset.path,
+            name: file.name, size: file.size, kind: asset.kind, role,
+            duration: asset.duration, width: asset.width, height: asset.height, fps: asset.fps,
+          };
+          set(state => ({ clips: [...state.clips, clip], selectedId: clip.id }));
+          outcome.added.push(clip);
+        } catch (error) {
+          console.error('media.import.failed', file.name, error);
+          outcome.rejected.push({ name: file.name, reason: String(error) });
+        }
+      }
+      return outcome;
+    } finally {
+      set({ importing: false });
+    }
+  },
+  deleteImported: async (id) => {
+    const clip = get().clips.find(item => item.id === id);
+    if (clip?.assetId) await api.deleteAsset(clip.assetId);
+    set(state => ({
+      clips: state.clips.filter(item => item.id !== id),
+      selectedId: state.selectedId === id ? null : state.selectedId,
+    }));
+  },
   addFiles: (files, role = 'source') => {
     const existing = new Set(get().clips.map((clip) => clip.path));
     const { accepted, rejected } = validateFiles(files);
@@ -70,7 +134,7 @@ export const useMediaStore = create<MediaState>((set, get) => ({
       clips.splice(to, 0, moved);
       return { clips };
     }),
-  clear: () => set({ clips: [] }),
+  clear: () => set({ clips: [], projectId: null, importing: false, selectedId: null }),
 }));
 
 /** Reference clips only (Style Match reads exactly one). */

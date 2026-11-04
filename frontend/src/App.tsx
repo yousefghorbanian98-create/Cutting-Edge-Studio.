@@ -4,6 +4,7 @@ import { Panel } from './components/layout/Panel';
 import { StatusBar } from './components/layout/StatusBar';
 import { CommandPalette, SkipLink, Toaster, type CommandAction } from './components/ui';
 import { MediaPanel } from './features/media/MediaPanel';
+import { SourcePreview } from './features/media/SourcePreview';
 import { PostPanel } from './features/post/PostPanel';
 import { StyleMatchWizard } from './features/stylematch/StyleMatchWizard';
 import { TimelinePanel } from './features/timeline/TimelinePanel';
@@ -65,9 +66,7 @@ export default function App() {
         </Panel>
         <div className="flex min-w-0 flex-1 flex-col gap-2">
           <Panel title={translate(language, 'panel.preview')} className="flex-1">
-            <div className="flex h-full items-center justify-center rounded-[var(--radius-control)] bg-black/40 text-xs text-[var(--text-secondary)]">
-              {translate(language, 'preview.empty')}
-            </div>
+            <SourcePreview />
           </Panel>
           <Panel title={translate(language, 'panel.timeline')} className="h-[280px] shrink-0">
             <TimelinePanel />

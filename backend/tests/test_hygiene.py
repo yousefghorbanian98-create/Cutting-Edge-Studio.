@@ -247,3 +247,19 @@ def test_light_build_selects_runtime_before_cargo() -> None:
     cargo_build = script.index("cargo build --release")
     restore_config = script.index("Set-Content -Path $tauriConfPath -Value $confBackup")
     assert runtime_override < cargo_build < restore_config
+
+
+def test_secret_scanner_exception_is_narrowly_scoped_to_rea_identifiers() -> None:
+    config = tomllib.loads((REPO / ".gitleaks.toml").read_text(encoding="utf-8"))
+    assert config["extend"]["useDefault"] is True
+    exception = config["allowlists"][0]
+    assert exception["condition"] == "AND"
+    paths = [re.compile(pattern) for pattern in exception["paths"]]
+    patterns = [re.compile(pattern) for pattern in exception["regexes"]]
+    assert any(p.search("docs/evidence/local/rea-runtime.json") for p in paths)
+    assert not any(p.search("backend/app/api/assets.py") for p in paths)
+    assert not any(p.search("docs/evidence/other.json") for p in paths)
+    artifact_id = 'script_key":"scr_' + "a" * 64 + '"'
+    assert any(p.search(artifact_id) for p in patterns)
+    assert not any(p.search('api_key":"not-an-artifact-identifier"') for p in patterns)
+    assert not any(p.search('script_key":"not-an-artifact-identifier"') for p in patterns)

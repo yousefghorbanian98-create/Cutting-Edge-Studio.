@@ -16,9 +16,13 @@ const HEALTH = {
 };
 
 function stubHealth(payload: unknown = HEALTH) {
-  return vi.fn().mockImplementation(() =>
-    Promise.resolve(new Response(JSON.stringify(payload), { status: 200 })),
-  );
+  return vi.fn().mockImplementation((url: string) => {
+    const body = url.endsWith('/uploads') ? {
+      id: 'asset-1', project_id: 'project-1', path: '/local/imports/posing.mp4',
+      role: 'source', kind: 'video', duration: 12.5, width: 1080, height: 1920, fps: 30,
+    } : url === '/api/v1/projects' ? { id: 'project-1', name: 'Test' } : payload;
+    return Promise.resolve(new Response(JSON.stringify(body), { status: 200 }));
+  });
 }
 
 afterEach(() => {

@@ -25,7 +25,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   let response: Response;
   try {
     response = await fetch(`${BASE}${path}`, {
-      headers: { 'content-type': 'application/json' },
+      headers: init?.body instanceof FormData ? undefined : { 'content-type': 'application/json' },
       ...init,
     });
   } catch (cause) {
@@ -41,6 +41,38 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return (await response.json()) as T;
 }
 
+export interface ProjectResponse { id: string; name: string }
+export interface AssetResponse {
+  id: string;
+  project_id: string;
+  path: string;
+  role: string;
+  kind: 'video' | 'audio';
+  duration: number;
+  fps: number;
+  width: number;
+  height: number;
+  video_codec: string | null;
+  audio_codec: string | null;
+  has_audio: boolean;
+}
+
+export function assetContentUrl(id: string): string {
+  return `${BASE}/assets/${encodeURIComponent(id)}/content`;
+}
+
 export const api = {
   health: () => request<HealthResponse>('/health'),
+  createProject: () => request<ProjectResponse>('/projects', {
+    method: 'POST', body: JSON.stringify({ name: 'Local editing session', mode: 'style-match' }),
+  }),
+  uploadAsset: (projectId: string, file: File, role: 'source' | 'reference') => {
+    const body = new FormData();
+    body.append('file', file);
+    body.append('role', role);
+    return request<AssetResponse>(`/projects/${encodeURIComponent(projectId)}/uploads`, {
+      method: 'POST', body,
+    });
+  },
+  deleteAsset: (id: string) => request<void>(`/assets/${encodeURIComponent(id)}`, { method: 'DELETE' }),
 };

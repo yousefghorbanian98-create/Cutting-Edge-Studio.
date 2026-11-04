@@ -148,3 +148,104 @@ def test_encoder_endpoint_degrades_without_ffmpeg(media_client: TestClient) -> N
     body = response.json()
     assert body["encoder"] is None
     assert body["hardware"] is False
+
+
+def test_browser_upload_persists_bytes_and_real_asset(
+    media_client: TestClient, settings: Settings
+) -> None:
+    project_id = _project(media_client)
+    response = media_client.post(
+        f"/api/v1/projects/{project_id}/uploads",
+        files={"file": ("../../source.MP4", b"test-media", "video/mp4")},
+        data={"role": "reference"},
+    )
+    assert response.status_code == 201, response.text
+    body = response.json()
+    stored = Path(body["path"])
+    assert stored.parent == settings.data_dir / "references" / project_id
+    assert stored.suffix == ".mp4"
+    assert stored.read_bytes() == b"test-media"
+    assert body["role"] == "reference"
+    assert body["video_codec"] == "h264"
+    assert body["has_audio"] is True
+    assert media_client.get(f"/api/v1/projects/{project_id}/assets").json()[0]["id"] == body["id"]
+    content = media_client.get(f"/api/v1/assets/{body['id']}/content")
+    assert content.content == b"test-media"
+    assert content.headers["cache-control"] == "no-store"
+    partial = media_client.get(
+        f"/api/v1/assets/{body['id']}/content", headers={"Range": "bytes=2-5"}
+    )
+    assert partial.status_code == 206
+    assert partial.content == b"st-m"
+
+
+@pytest.mark.parametrize(
+    ("filename", "data", "expected"), [("file.exe", b"abc", 422), ("a.mp4", b"", 413)]
+)
+def test_upload_rejects_invalid_input(media_client, settings, filename, data, expected) -> None:
+    project_id = _project(media_client)
+    response = media_client.post(
+        f"/api/v1/projects/{project_id}/uploads", files={"file": (filename, data)}
+    )
+    assert response.status_code == expected
+    assert list(settings.projects_dir.rglob("*.mp4")) == []
+    assert media_client.get(f"/api/v1/projects/{project_id}/assets").json() == []
+
+
+def test_upload_unknown_project_and_invalid_role(media_client) -> None:
+    response = media_client.post("/api/v1/projects/nope/uploads", files={"file": ("a.mp4", b"x")})
+    assert response.status_code == 404
+    project_id = _project(media_client)
+    response = media_client.post(
+        f"/api/v1/projects/{project_id}/uploads",
+        files={"file": ("a.mp4", b"x")},
+        data={"role": "unknown"},
+    )
+    assert response.status_code == 422
+
+
+def test_upload_limits_size(media_client, monkeypatch) -> None:
+    from app.api import uploads
+
+    project_id = _project(media_client)
+    monkeypatch.setattr(uploads, "MAX_IMPORT_BYTES", 3)
+    response = media_client.post(
+        f"/api/v1/projects/{project_id}/uploads", files={"file": ("a.mp4", b"four")}
+    )
+    assert response.status_code == 413
+
+
+def test_upload_checks_free_space(media_client, monkeypatch) -> None:
+    from types import SimpleNamespace
+
+    from app.api import uploads
+
+    project_id = _project(media_client)
+    monkeypatch.setattr(uploads.shutil, "disk_usage", lambda _: SimpleNamespace(free=0))
+    response = media_client.post(
+        f"/api/v1/projects/{project_id}/uploads", files={"file": ("a.mp4", b"x")}
+    )
+    assert response.status_code == 507
+
+
+def test_failed_upload_cleans_copy_and_does_not_create_asset(settings) -> None:
+    app = create_app(settings, prober=ExplodingProber())
+    with TestClient(app) as client:
+        project_id = _project(client)
+        response = client.post(
+            f"/api/v1/projects/{project_id}/uploads", files={"file": ("a.mp4", b"x")}
+        )
+        assert response.status_code == 503
+        assert "ffprobe unavailable" in response.json()["detail"]
+        assert list(settings.projects_dir.rglob("*.mp4")) == []
+        assert client.get(f"/api/v1/projects/{project_id}/assets").json() == []
+
+
+def test_content_unknown_asset_or_missing_file(media_client, media_file) -> None:
+    assert media_client.get("/api/v1/assets/nope/content").status_code == 404
+    project_id = _project(media_client)
+    body = media_client.post(
+        f"/api/v1/projects/{project_id}/assets", json={"path": str(media_file)}
+    ).json()
+    media_file.unlink()
+    assert media_client.get(f"/api/v1/assets/{body['id']}/content").status_code == 404

@@ -24,9 +24,10 @@ export function StyleMatchWizard() {
     label: translate(language, STEP_LABEL_KEYS[index] ?? ''),
   }));
   const requirement = {
-    referenceSelected: referencePath !== null,
+    referenceSelected: referencePath !== null && clips.some(clip => clip.role === 'reference' && clip.path === referencePath),
     clipCount: clips.length,
   };
+  const reference = clips.find(clip => clip.role === 'reference');
   const blocked = !canAdvance(stepIndex, requirement);
   const progress = Math.round((stepIndex / (WIZARD_STEPS.length - 1)) * 100);
   const isLast = stepIndex === WIZARD_STEPS.length - 1;
@@ -70,13 +71,13 @@ export function StyleMatchWizard() {
               {translate(language, 'wizard.reference.selected')}
             </p>
             <p className="text-[11px] text-[var(--text-primary)]">
-              {referencePath ?? translate(language, 'wizard.no.reference')}
+              {requirement.referenceSelected ? referencePath : translate(language, 'wizard.no.reference')}
             </p>
             <Button
               size="sm"
               variant="secondary"
-              onClick={() => selectedReference(clips[0]?.path ?? null)}
-              disabled={clips.length === 0}
+              onClick={() => selectedReference(reference?.path ?? null)}
+              disabled={!reference}
             >
               {translate(language, 'wizard.step.1')}
             </Button>
@@ -85,6 +86,7 @@ export function StyleMatchWizard() {
       </motion.div>
       </AnimatePresence>
 
+      {isLast ? <p role="status" className="text-xs text-[var(--warning)]">{translate(language, 'wizard.unavailable')}</p> : null}
       <div className="flex items-center justify-between gap-2">
         <Button variant="ghost" size="sm" onClick={back} disabled={stepIndex === 0}>
           {translate(language, 'wizard.back')}
@@ -92,7 +94,7 @@ export function StyleMatchWizard() {
         <Button
           size="sm"
           onClick={() => next(requirement)}
-          disabled={blocked}
+          disabled={blocked || isLast}
           loading={false}
           data-testid="wizard-next"
         >

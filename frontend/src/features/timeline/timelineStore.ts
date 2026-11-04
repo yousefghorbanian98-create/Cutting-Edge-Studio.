@@ -45,7 +45,7 @@ export interface TimelineState {
   zoomOut: () => void;
   toggleSnap: () => void;
 
-  addClip: (input: { mediaId: string; name: string; kind: 'video' | 'audio'; at?: number }) => TimelineClip | null;
+  addClip: (input: { mediaId: string; name: string; kind: 'video' | 'audio'; at?: number; duration?: number }) => TimelineClip | null;
   moveClip: (id: string, start: number) => boolean;
   trimClip: (id: string, edge: 'start' | 'end', deltaSeconds: number) => boolean;
   splitAtPlayhead: () => number;
@@ -120,12 +120,12 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
     zoomOut: () => set((state) => ({ pxPerSecond: clamp(state.pxPerSecond / 1.25, ZOOM_RANGE.min, ZOOM_RANGE.max) })),
     toggleSnap: () => set((state) => ({ snapEnabled: !state.snapEnabled })),
 
-    addClip: ({ mediaId, name, kind, at }) => {
+    addClip: ({ mediaId, name, kind, at, duration: mediaDuration }) => {
       const state = get();
       const track = state.tracks.find((item) => item.kind === kind && !item.locked);
       if (!track) return null;
       const desired = at ?? state.playhead;
-      const duration = 5;
+      const duration = mediaDuration && Number.isFinite(mediaDuration) && mediaDuration > 0 ? mediaDuration : 5;
       const start = findFreeSlot(state.clips, track.id, desired, duration);
       const clip: TimelineClip = {
         id: nextId('clip'),

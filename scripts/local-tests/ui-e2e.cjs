@@ -1,3 +1,4 @@
+// HISTORICAL baseline driver for commit 9122d6a only. Current R1 acceptance uses recovery-import.cjs.
 const chromium = require('@sparticuz/chromium').default;
 const { chromium: playwright } = require('playwright');
 const fs = require('fs');

@@ -7,6 +7,7 @@ import threading
 from pathlib import Path
 
 from fastapi import APIRouter, HTTPException, Request, Response, status
+from fastapi.responses import FileResponse
 
 from app.deps import SessionDep, SettingsDep
 from app.logging import get_logger
@@ -200,3 +201,13 @@ def detect_encoder(request: Request) -> EncoderProbe:
         if encoder == "h264_nvenc"
         else "software/openh264 path",
     )
+
+
+@router.get("/assets/{asset_id}/content", summary="Play registered local media with range support")
+def asset_content(asset_id: str, session: SessionDep) -> FileResponse:
+    """Starlette handles byte ranges; callers supply asset IDs, never filesystem paths."""
+    asset = _asset_or_404(session, asset_id)
+    path = Path(asset.path)
+    if not path.is_file():
+        raise HTTPException(status_code=404, detail="Media file is no longer available")
+    return FileResponse(path, headers={"Cache-Control": "no-store"})

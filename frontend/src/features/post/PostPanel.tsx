@@ -140,10 +140,11 @@ export function PostPanel() {
         <p className="text-[10px] text-[var(--text-secondary)]" data-testid="post-summary">
           {summary}
         </p>
-        <Button size="sm" disabled={!canRender({ enabled, quality })}>
+        <Button size="sm" disabled>
           <Check size={12} className="me-1" aria-hidden="true" />
           {translate(language, quality === 'preview' ? 'post.render.preview' : 'post.render.final')}
         </Button>
+        <p role="status" className="text-[10px] text-[var(--warning)]">{translate(language, 'post.unavailable')}</p>
         {!canRender({ enabled, quality }) ? (
           <p className="text-[10px] text-[var(--warning)]">{translate(language, 'post.blocked')}</p>
         ) : null}

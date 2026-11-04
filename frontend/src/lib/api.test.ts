@@ -43,3 +43,14 @@ describe('api client', () => {
     await expect(api.health()).rejects.toMatchObject({ status: 0 });
   });
 });
+
+it('uploads multipart data without overriding its boundary with JSON headers', async () => {
+  const mock = vi.fn().mockResolvedValue(new Response(JSON.stringify({ id: 'a1' }), { status: 201 }));
+  vi.stubGlobal('fetch', mock);
+  await api.uploadAsset('p1', new File(['media'], 'a.mp4'), 'reference');
+  const [url, options] = mock.mock.calls[0]!;
+  expect(url).toBe('/api/v1/projects/p1/uploads');
+  expect(options.headers).toBeUndefined();
+  expect(options.body).toBeInstanceOf(FormData);
+  expect(options.body.get('role')).toBe('reference');
+});

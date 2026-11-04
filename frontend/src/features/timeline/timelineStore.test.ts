@@ -151,3 +151,9 @@ describe('timeline store — bookmarks and view state', () => {
     expect(targets).toEqual([0, 9]);
   });
 });
+
+it('uses probed media duration when adding an imported clip', () => {
+  useTimelineStore.getState().reset();
+  const clip = useTimelineStore.getState().addClip({ mediaId: 'real', name: 'real.mp4', kind: 'video', duration: 8.2 });
+  expect(clip?.duration).toBe(8.2);
+});

@@ -15,11 +15,13 @@ function SortableClip({
   language,
   onRemove,
   onSend,
+  onSelect,
 }: {
   clip: MediaClip;
   language: 'fa' | 'en';
   onRemove: (id: string) => void;
   onSend: (clip: MediaClip) => void;
+  onSelect: (id: string) => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: clip.id });
   return (
@@ -41,9 +43,9 @@ function SortableClip({
         {clip.kind === 'video' ? <Film size={13} aria-hidden="true" /> : <Music size={13} aria-hidden="true" />}
       </button>
       <div className="min-w-0 flex-1">
-        <p className="truncate text-[11px] text-[var(--text-primary)]">{clip.name}</p>
+        <button type="button" onClick={() => onSelect(clip.id)} className="block max-w-full truncate text-[11px] text-[var(--text-primary)]">{clip.name}</button>
         <p className="text-[10px] text-[var(--text-secondary)]">
-          {formatBytes(clip.size)}
+          {formatBytes(clip.size)}{clip.duration !== undefined ? ` · ${clip.duration.toFixed(2)}s · ${clip.width}×${clip.height}` : ''}
           {clip.role === 'reference' ? ` · ${translate(language, 'media.reference')}` : ''}
         </p>
       </div>
@@ -75,30 +77,44 @@ function SortableClip({
 export function MediaPanel() {
   const language = useAppStore((state) => state.language);
   const clips = useMediaStore((state) => state.clips);
-  const addFiles = useMediaStore((state) => state.addFiles);
-  const removeClip = useMediaStore((state) => state.removeClip);
+  const importToBackend = useMediaStore((state) => state.importFiles);
+  const deleteImported = useMediaStore((state) => state.deleteImported);
+  const selectClip = useMediaStore((state) => state.selectClip);
+  const importing = useMediaStore((state) => state.importing);
   const reorder = useMediaStore((state) => state.reorder);
   const addClipToTimeline = useTimelineStore((state) => state.addClip);
   const [errors, setErrors] = useState<string[]>([]);
   const [dragging, setDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const referenceInputRef = useRef<HTMLInputElement>(null);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }));
 
-  const importFiles = (files: FileList | File[]) => {
-    const candidates = Array.from(files).map((file) => ({
-      name: file.name,
-      size: file.size,
-      path: (file as File & { path?: string }).path ?? file.name,
-    }));
-    const outcome = addFiles(candidates);
-    setErrors(
-      outcome.rejected.map((item) =>
-        item.reason === 'duplicate'
-          ? `${item.name}: ${translate(language, 'media.error.duplicate')}`
-          : `${item.name}: ${translate(language, 'media.error.extension')}`,
-      ),
-    );
+  const importFiles = async (files: FileList | File[], role: MediaClip['role'] = 'source') => {
+    try {
+      const outcome = await importToBackend(Array.from(files), role);
+      setErrors(outcome.rejected.map(item => {
+        const key = `media.error.${item.reason}`;
+        const message = translate(language, key);
+        return `${item.name}: ${message === key ? item.reason : message}`;
+      }));
+    } catch (error) {
+      console.error('media.import.failed', error);
+      setErrors([String(error)]);
+    }
+  };
+
+  const removeClip = async (id: string) => {
+    const clip = useMediaStore.getState().clips.find(item => item.id === id);
+    if (clip && useTimelineStore.getState().clips.some(item => item.mediaId === clip.path)) {
+      setErrors([translate(language, 'media.error.inUse')]);
+      return;
+    }
+    try { await deleteImported(id); setErrors([]); }
+    catch (error) {
+      console.error('media.delete.failed', error);
+      setErrors([String(error)]);
+    }
   };
 
   const onDragEnd = (event: DragEndEvent) => {
@@ -118,7 +134,7 @@ export function MediaPanel() {
       onDrop={(event) => {
         event.preventDefault();
         setDragging(false);
-        importFiles(event.dataTransfer.files);
+        void importFiles(event.dataTransfer.files);
       }}
       className="flex h-full flex-col gap-2"
       data-dragging={dragging || undefined}
@@ -127,7 +143,7 @@ export function MediaPanel() {
         <span className="text-[11px] text-[var(--text-secondary)]">
           {clips.length} {translate(language, 'media.count')}
         </span>
-        <Button size="sm" variant="secondary" onClick={() => inputRef.current?.click()}>
+        <Button size="sm" variant="secondary" disabled={importing} onClick={() => inputRef.current?.click()}>
           <Upload size={12} aria-hidden="true" />
           {translate(language, 'media.import')}
         </Button>
@@ -139,10 +155,23 @@ export function MediaPanel() {
           aria-label={translate(language, 'media.import')}
           className="hidden"
           onChange={(event) => {
-            if (event.target.files) importFiles(event.target.files);
+            if (event.target.files) void importFiles(event.target.files);
             event.target.value = '';
           }}
         />
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <Button size="sm" variant="secondary" disabled={importing} onClick={() => referenceInputRef.current?.click()}>
+          {translate(language, 'media.import.reference')}
+        </Button>
+        <input ref={referenceInputRef} type="file" accept="video/*" className="hidden"
+          aria-label={translate(language, 'media.import.reference')}
+          onChange={event => {
+            if (event.target.files) void importFiles(event.target.files, 'reference');
+            event.target.value = '';
+          }} />
+        {importing ? <p role="status">{translate(language, 'media.importing')}</p> : null}
       </div>
 
       {errors.length > 0 ? (
@@ -168,8 +197,12 @@ export function MediaPanel() {
                   key={clip.id}
                   clip={clip}
                   language={language}
-                  onRemove={removeClip}
-                  onSend={(item) => addClipToTimeline({ mediaId: item.path, name: item.name, kind: item.kind })}
+                  onRemove={id => void removeClip(id)}
+                  onSelect={selectClip}
+                  onSend={(item) => {
+                    selectClip(item.id);
+                    addClipToTimeline({ mediaId: item.path, name: item.name, kind: item.kind, duration: item.duration });
+                  }}
                 />
               ))}
             </ul>
