@@ -161,7 +161,7 @@ Security commit **3a1446a** replaces the separately commercially licensed gitlea
 with official **MIT gitleaks CLI 8.30.1**, checksum-verified against the release API:
 `551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb`.
 It scans full Git history, preserves nonzero failure status, publishes redacted SARIF and emits
-locations only. No new exclusions or allowlists. Old wrapper finding values/cause were **not
+locations only. That security commit introduced no new exclusions/allowlists. Old wrapper finding values/cause were **not
 independently retrieved/reviewed**; they are not asserted to be false positives.
 
 - PR run **41914773884** on 3a1446a: **SUCCESS**, including the pinned full-history scan.
@@ -181,6 +181,22 @@ directory, with the experimental audio flag explicitly enabled for this provisio
 development session. A read-only health/capabilities smoke through its relative `/api` proxy
 passed. This does not change the default-disabled build setting or qualify distribution.
 The disposable crash-test backend/UI were stopped after evidence collection.
+
+### Fresh CI finding and narrowly scoped correction
+
+The first new-revision PR run **41924525476** passed backend/frontend but failed the full-history
+secret scan. Locations-only annotation identified **generic-api-key**, this report, line 161:
+the public release archive digest following the words “release API”. This NEW finding was
+independently reviewed and matched again to the official gitleaks v8.30.1 release asset metadata.
+It is a public checksum, not an authentication credential. This does not resolve or reclassify
+unretrieved historical wrapper findings.
+
+One new exception requires **both** this exact report path and this exact checksum as the
+scanner's secret value. No directory, commit, rule or general hex/checksum exclusion was added.
+CI also runs the real pinned CLI on disposable history: the public digest in this report is
+excluded, while another credential-shaped value in the same report AND the same digest in
+another file must still produce two failures. Full real-repository history is still scanned;
+redaction and failure exit status remain intact. Fresh post-correction CI is pending here.
 
 ## 7. Reproduction / next gates
 

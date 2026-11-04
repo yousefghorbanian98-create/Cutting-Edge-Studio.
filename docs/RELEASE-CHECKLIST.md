@@ -11,7 +11,7 @@
 - [x] Frontend: `npm run lint`, `npm test` (161), `npm run build`
 - [x] Frontend: `npm audit --audit-level=high` → 0 high/critical; 8 moderate dev-tool findings remain
 - [x] Security baseline 3a1446a: official pinned MIT gitleaks 8.30.1 full-history scan passed PR 41914773884 and push 41914765825; redacted SARIF, failure status retained, no new allowlists. Earlier wrapper findings were not independently retrieved/reviewed.
-- [ ] Current R2b2 revision CI: pending at report authoring; prior baseline CI does not clear a new revision.
+- [ ] Current R2b2 revision CI: backend/frontend passed 41924525476; security found the independently verified public archive digest in the evidence report. Exact path + value exception and real-CLI negative controls authored; post-correction run pending. Prior baseline CI does not clear a new revision.
 - [x] Guardrails: `tests/test_hygiene.py` (offline, licences, E4)
 - [x] Prior 3a1446a Windows NSIS light build: push 41914765825 SUCCESS and setup artifact metadata present. Uses WithoutPinnedBinaries; archive executable/SHA contents not independently retrieved. NOT full bundle, install/runtime/offline acceptance.
 

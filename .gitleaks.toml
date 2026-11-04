@@ -14,3 +14,13 @@ regexes = [
   '''(?:script_key|resource_key)"\s*:\s*"(?:scr|res)_[a-f0-9]{64}''',
   '''authority"\s*:\s*"shipped-artifact''',
 ]
+
+# Independently rechecked against the official v8.30.1 release API. This is a
+# public archive digest, NOT an authentication credential. Keep both boundaries.
+# The real-CLI negative-control test proves other values/paths still fail.
+[[allowlists]]
+description = "Official gitleaks Linux x64 archive checksum in the R2b2 evidence report only"
+condition = "AND"
+paths = ['''^docs/RECOVERY-R2B2-REPORT\.md$''']
+regexTarget = "secret"
+regexes = ['''^551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb$''']
