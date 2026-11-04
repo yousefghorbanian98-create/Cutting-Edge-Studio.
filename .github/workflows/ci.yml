@@ -100,7 +100,7 @@ jobs:
             ~/.cargo/registry
             src-tauri/target
           key: cargo-${{ hashFiles('src-tauri/Cargo.toml') }}
-      - name: Build installer (light: no pinned FFmpeg/models)
+      - name: Build installer (light build, no pinned FFmpeg/models)
         shell: pwsh
         run: ./scripts/build-installer.ps1 -WithoutPinnedBinaries
       - uses: actions/upload-artifact@v4
