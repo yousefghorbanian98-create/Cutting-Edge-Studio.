@@ -1,0 +1,25 @@
+ backend/app/api/assets.py                          |  30 +-
+ backend/app/api/uploads.py                         |  14 +-
+ backend/app/api/workspace.py                       | 117 +++++++
+ backend/app/main.py                                |  26 +-
+ backend/app/schemas_media.py                       |   3 +
+ backend/app/schemas_workspace.py                   | 139 ++++++++
+ backend/tests/test_workspace.py                    | 293 +++++++++++++++++
+ frontend/package-lock.json                         |  10 +
+ frontend/package.json                              |   1 +
+ frontend/src/App.tsx                               |  53 +--
+ frontend/src/features/media/MediaPanel.tsx         |   3 +-
+ frontend/src/features/media/mediaStore.ts          |  16 +-
+ frontend/src/features/timeline/TimelinePanel.tsx   |  22 +-
+ frontend/src/features/timeline/timelineStore.ts    |   6 +-
+ .../src/features/workspace/WorkspaceBar.test.tsx   | 126 ++++++++
+ frontend/src/features/workspace/WorkspaceBar.tsx   | 135 ++++++++
+ frontend/src/features/workspace/schema.ts          |  69 ++++
+ .../src/features/workspace/workspaceStore.test.ts  | 355 +++++++++++++++++++++
+ frontend/src/features/workspace/workspaceStore.ts  | 344 ++++++++++++++++++++
+ frontend/src/lib/api.ts                            |  29 +-
+ frontend/src/lib/i18n.ts                           |  32 ++
+ licenses/THIRD-PARTY.md                            |   1 +
+ licenses/ZOD-MIT.md                                |  25 ++
+ scripts/local-tests/recovery-workspace.cjs         | 228 +++++++++++++
+ 24 files changed, 2028 insertions(+), 49 deletions(-)

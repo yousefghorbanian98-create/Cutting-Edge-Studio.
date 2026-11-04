@@ -1,0 +1,1024 @@
+{
+  "checks": [
+    {
+      "phase": "prepare",
+      "name": "Empty editor does not claim a saved project",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "prepare",
+      "name": "Actual SQLite snapshot matches edited browser stores",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "prepare",
+      "name": "Split/trim in-points, track flags, zoom, snap, post and reference persist",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "prepare",
+      "name": "Original Unicode filenames and byte sizes survive backend listing",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "prepare",
+      "name": "Backend rejects deletion of media used in a saved timeline",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "prepare",
+      "name": "Browser storage contains only a last-project pointer, not document/media data",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "prepare",
+      "name": "Real browser reload restores the complete saved workspace",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "prepare",
+      "name": "New project does not inherit old media/timeline",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "prepare",
+      "name": "Project picker reopens the previous SQLite workspace",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "prepare",
+      "name": "Two real tabs reject stale saves and retain unsaved local text",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "prepare",
+      "name": "Conflict prevents automatic overwrite",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "prepare",
+      "name": "Explicit confirmed reopen recovers the newer tab revision",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "prepare",
+      "name": "Unsupported saved state is visible and leaves the active editor intact",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "prepare",
+      "name": "Unsupported saved bytes are not overwritten with defaults",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "prepare",
+      "name": "Deleted unused reference does not make the saved project unopenable",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "prepare",
+      "name": "Deletion recovery warns without silently overwriting saved bytes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "reopen",
+      "name": "Backend process actually restarted between phases",
+      "passed": true,
+      "detail": "20979 → 21251"
+    },
+    {
+      "phase": "reopen",
+      "name": "New browser process plus restarted backend restores byte-equivalent saved state",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "reopen",
+      "name": "Restoring does not re-upload or create replacement projects",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "reopen",
+      "name": "All original names reappear after restart",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "reopen",
+      "name": "Restored source decodes from its original asset-ID route",
+      "passed": true,
+      "detail": "{\"duration\":6,\"src\":\"/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content\"}"
+    },
+    {
+      "phase": "reopen",
+      "name": "Source streaming remains range-capable after backend restart",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "reopen",
+      "name": "Missing managed media produces a warning without discarding saved edits",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "reopen",
+      "name": "Independent empty browser profile has no saved project pointer",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "reopen",
+      "name": "An empty browser profile can reopen all document data from SQLite",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "reopen",
+      "name": "No browser page exceptions in either phase",
+      "passed": true,
+      "detail": "[]"
+    }
+  ],
+  "requests": [
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/health"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/health"
+    },
+    {
+      "phase": "prepare",
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects"
+    },
+    {
+      "phase": "prepare",
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects/f16526e2b8ec4c7ea48d0a27c0735f31/uploads"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects/f16526e2b8ec4c7ea48d0a27c0735f31/uploads"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/04234be11465497e932a26e148546923/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/04234be11465497e932a26e148546923/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/04234be11465497e932a26e148546923/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/04234be11465497e932a26e148546923/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/04234be11465497e932a26e148546923/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/04234be11465497e932a26e148546923/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/04234be11465497e932a26e148546923/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/04234be11465497e932a26e148546923/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects/f16526e2b8ec4c7ea48d0a27c0735f31/uploads"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/b7af6749cdb34ff88d31fcc812d3d57d/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/b7af6749cdb34ff88d31fcc812d3d57d/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects/f16526e2b8ec4c7ea48d0a27c0735f31/uploads"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/a1cc794826f94baba0615eadefae6eeb/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/b7af6749cdb34ff88d31fcc812d3d57d/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/b7af6749cdb34ff88d31fcc812d3d57d/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/b7af6749cdb34ff88d31fcc812d3d57d/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/b7af6749cdb34ff88d31fcc812d3d57d/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/b7af6749cdb34ff88d31fcc812d3d57d/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/04234be11465497e932a26e148546923/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/04234be11465497e932a26e148546923/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/04234be11465497e932a26e148546923/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/04234be11465497e932a26e148546923/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/04234be11465497e932a26e148546923/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/f16526e2b8ec4c7ea48d0a27c0735f31/workspace"
+    },
+    {
+      "phase": "prepare",
+      "method": "PUT",
+      "url": "http://127.0.0.1:1421/api/v1/projects/f16526e2b8ec4c7ea48d0a27c0735f31/workspace"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/f16526e2b8ec4c7ea48d0a27c0735f31/workspace"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/f16526e2b8ec4c7ea48d0a27c0735f31/assets"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/health"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/health"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/2f7d6e9a223146839a287f89dcf5fe6c/workspace"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/f16526e2b8ec4c7ea48d0a27c0735f31/workspace"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/f16526e2b8ec4c7ea48d0a27c0735f31/assets"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/f16526e2b8ec4c7ea48d0a27c0735f31/workspace"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/f16526e2b8ec4c7ea48d0a27c0735f31/assets"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/health"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/health"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "PUT",
+      "url": "http://127.0.0.1:1421/api/v1/projects/f16526e2b8ec4c7ea48d0a27c0735f31/workspace"
+    },
+    {
+      "phase": "prepare",
+      "method": "PUT",
+      "url": "http://127.0.0.1:1421/api/v1/projects/f16526e2b8ec4c7ea48d0a27c0735f31/workspace"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/f16526e2b8ec4c7ea48d0a27c0735f31/workspace"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/f16526e2b8ec4c7ea48d0a27c0735f31/assets"
+    },
+    {
+      "phase": "prepare",
+      "method": "PUT",
+      "url": "http://127.0.0.1:1421/api/v1/projects/f16526e2b8ec4c7ea48d0a27c0735f31/workspace"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/2f7d6e9a223146839a287f89dcf5fe6c/workspace"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/2f7d6e9a223146839a287f89dcf5fe6c/assets"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/f16526e2b8ec4c7ea48d0a27c0735f31/workspace"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/f16526e2b8ec4c7ea48d0a27c0735f31/assets"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/75d4d2740cae4f36b967609748481f27/workspace"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/75d4d2740cae4f36b967609748481f27/assets"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/f16526e2b8ec4c7ea48d0a27c0735f31/workspace"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/f16526e2b8ec4c7ea48d0a27c0735f31/assets"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/f16526e2b8ec4c7ea48d0a27c0735f31/workspace"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/f16526e2b8ec4c7ea48d0a27c0735f31/assets"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/health"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/health"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/f16526e2b8ec4c7ea48d0a27c0735f31/workspace"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/f16526e2b8ec4c7ea48d0a27c0735f31/assets"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/health"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/health"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/f16526e2b8ec4c7ea48d0a27c0735f31/workspace"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/f16526e2b8ec4c7ea48d0a27c0735f31/assets"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/health"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/health"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"
+    }
+  ],
+  "errors": [],
+  "phases": [
+    {
+      "phase": "prepare",
+      "passed": true
+    },
+    {
+      "phase": "reopen",
+      "passed": true
+    }
+  ],
+  "assets": [
+    {
+      "id": "0a76e013510a4f8db34f5d0514c7c291",
+      "project_id": "f16526e2b8ec4c7ea48d0a27c0735f31",
+      "name": "گل اول.mp4",
+      "size_bytes": 11340561,
+      "available": true,
+      "path": "/tmp/ce-r1b-data/projects/f16526e2b8ec4c7ea48d0a27c0735f31/imports/b8a3876b20db435e95e91ec2e29c8cef.mp4",
+      "role": "source",
+      "kind": "video",
+      "duration": 6,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920,
+      "video_codec": "h264",
+      "audio_codec": "aac",
+      "has_audio": true,
+      "created_at": "2026-11-04T18:44:10.377750Z",
+      "updated_at": "2026-11-04T18:44:10.377756Z"
+    },
+    {
+      "id": "04234be11465497e932a26e148546923",
+      "project_id": "f16526e2b8ec4c7ea48d0a27c0735f31",
+      "name": "Goal two.mp4",
+      "size_bytes": 12020427,
+      "available": true,
+      "path": "/tmp/ce-r1b-data/projects/f16526e2b8ec4c7ea48d0a27c0735f31/imports/dcb115c14d8d44db97cf796951b8dfa4.mp4",
+      "role": "source",
+      "kind": "video",
+      "duration": 6,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920,
+      "video_codec": "h264",
+      "audio_codec": "aac",
+      "has_audio": true,
+      "created_at": "2026-11-04T18:44:12.586295Z",
+      "updated_at": "2026-11-04T18:44:12.586297Z"
+    },
+    {
+      "id": "b7af6749cdb34ff88d31fcc812d3d57d",
+      "project_id": "f16526e2b8ec4c7ea48d0a27c0735f31",
+      "name": "B-roll three.mp4",
+      "size_bytes": 11362090,
+      "available": true,
+      "path": "/tmp/ce-r1b-data/projects/f16526e2b8ec4c7ea48d0a27c0735f31/imports/fa61754f78214f249eb6b587c0942f82.mp4",
+      "role": "source",
+      "kind": "video",
+      "duration": 6,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920,
+      "video_codec": "h264",
+      "audio_codec": "aac",
+      "has_audio": true,
+      "created_at": "2026-11-04T18:44:14.601425Z",
+      "updated_at": "2026-11-04T18:44:14.601445Z"
+    },
+    {
+      "id": "a1cc794826f94baba0615eadefae6eeb",
+      "project_id": "f16526e2b8ec4c7ea48d0a27c0735f31",
+      "name": "مرجع.mp4",
+      "size_bytes": 317426,
+      "available": true,
+      "path": "/tmp/ce-r1b-data/references/f16526e2b8ec4c7ea48d0a27c0735f31/e12ddcd6066649f7ba33f963e800ea9b.mp4",
+      "role": "reference",
+      "kind": "video",
+      "duration": 20,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920,
+      "video_codec": "h264",
+      "audio_codec": null,
+      "has_audio": false,
+      "created_at": "2026-11-04T18:44:14.860039Z",
+      "updated_at": "2026-11-04T18:44:14.860042Z"
+    }
+  ],
+  "project": "f16526e2b8ec4c7ea48d0a27c0735f31",
+  "expected": {
+    "version": 1,
+    "timeline": {
+      "tracks": [
+        {
+          "id": "v1",
+          "name": "V1",
+          "kind": "video",
+          "locked": false,
+          "muted": false
+        },
+        {
+          "id": "v2",
+          "name": "V2",
+          "kind": "video",
+          "locked": true,
+          "muted": false
+        },
+        {
+          "id": "a1",
+          "name": "A1",
+          "kind": "audio",
+          "locked": false,
+          "muted": true
+        }
+      ],
+      "clips": [
+        {
+          "id": "clip-fae0742d-e3a5-4dce-a65d-b02ae69a6d91",
+          "mediaId": "/tmp/ce-r1b-data/projects/f16526e2b8ec4c7ea48d0a27c0735f31/imports/b8a3876b20db435e95e91ec2e29c8cef.mp4",
+          "name": "گل اول.mp4",
+          "trackId": "v1",
+          "start": 0,
+          "duration": 2.025,
+          "inPoint": 0,
+          "kind": "video"
+        },
+        {
+          "id": "clip-8746a5f7-fd5f-4f47-bcf0-18da1eda1dce",
+          "mediaId": "/tmp/ce-r1b-data/projects/f16526e2b8ec4c7ea48d0a27c0735f31/imports/b8a3876b20db435e95e91ec2e29c8cef.mp4",
+          "name": "گل اول.mp4",
+          "trackId": "v1",
+          "start": 2.025,
+          "duration": 3.475,
+          "inPoint": 2.025,
+          "kind": "video"
+        },
+        {
+          "id": "clip-95b51419-11e5-438a-93b1-ef6285ec9aba",
+          "mediaId": "/tmp/ce-r1b-data/projects/f16526e2b8ec4c7ea48d0a27c0735f31/imports/dcb115c14d8d44db97cf796951b8dfa4.mp4",
+          "name": "Goal two.mp4",
+          "trackId": "v1",
+          "start": 6,
+          "duration": 6,
+          "inPoint": 0,
+          "kind": "video"
+        }
+      ],
+      "bookmarks": [
+        {
+          "id": "mark-75f46e21-a617-4e71-95a4-273b887c7048",
+          "time": 2.025,
+          "label": "M1",
+          "color": "var(--accent-primary)"
+        }
+      ],
+      "duration": 30,
+      "playhead": 2.025,
+      "pxPerSecond": 50,
+      "snapEnabled": false
+    },
+    "mediaOrder": [
+      "0a76e013510a4f8db34f5d0514c7c291",
+      "04234be11465497e932a26e148546923",
+      "b7af6749cdb34ff88d31fcc812d3d57d",
+      "a1cc794826f94baba0615eadefae6eeb"
+    ],
+    "selectedAssetId": "0a76e013510a4f8db34f5d0514c7c291",
+    "referenceAssetId": "a1cc794826f94baba0615eadefae6eeb",
+    "wizardStep": 2,
+    "post": {
+      "enabled": {
+        "replay": true,
+        "comparison": false,
+        "captions": true,
+        "broll": false,
+        "loudness": true,
+        "thumbnail": true,
+        "templates": false
+      },
+      "presetId": "youtube",
+      "layout": "side_by_side",
+      "captionFormat": "ass",
+      "quality": "preview"
+    },
+    "appearance": {
+      "language": "en",
+      "theme": "glass"
+    }
+  },
+  "blankProject": "2f7d6e9a223146839a287f89dcf5fe6c",
+  "saved": {
+    "revision": "21c0ddc13b953de7b3a2e3eec7c2bcdd1fc23cb9ce73ce19c144b1186fa7b805",
+    "name": "R1b — مسابقهٔ پایدار",
+    "snapshot": {
+      "version": 1,
+      "timeline": {
+        "tracks": [
+          {
+            "id": "v1",
+            "name": "V1",
+            "kind": "video",
+            "locked": false,
+            "muted": false
+          },
+          {
+            "id": "v2",
+            "name": "V2",
+            "kind": "video",
+            "locked": true,
+            "muted": false
+          },
+          {
+            "id": "a1",
+            "name": "A1",
+            "kind": "audio",
+            "locked": false,
+            "muted": true
+          }
+        ],
+        "clips": [
+          {
+            "id": "clip-fae0742d-e3a5-4dce-a65d-b02ae69a6d91",
+            "mediaId": "/tmp/ce-r1b-data/projects/f16526e2b8ec4c7ea48d0a27c0735f31/imports/b8a3876b20db435e95e91ec2e29c8cef.mp4",
+            "name": "گل اول.mp4",
+            "trackId": "v1",
+            "start": 0,
+            "duration": 2.025,
+            "inPoint": 0,
+            "kind": "video"
+          },
+          {
+            "id": "clip-8746a5f7-fd5f-4f47-bcf0-18da1eda1dce",
+            "mediaId": "/tmp/ce-r1b-data/projects/f16526e2b8ec4c7ea48d0a27c0735f31/imports/b8a3876b20db435e95e91ec2e29c8cef.mp4",
+            "name": "گل اول.mp4",
+            "trackId": "v1",
+            "start": 2.025,
+            "duration": 3.475,
+            "inPoint": 2.025,
+            "kind": "video"
+          },
+          {
+            "id": "clip-95b51419-11e5-438a-93b1-ef6285ec9aba",
+            "mediaId": "/tmp/ce-r1b-data/projects/f16526e2b8ec4c7ea48d0a27c0735f31/imports/dcb115c14d8d44db97cf796951b8dfa4.mp4",
+            "name": "Goal two.mp4",
+            "trackId": "v1",
+            "start": 6,
+            "duration": 6,
+            "inPoint": 0,
+            "kind": "video"
+          }
+        ],
+        "bookmarks": [
+          {
+            "id": "mark-75f46e21-a617-4e71-95a4-273b887c7048",
+            "time": 2.025,
+            "label": "M1",
+            "color": "var(--accent-primary)"
+          }
+        ],
+        "duration": 30,
+        "playhead": 2.025,
+        "pxPerSecond": 50,
+        "snapEnabled": false
+      },
+      "mediaOrder": [
+        "0a76e013510a4f8db34f5d0514c7c291",
+        "04234be11465497e932a26e148546923",
+        "b7af6749cdb34ff88d31fcc812d3d57d",
+        "a1cc794826f94baba0615eadefae6eeb"
+      ],
+      "selectedAssetId": "0a76e013510a4f8db34f5d0514c7c291",
+      "referenceAssetId": "a1cc794826f94baba0615eadefae6eeb",
+      "wizardStep": 2,
+      "post": {
+        "enabled": {
+          "replay": true,
+          "comparison": false,
+          "captions": true,
+          "broll": false,
+          "loudness": true,
+          "thumbnail": true,
+          "templates": false
+        },
+        "presetId": "youtube",
+        "layout": "side_by_side",
+        "captionFormat": "ass",
+        "quality": "preview"
+      },
+      "appearance": {
+        "language": "en",
+        "theme": "glass"
+      }
+    }
+  },
+  "backendBefore": "20979",
+  "limits": [
+    "Source playback only; composited timeline playback/export remains unaccepted.",
+    "Numeric trim and track switches were exercised via actual Zustand actions; they have no wired UI controls yet.",
+    "No real model analysis, approved render, offline Windows installer or competitor behavior claimed."
+  ],
+  "backendAfter": "21251"
+}

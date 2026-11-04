@@ -1,0 +1,16 @@
+PASS Empty editor does not claim a saved project
+PASS Actual SQLite snapshot matches edited browser stores
+PASS Split/trim in-points, track flags, zoom, snap, post and reference persist
+PASS Original Unicode filenames and byte sizes survive backend listing
+PASS Backend rejects deletion of media used in a saved timeline
+PASS Browser storage contains only a last-project pointer, not document/media data
+PASS Real browser reload restores the complete saved workspace
+PASS New project does not inherit old media/timeline
+PASS Project picker reopens the previous SQLite workspace
+PASS Two real tabs reject stale saves and retain unsaved local text
+PASS Conflict prevents automatic overwrite
+PASS Explicit confirmed reopen recovers the newer tab revision
+PASS Unsupported saved state is visible and leaves the active editor intact
+PASS Unsupported saved bytes are not overwritten with defaults
+PASS Deleted unused reference does not make the saved project unopenable
+PASS Deletion recovery warns without silently overwriting saved bytes

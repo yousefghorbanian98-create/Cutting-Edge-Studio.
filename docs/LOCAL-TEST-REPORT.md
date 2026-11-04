@@ -3,8 +3,9 @@
 Date: **2026-11-04** · Branch: `arena/dbb53bc2-cutting-edge-studio` · PR: **#1**
 
 > **Subsequent recovery:** [RECOVERY-ROADMAP.md](RECOVERY-ROADMAP.md) and
-> [RECOVERY-R1-REPORT.md](RECOVERY-R1-REPORT.md) record the next iteration. Real browser import
-> and source playback now work locally; analysis/export remain blocked. The observations below
+> [RECOVERY-R1-REPORT.md](RECOVERY-R1-REPORT.md) / [RECOVERY-R1B-REPORT.md](RECOVERY-R1B-REPORT.md)
+> record the recovery iterations. Real import, source playback and saved-workspace reopening
+> now work locally; analysis/export remain blocked. The observations below
 > are the historical baseline, not a claim that the repaired import is still metadata-only.
 
 ## نتیجهٔ اجرایی / Verdict

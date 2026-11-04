@@ -6,11 +6,11 @@
 ## A. Automated checks (local results and earlier CI evidence)
 
 - [x] Backend: `ruff check .` + `ruff format --check .`
-- [x] Backend: `pytest --cov=app` → 133 passed locally, coverage 93.95 %
+- [x] Backend: `pytest --cov=app` → 168 passed locally, coverage 94.38 %
 - [x] Backend: `pip-audit -r requirements.txt --strict` → no known vulnerabilities
-- [x] Frontend: `npm run lint`, `npm test` (118), `npm run build`
-- [x] Frontend: `npm audit --audit-level=high` → 0 high/critical
-- [x] Security: gitleaks + trivy (CRITICAL)
+- [x] Frontend: `npm run lint`, `npm test` (143), `npm run build`
+- [x] Frontend: `npm audit --audit-level=high` → 0 high/critical; 8 moderate dev-tool findings remain
+- [x] Security: gitleaks + trivy (CRITICAL) passed prior R1/docs CI run 41881964341; new R1b CI pending
 - [x] Guardrails: `tests/test_hygiene.py` (offline, licences, E4)
 - [ ] Installer: verify a successful Windows NSIS build produces `CuttingEdgeV2-Setup-v1.0.0.exe` + `.sha256`
 
@@ -18,7 +18,7 @@
 
 - [x] Browser media import creates backend assets with usable local paths (R1 local evidence)
 - [x] Source playback through registered asset IDs and HTTP ranges (not edit rendering)
-- [ ] Project/media/timeline workspace reopens after restart
+- [x] Project/media/timeline saved workspace reopens after actual backend restart (R1b Linux/browser, 26 checks; [report](RECOVERY-R1B-REPORT.md))
 - [ ] Wizard starts real analysis and shows backend progress/results
 - [ ] Preview/export controls invoke the approved renderer and play the result
 - [ ] Packaged Tauri has working sidecar API routing without Vite
