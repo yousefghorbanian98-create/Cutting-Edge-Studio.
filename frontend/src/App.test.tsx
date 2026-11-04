@@ -2,22 +2,35 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import App from './App';
+import { useMediaStore } from './features/media/mediaStore';
+import { useWizardStore } from './features/stylematch/wizardStore';
 import { useAppStore } from './store/useAppStore';
 
-function stubHealth(payload: unknown, status = 200) {
-  const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify(payload), { status }));
-  vi.stubGlobal('fetch', fetchMock);
-  return fetchMock;
+const HEALTH = {
+  status: 'ok',
+  version: '1.0.0',
+  app_name: 'CuttingEdgeV2',
+  offline: true,
+  database: '/tmp/x/cutting-edge.db',
+  models_dir: '/tmp/x/models',
+};
+
+function stubHealth(payload: unknown = HEALTH) {
+  return vi.fn().mockImplementation(() =>
+    Promise.resolve(new Response(JSON.stringify(payload), { status: 200 })),
+  );
 }
 
 afterEach(() => {
   vi.unstubAllGlobals();
   useAppStore.setState({ language: 'fa', theme: 'pro', backend: 'checking', backendVersion: null });
+  useMediaStore.getState().clear();
+  useWizardStore.getState().reset();
 });
 
 describe('application shell', () => {
   it('renders the 4 workspace panels plus menu and status bars in Persian', async () => {
-    stubHealth({ status: 'ok', version: '1.0.0', app_name: 'x', offline: true, database: '', models_dir: '' });
+    vi.stubGlobal('fetch', stubHealth());
     render(<App />);
     expect(screen.getByRole('navigation', { name: 'main menu' })).toBeInTheDocument();
     expect(screen.getByRole('complementary', { name: 'رسانه' })).toBeInTheDocument();
@@ -27,30 +40,55 @@ describe('application shell', () => {
   });
 
   it('shows the connected state and version when the backend answers', async () => {
-    stubHealth({ status: 'ok', version: '1.0.0', app_name: 'x', offline: true, database: '', models_dir: '' });
+    vi.stubGlobal('fetch', stubHealth());
     render(<App />);
-    await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent('هستهٔ پردازش متصل است'));
+    await waitFor(() =>
+      expect(screen.getByRole('status', { name: 'backend status' })).toHaveTextContent(
+        'هستهٔ پردازش متصل است',
+      ),
+    );
     expect(screen.getByText(/1\.0\.0/)).toBeInTheDocument();
   });
 
   it('degrades to an offline badge instead of crashing', async () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('down')));
     render(<App />);
-    await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent('هستهٔ پردازش در دسترس نیست'));
+    await waitFor(() =>
+      expect(screen.getByRole('status', { name: 'backend status' })).toHaveTextContent(
+        'هستهٔ پردازش در دسترس نیست',
+      ),
+    );
   });
 
   it('switches language and direction from the menu bar', async () => {
-    stubHealth({ status: 'ok', version: '1.0.0', app_name: 'x', offline: true, database: '', models_dir: '' });
+    vi.stubGlobal('fetch', stubHealth());
     render(<App />);
-    await userEvent.click(screen.getByRole('button', { name: 'EN' }));
+    await userEvent.click(screen.getByRole('button', { name: 'زبان' }));
     expect(document.documentElement.dir).toBe('ltr');
     expect(screen.getByRole('region', { name: 'Preview' })).toBeInTheDocument();
   });
 
-  it('changes the theme from the menu bar', async () => {
-    stubHealth({ status: 'ok', version: '1.0.0', app_name: 'x', offline: true, database: '', models_dir: '' });
+  it('switches theme through the command palette (Ctrl+K)', async () => {
+    vi.stubGlobal('fetch', stubHealth());
     render(<App />);
-    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'theme' }), 'minimal');
-    expect(document.documentElement.dataset.theme).toBe('minimal');
+    await userEvent.keyboard('{Control>}k{/Control}');
+    await userEvent.click(screen.getByText('تغییر تم'));
+    expect(document.documentElement.dataset.theme).toBe('glass');
+  });
+
+  it('imports a clip through the file input and shows it in the media panel', async () => {
+    vi.stubGlobal('fetch', stubHealth());
+    render(<App />);
+    const input = screen.getByLabelText('ورود کلیپ') as HTMLInputElement;
+    const file = new File(['x'], 'posing.mp4', { type: 'video/mp4' });
+    await userEvent.upload(input, file);
+    expect(await screen.findByText('posing.mp4')).toBeInTheDocument();
+  });
+
+  it('keeps the Style Match wizard blocked until a reference exists', async () => {
+    vi.stubGlobal('fetch', stubHealth());
+    render(<App />);
+    expect(screen.getByTestId('wizard-next')).toBeDisabled();
+    expect(screen.getByText('یک ویدیوی مرجع انتخاب کنید')).toBeInTheDocument();
   });
 });
