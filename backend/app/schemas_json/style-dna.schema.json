@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://cutting-edge.local/schemas/style-dna.schema.json",
+  "title": "StyleDNA",
+  "type": "object",
+  "required": ["version", "cut_lengths", "cut_stats", "shot_type_counts", "transition"],
+  "properties": {
+    "version": { "type": "string" },
+    "reference": { "type": "object" },
+    "cut_lengths": { "type": "array", "items": { "type": "number", "exclusiveMinimum": 0 } },
+    "cut_stats": {
+      "type": "object",
+      "required": ["count", "mean", "median"],
+      "properties": {
+        "count": { "type": "number" },
+        "mean": { "type": "number" },
+        "median": { "type": "number" },
+        "stdev": { "type": "number" },
+        "p10": { "type": "number" },
+        "p90": { "type": "number" }
+      }
+    },
+    "shot_type_counts": {
+      "type": "object",
+      "properties": {
+        "closeup": { "type": "integer", "minimum": 0 },
+        "medium": { "type": "integer", "minimum": 0 },
+        "wide": { "type": "integer", "minimum": 0 },
+        "detail": { "type": "integer", "minimum": 0 },
+        "unknown": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "shots_per_minute": { "type": "number", "minimum": 0 },
+    "bpm": { "type": "number", "minimum": 0 },
+    "beat_times": { "type": "array", "items": { "type": "number", "minimum": 0 } },
+    "color": {
+      "type": "object",
+      "properties": {
+        "r": { "type": "number" },
+        "g": { "type": "number" },
+        "b": { "type": "number" },
+        "contrast": { "type": "number" },
+        "saturation": { "type": "number" }
+      }
+    },
+    "camera_motion": { "type": "object", "additionalProperties": { "type": "integer", "minimum": 0 } },
+    "transition": {
+      "type": "object",
+      "required": ["dominant"],
+      "properties": {
+        "dominant": { "enum": ["cut", "fade", "dissolve", "whip", "zoom"] },
+        "counts": { "type": "object" },
+        "share": { "type": "number" },
+        "cut_share": { "type": "number" }
+      }
+    },
+    "audio": { "type": "object" },
+    "pacing_curve": { "type": "array", "items": { "type": "number", "minimum": 0, "maximum": 1 } }
+  },
+  "additionalProperties": true
+}

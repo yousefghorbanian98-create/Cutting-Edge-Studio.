@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://cutting-edge.local/schemas/edl.schema.json",
+  "title": "EDL",
+  "type": "object",
+  "required": ["version", "fps", "width", "height", "total_duration", "segments"],
+  "properties": {
+    "version": { "type": "string" },
+    "fps": { "type": "integer", "minimum": 1, "maximum": 240 },
+    "width": { "type": "integer", "minimum": 16 },
+    "height": { "type": "integer", "minimum": 16 },
+    "total_duration": { "type": "number", "minimum": 0 },
+    "segments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["source", "in_point", "out_point", "timeline_start", "duration"],
+        "properties": {
+          "source": { "type": "string" },
+          "in_point": { "type": "number", "minimum": 0 },
+          "out_point": { "type": "number", "minimum": 0 },
+          "timeline_start": { "type": "number", "minimum": 0 },
+          "duration": { "type": "number", "exclusiveMinimum": 0 },
+          "shot_type": { "type": "string" },
+          "speed": { "type": "number", "exclusiveMinimum": 0 },
+          "transition_in": { "enum": ["cut", "fade", "dissolve", "whip", "zoom"] },
+          "transition_duration": { "type": "number", "minimum": 0 },
+          "zoom": { "type": "object" }
+        }
+      }
+    },
+    "color": { "type": "object" },
+    "audio": { "type": "object" },
+    "notes": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": true
+}

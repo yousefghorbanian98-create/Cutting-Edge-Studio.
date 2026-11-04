@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://cutting-edge.local/schemas/source-analysis.schema.json",
+  "title": "SourceAnalysis",
+  "type": "object",
+  "required": ["clips"],
+  "properties": {
+    "has_audio": { "type": "boolean" },
+    "clips": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "duration"],
+        "properties": {
+          "path": { "type": "string" },
+          "name": { "type": "string" },
+          "duration": { "type": "number", "minimum": 0 },
+          "width": { "type": "integer" },
+          "height": { "type": "integer" },
+          "fps": { "type": "number" },
+          "faces": { "type": "boolean" },
+          "moments": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["start", "score"],
+              "properties": {
+                "start": { "type": "number", "minimum": 0 },
+                "end": { "type": "number", "minimum": 0 },
+                "score": { "type": "number", "minimum": 0, "maximum": 1 },
+                "shot_type": { "enum": ["closeup", "medium", "wide", "detail", "unknown"] },
+                "kind": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": true
+}
