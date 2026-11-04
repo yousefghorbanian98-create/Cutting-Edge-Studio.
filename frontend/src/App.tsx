@@ -4,6 +4,7 @@ import { Panel } from './components/layout/Panel';
 import { StatusBar } from './components/layout/StatusBar';
 import { CommandPalette, SkipLink, Toaster, type CommandAction } from './components/ui';
 import { MediaPanel } from './features/media/MediaPanel';
+import { PostPanel } from './features/post/PostPanel';
 import { StyleMatchWizard } from './features/stylematch/StyleMatchWizard';
 import { TimelinePanel } from './features/timeline/TimelinePanel';
 import { api } from './lib/api';
@@ -72,9 +73,12 @@ export default function App() {
             <TimelinePanel />
           </Panel>
         </div>
-        <Panel title={translate(language, 'panel.properties')} as="aside" className="w-[320px] shrink-0">
-          <div id="style-match-wizard" className="h-full">
+        <Panel title={translate(language, 'panel.properties')} as="aside" className="flex w-[320px] shrink-0 flex-col gap-2">
+          <div id="style-match-wizard" className="min-h-0 flex-1 overflow-hidden">
             <StyleMatchWizard />
+          </div>
+          <div id="post-panel" className="min-h-0 flex-1 overflow-hidden border-t border-[var(--border-subtle)] pt-2">
+            <PostPanel />
           </div>
         </Panel>
       </main>
