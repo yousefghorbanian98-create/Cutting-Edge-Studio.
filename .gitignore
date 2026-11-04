@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+
+# Node
+node_modules/
+dist/
+coverage/
+.vite/
+
+# Rust / Tauri
+target/
+src-tauri/gen/
+
+# Local runtime data (never committed)
+*.db
+*.db-wal
+*.db-shm
+logs/
+backend/.data/
+
+# Build artifacts fetched on the build machine
+models/
+binaries/*.exe
+binaries/*.zip
+webview2-fixed-runtime/
+delivery/*.exe
+delivery/*.sha256
+
+# Editors / OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
