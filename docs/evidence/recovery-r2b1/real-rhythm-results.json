@@ -1,0 +1,81 @@
+[
+  {
+    "expected_fixture_bpm": 90,
+    "measurement": {
+      "sha256": "b54cc16294eff72f0ccd1aa6722854453cd4bf5c2388f7e16a4bdb8cd5c56e8c",
+      "samples_analyzed": 264600,
+      "duration_seconds": 12.0,
+      "tempo_bpm": 89.10290948275862,
+      "beat_times_seconds": [
+        0.5340589569160997,
+        1.18421768707483,
+        1.8575963718820863,
+        2.5309750566893423,
+        3.1811337868480725,
+        3.8545124716553287,
+        4.527891156462585,
+        5.178049886621316,
+        5.851428571428571,
+        6.524807256235827,
+        7.198185941043084,
+        7.848344671201814,
+        8.52172335600907,
+        9.195102040816327,
+        9.845260770975056,
+        10.518639455782314,
+        11.19201814058957
+      ],
+      "library_version": "0.11.0",
+      "method": "librosa.beat.beat_track",
+      "scope": "audio-rhythm-only"
+    }
+  },
+  {
+    "expected_fixture_bpm": 120,
+    "measurement": {
+      "sha256": "3c24bf6e316b8e2b6278289b4e0a8b9a0318da8462ae947a996974ffc2a8d464",
+      "samples_analyzed": 264600,
+      "duration_seconds": 12.0,
+      "tempo_bpm": 117.45383522727273,
+      "beat_times_seconds": [
+        1.0216780045351475,
+        1.509297052154195,
+        2.020136054421769,
+        2.5309750566893423,
+        3.01859410430839,
+        3.5294331065759637,
+        4.017052154195011,
+        4.527891156462585,
+        5.015510204081632,
+        5.526349206349207,
+        6.013968253968254,
+        6.524807256235827,
+        7.012426303854875,
+        7.523265306122449,
+        8.010884353741497,
+        8.52172335600907,
+        9.009342403628118,
+        9.520181405895691,
+        10.031020408163265,
+        10.518639455782314,
+        11.029478458049887
+      ],
+      "library_version": "0.11.0",
+      "method": "librosa.beat.beat_track",
+      "scope": "audio-rhythm-only"
+    }
+  },
+  {
+    "expected_fixture_bpm": null,
+    "measurement": {
+      "sha256": "657ccfecd0c4dbc348f94967facfd035e4e806e437f12914bd5154f6b1afd0cc",
+      "samples_analyzed": 264600,
+      "duration_seconds": 12.0,
+      "tempo_bpm": null,
+      "beat_times_seconds": [],
+      "library_version": "0.11.0",
+      "method": "librosa.beat.beat_track",
+      "scope": "audio-rhythm-only"
+    }
+  }
+]

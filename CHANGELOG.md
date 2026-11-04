@@ -3,6 +3,14 @@
 All notable changes to Cutting Edge v2. Format: [Keep a Changelog](https://keepachangelog.com/),
 versioning: [SemVer](https://semver.org/).
 
+## Recovery R2b1 — 2026-11-04
+
+- Added an experimental WAV rhythm adapter calling existing ISC-licensed librosa, with real click-track/silence measurements; no new beat algorithm, API/job/UI or full R2 completion claimed.
+- Reused NumPy/SciPy for numeric helpers; reject placeholder model loaders and resident-limit overflow, and reject directories as model files.
+- Unified wheel runtime requirements through setuptools' dependency-file support; updated vulnerable development pytest and its asyncio plugin.
+- Repaired NSIS language identifier (`Farsi`, not nonexistent `Persian.nlf`) and disabled CI gitleaks PR comments without disabling scanning.
+- Verification: 227 tests with optional analysis / 94.86% coverage, base 224 + 3 explicit skips, frontend 154; see `docs/RECOVERY-R2B1-REPORT.md`. Optional/native packaging, full analysis jobs, Windows installer and release remain unaccepted.
+
 ## Recovery R2a — 2026-11-04
 
 - Added project-scoped real-media inspection jobs using registered IDs, SHA-256, ffprobe and full FFmpeg null decode, with observed progress, cancellation, durable terminal reports and explicit restart interruption.

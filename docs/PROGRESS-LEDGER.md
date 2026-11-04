@@ -17,7 +17,10 @@ R1 real import/source playback passed locally (18 browser checks). R1b save/reop
 locally (26 browser checks across a real backend restart; [report](RECOVERY-R1B-REPORT.md)).
 R2a real-media inspection passed locally (26 browser checks including a deliberate backend crash,
 199 backend tests / 94.59%, 154 frontend tests; [report](RECOVERY-R2A-REPORT.md), code `675478c`).
-This is decoding/probing/hashing only, not pretrained model analysis. Full R2, R3 rendering and
+R2b1 then validated a standalone librosa rhythm adapter (3/3 synthetic fixtures; 227 tests with
+optional analysis / 94.86%, base 224 + 3 explicit skips); [report](RECOVERY-R2B1-REPORT.md),
+code `d1decc2`. It is not wired to project jobs/UI or approved for Windows distribution.
+R2a remains decoding/probing/hashing only, not pretrained model analysis. Full R2, R3 rendering and
 Windows gates remain open. Competitor benchmark C1 is
 specified; actual CapCut/Filmora behavior is still unobserved.
 

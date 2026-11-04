@@ -6,13 +6,13 @@
 ## A. Automated checks (local results and earlier CI evidence)
 
 - [x] Backend: `ruff check .` + `ruff format --check .`
-- [x] Backend: `pytest --cov=app` → 199 passed locally, coverage 94.59 %
-- [x] Backend: `pip-audit -r requirements.txt --strict` → no known vulnerabilities
+- [x] Backend: `pytest --cov=app` → 227 passed with optional analysis, coverage 94.86 %; base suite 224 passed + 3 explicit optional skips
+- [x] Backend: `pip-audit --strict` → no known advisories in the local Python environment after pytest 9.0.3 update (native libraries/Windows distribution not certified)
 - [x] Frontend: `npm run lint`, `npm test` (154), `npm run build`
 - [x] Frontend: `npm audit --audit-level=high` → 0 high/critical; 8 moderate dev-tool findings remain
-- [x] Security: gitleaks + trivy (CRITICAL) passed prior R1b push CI run 41891179779; new R2a CI is separate, not yet accepted
+- [ ] Fresh PR security acceptance: previous push 41899645032 passed; PR 41899652618 failed the gitleaks comment-permission step. Comments disabled, scanning retained; new results pending.
 - [x] Guardrails: `tests/test_hygiene.py` (offline, licences, E4)
-- [ ] Installer: root-relative Tauri hooks repaired after ENOENT C:\frontend\package.json in 41891179779; verify a successful Windows NSIS build produces `CuttingEdgeV2-Setup-v1.0.0.exe` + `.sha256`
+- [ ] Installer: root-relative hooks and Farsi NSIS identifier repaired after 41891179779/41899645032; verify a successful Windows NSIS build produces `CuttingEdgeV2-Setup-v1.0.0.exe` + `.sha256`
 
 ## A2. Integration acceptance (not cleared by unit tests)
 
@@ -20,6 +20,7 @@
 - [x] Source playback through registered asset IDs and HTTP ranges (not edit rendering)
 - [x] Project/media/timeline saved workspace reopens after actual backend restart (R1b Linux/browser, 26 checks; [report](RECOVERY-R1B-REPORT.md))
 - [x] R2a only: real-media full decode/hash/probe jobs, observed progress, cancellation, failure, restart/crash recovery and project isolation (26 local browser checks; [report](RECOVERY-R2A-REPORT.md)); diagnostic LGPL shared tools, not approved Windows runtime
+- [x] R2b1 standalone OSS rhythm adapter: real librosa on 3 owned synthetic fixtures; not a project job/UI or real-music quality acceptance ([report](RECOVERY-R2B1-REPORT.md))
 - [ ] Wizard starts genuine pretrained model analysis and shows backend progress/results
 - [ ] Preview/export controls invoke the approved renderer and play the result
 - [ ] Packaged Tauri has working sidecar API routing without Vite

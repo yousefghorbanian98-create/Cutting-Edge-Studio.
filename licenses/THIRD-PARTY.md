@@ -39,7 +39,7 @@ CC-BY-SA (as code) · SSPL · BUSL · proprietary · non-commercial weights.
 | @testing-library/* | 16.1.0 / 6.6.3 | MIT | Component tests |
 | ESLint (+ typescript-eslint) | 8.57.1 / 8.19.1 | MIT | Lint |
 | ruff | 0.8.4 | MIT | Python lint/format |
-| pytest / pytest-cov | 8.3.4 / 6.0.0 | MIT | Backend tests |
+| pytest / pytest-cov | 9.0.3 / 6.0.0 | MIT | Backend tests |
 | PyInstaller | 6.22.3 | GPLv2+ **with bootloader exception** | Sidecar packaging |
 | @radix-ui/react-* (dialog, select, tabs, switch, slider, progress, tooltip, dropdown-menu, checkbox, separator, scroll-area) | 1.x / 2.x | MIT | Accessible primitives (P1) |
 | framer-motion | 11.15.0 | MIT | Wizard step transitions |
@@ -61,13 +61,13 @@ CC-BY-SA (as code) · SSPL · BUSL · proprietary · non-commercial weights.
 | Component | License | Notes |
 |---|---|---|
 | FFmpeg (BtbN **LGPL shared** build) | LGPL-2.1+ (dynamic) | `libx264` is GPL → never shipped. H.264 via NVENC, fallback openh264 (BSD-2). |
-| MediaPipe | Apache-2.0 | Pose/face/hands/segmentation; models ship inside the wheel |
+| MediaPipe | Apache-2.0 | Task adapter requires a separately verified local `.task` artifact; do not assume the wheel supplies the required weights. |
 | YOLOX-s | Apache-2.0 code / MIT weights | Replaces YOLO-NAS (LOCK-04 v2.5.1) |
 | CLIP ViT-B/32 (ONNX) | MIT | Zero-shot shot/action classification |
 | faster-whisper (base) | MIT | ASR for captions; weights pinned by SHA-256 |
 | Piper TTS + voices | MIT code / per-voice | Each voice license audited before bundling |
 | TransNet V2 | MIT | Shot boundary detection |
-| librosa | ISC | Beat/onset/tempo (replaces madmom) |
+| librosa 0.11.0 | ISC | Experimental standalone rhythm adapter tested in R2b1; not default runtime/job/UI. Notice in `LIBROSA-ISC.md`; native/transitive/Windows packaging review remains open. |
 | color-matcher | BSD-3-Clause | Color transfer |
 | OpenCV | Apache-2.0 | Optical flow, HoughLines, Laplacian |
 | Konva.js | MIT | Telestration canvas |
@@ -127,3 +127,13 @@ CC-BY-SA (as code) · SSPL · BUSL · proprietary · non-commercial weights.
 (non-commercial) · `madmom` (dead upstream + CC-BY-NC-SA models) · Ollama / InternVL /
 VideoLLaMA3 (no redistribution rights, offline policy) · RobustVideoMatting, HotClip, Concat
 (GPL) · any telemetry SDK.
+
+### R2b1 optional-analysis qualification
+
+`librosa.beat.beat_track` was tested directly rather than writing a new detector. The optional
+analysis dependency selection is exploratory, not an approved shipping lock. Default backend
+requirements do not include librosa. Python-SoXR 1.1.0 was source-built against an external
+shared libsoxr for these tests; the default prebuilt wheel was not assumed to meet the project's
+dynamic-only LGPL policy. No test native binaries/source archives are bundled. Audit each
+transitive licence, native component and Windows artifact before enabling distribution.
+See `docs/RECOVERY-R2B1-REPORT.md` and its linkage/provenance evidence.

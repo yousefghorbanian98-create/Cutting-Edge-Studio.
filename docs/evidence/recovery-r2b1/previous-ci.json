@@ -1,0 +1,315 @@
+{
+  "conclusion": "failure",
+  "headSha": "d941d877444692a73c038d0c292bdde6c9905774",
+  "jobs": [
+    {
+      "completedAt": "2026-11-04T19:55:08Z",
+      "conclusion": "success",
+      "databaseId": 126818325650,
+      "name": "Backend \u2014 lint + tests (Linux)",
+      "startedAt": "2026-11-04T19:43:14Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@v4",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v5",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run python -m pip install --upgrade pip",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run pip install -r requirements-dev.txt",
+          "number": 5,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "ruff (select ALL)",
+          "number": 6,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "ruff format --check",
+          "number": 7,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "pytest + coverage (>=80%)",
+          "number": 8,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "pip-audit",
+          "number": 9,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 10,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v5",
+          "number": 19,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v4",
+          "number": 20,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 21,
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/yousefghorbanian98-create/Cutting-Edge-Studio./actions/runs/41899645032/job/126818325650"
+    },
+    {
+      "completedAt": "2026-11-04T19:55:08Z",
+      "conclusion": "success",
+      "databaseId": 126818325975,
+      "name": "Security \u2014 gitleaks + trivy fs",
+      "startedAt": "2026-11-04T19:43:15Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@v4",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "gitleaks",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "trivy filesystem (HIGH/CRITICAL)",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post trivy filesystem (HIGH/CRITICAL)",
+          "number": 7,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v4",
+          "number": 8,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 9,
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/yousefghorbanian98-create/Cutting-Edge-Studio./actions/runs/41899645032/job/126818325975"
+    },
+    {
+      "completedAt": "2026-11-04T19:55:08Z",
+      "conclusion": "success",
+      "databaseId": 126818326081,
+      "name": "Frontend \u2014 lint + tests + build (Linux)",
+      "startedAt": "2026-11-04T19:43:14Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@v4",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-node@v4",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run npm ci",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run npm run lint",
+          "number": 5,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run npm run test",
+          "number": 6,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run npm run build",
+          "number": 7,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "npm audit (high+)",
+          "number": 8,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-node@v4",
+          "number": 15,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v4",
+          "number": 16,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 17,
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/yousefghorbanian98-create/Cutting-Edge-Studio./actions/runs/41899645032/job/126818326081"
+    },
+    {
+      "completedAt": "2026-11-04T19:55:08Z",
+      "conclusion": "failure",
+      "databaseId": 126818326210,
+      "name": "Installer \u2014 Windows NSIS build",
+      "startedAt": "2026-11-04T19:43:15Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Clone into a Windows-safe directory",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-node@v4",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v5",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run dtolnay/rust-toolchain@stable",
+          "number": 5,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Cache cargo",
+          "number": 6,
+          "status": "completed"
+        },
+        {
+          "conclusion": "failure",
+          "name": "Build installer (light build, no pinned FFmpeg/models)",
+          "number": 7,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Upload build log on failure",
+          "number": 8,
+          "status": "completed"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 9,
+          "status": "completed"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Post Cache cargo",
+          "number": 16,
+          "status": "completed"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Post Run actions/setup-python@v5",
+          "number": 17,
+          "status": "completed"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Post Run actions/setup-node@v4",
+          "number": 18,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 19,
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/yousefghorbanian98-create/Cutting-Edge-Studio./actions/runs/41899645032/job/126818326210"
+    }
+  ],
+  "url": "https://github.com/yousefghorbanian98-create/Cutting-Edge-Studio./actions/runs/41899645032"
+}

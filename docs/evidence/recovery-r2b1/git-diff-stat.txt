@@ -1,0 +1,14 @@
+.github/workflows/ci.yml                   |   2 +
+ backend/app/services/audio/__init__.py     |   1 +
+ backend/app/services/audio/rhythm.py       | 119 ++++++++++++++++++++++
+ backend/app/services/inference/adapters.py |  29 +++---
+ backend/app/services/inference/registry.py |  14 +++
+ backend/pyproject.toml                     |  17 +---
+ backend/requirements-dev.txt               |   4 +-
+ backend/tests/test_audio_rhythm.py         | 158 +++++++++++++++++++++++++++++
+ backend/tests/test_hygiene.py              |  14 +++
+ backend/tests/test_inference.py            |  28 +++++
+ licenses/LIBROSA-ISC.md                    |  15 +++
+ scripts/local-tests/audio-rhythm.py        |  51 ++++++++++
+ src-tauri/tauri.conf.json                  |   2 +-
+ 13 files changed, 423 insertions(+), 31 deletions(-)

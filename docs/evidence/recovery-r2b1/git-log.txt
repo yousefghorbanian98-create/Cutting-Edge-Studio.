@@ -1,0 +1,5 @@
+d1decc2 feat: validate OSS rhythm adapter and reject unwired model loaders
+d941d87 docs: record R2a decode, cancellation and crash-recovery evidence
+675478c feat: run durable real-media decode inspections with observed progress
+fdcbc26 docs: record R1b restart recovery evidence and advance the recovery queue
+df8ccdc feat(workspace): save and reopen versioned local editing projects
