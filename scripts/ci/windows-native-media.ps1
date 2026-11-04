@@ -66,6 +66,7 @@ $null = Invoke-NativeTool $ffmpeg @('-hide_banner', '-nostdin', '-v', 'error', '
 # Feasibility check for a ready LGPL shot-candidate alternative, not TransNetV2.
 $scdetAvailable = [bool]($filters -match '\bscdet\b')
 $sceneProbe = $null
+if (-not $scdetAvailable) { throw 'The pinned build lacks the required ready scdet filter; no scene result is fabricated.' }
 if ($scdetAvailable) {
     $graph = 'color=c=black:s=160x96:r=25:d=1[black];color=c=white:s=160x96:r=25:d=1[white];[black][white]concat=n=2:v=1:a=0,scdet=threshold=10'
     $sceneText = Invoke-NativeTool $ffprobe @('-v', 'error', '-f', 'lavfi', '-i', $graph,
@@ -98,4 +99,4 @@ $record = [ordered]@{
         'No generated media or native binaries are committed or bundled by this probe.')
 }
 $record | ConvertTo-Json -Depth 12 | Set-Content (Join-Path $OutputDir 'probe.json') -Encoding utf8
-Write-Output '::notice title=Windows native media tools::PASS: reviewed archive checksum; LGPL shared configuration; no forbidden encoders; real libopenh264 encode, ffprobe facts and error-checked decode. This is tools-only, not installer/runtime acceptance.'
+Write-Output '::notice title=Windows native media tools::PASS: reviewed archive checksum; LGPL shared configuration; no forbidden encoders; real libopenh264 encode, ffprobe facts, error-checked decode and one native scdet candidate at 1 second. This is tools-only, not installer/runtime acceptance.'
