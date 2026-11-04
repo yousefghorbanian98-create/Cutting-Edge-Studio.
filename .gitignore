@@ -29,6 +29,9 @@ backend/.data/
 models/
 binaries/*.exe
 binaries/*.zip
+src-tauri/binaries/
+backend/build/
+backend/dist/
 webview2-fixed-runtime/
 delivery/*.exe
 delivery/*.sha256

@@ -81,8 +81,8 @@ jobs:
           exit-code: '1'
 
   installer:
-    name: Installer — Windows build (manual only)
-    if: github.event_name == 'workflow_dispatch'
+    name: Installer — Windows NSIS build
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'push'
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -100,12 +100,13 @@ jobs:
             ~/.cargo/registry
             src-tauri/target
           key: cargo-${{ hashFiles('src-tauri/Cargo.toml') }}
-      - name: Build installer
+      - name: Build installer (light: no pinned FFmpeg/models)
         shell: pwsh
-        run: ./scripts/build-installer.ps1
+        run: ./scripts/build-installer.ps1 -WithoutPinnedBinaries
       - uses: actions/upload-artifact@v4
         with:
           name: CuttingEdgeV2-Setup
+          if-no-files-found: error
           path: |
             delivery/*.exe
             delivery/*.sha256

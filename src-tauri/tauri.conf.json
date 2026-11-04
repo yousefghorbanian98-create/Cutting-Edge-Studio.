@@ -28,12 +28,16 @@
   },
   "bundle": {
     "active": true,
-    "targets": ["nsis"],
+    "targets": [
+      "nsis"
+    ],
     "category": "Video",
     "shortDescription": "Offline sports video editor",
     "longDescription": "Cutting Edge v2 — offline, OSS-first sports video editor for bodybuilding and volleyball creators.",
     "copyright": "MIT",
-    "externalBin": ["binaries/cutting-edge-backend"],
+    "externalBin": [
+      "binaries/cutting-edge-backend"
+    ],
     "resources": [
       "../licenses/*",
       "../docs/*.md"
@@ -41,14 +45,22 @@
     "windows": {
       "nsis": {
         "installMode": "perMachine",
-        "languages": ["English", "Persian"],
+        "languages": [
+          "English",
+          "Persian"
+        ],
         "displayLanguageSelector": true
       },
       "webviewInstallMode": {
         "type": "fixedRuntime",
         "path": "./webview2-fixed-runtime/"
       }
-    }
+    },
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/icon.ico"
+    ]
   },
   "plugins": {
     "updater": {

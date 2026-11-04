@@ -1,20 +1,26 @@
 <#
 .SYNOPSIS
-    Builds CuttingEdgeV2-Setup-<version>.exe on a Windows build machine.
+    Builds CuttingEdgeV2-Setup-v<version>.exe on a Windows build machine.
 
 .DESCRIPTION
     Offline-by-design build:
       1. Verifies every pinned artifact in scripts/pins.json (SHA-256 required).
       2. Downloads artifacts only on the BUILD machine (never at runtime, LOCK-05).
-      3. Builds the React frontend, the Python sidecar and the Tauri shell.
+      3. Builds the React frontend, the Python sidecar (PyInstaller, one file) and the Tauri shell.
       4. Packages the NSIS installer and writes a .sha256 next to it.
 
-    Runtime downloads stay impossible: the produced installer carries every model,
-    binary and the WebView2 fixed-version runtime.
+    The produced installer carries every model, binary and the WebView2 fixed-version
+    runtime; nothing is downloaded at runtime.
 
 .PARAMETER UpdatePins
     Downloads the artifacts and writes their SHA-256 into scripts/pins.json.
     Run this once on a trusted network, review the diff, then commit.
+
+.PARAMETER WithoutPinnedBinaries
+    CI / smoke mode: skips the pinned FFmpeg, models and WebView2 fixed runtime, and asks
+    the NSIS target to use the machine's WebView2. The resulting installer is a real,
+    installable build of the app whose media engine resolves FFmpeg from PATH
+    (docs/install-guide-v1.0.0-en.md, "Light build"). Use the full run for delivery.
 
 .PARAMETER SkipInstaller
     Stops after the sidecar + shell are built (fast inner loop for verification).
@@ -22,19 +28,23 @@
 .EXAMPLE
     pwsh -File scripts/build-installer.ps1 -UpdatePins
     pwsh -File scripts/build-installer.ps1
+    pwsh -File scripts/build-installer.ps1 -WithoutPinnedBinaries
 #>
 [CmdletBinding()]
 param(
     [switch]$UpdatePins,
+    [switch]$WithoutPinnedBinaries,
     [switch]$SkipInstaller
 )
 
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
 $pins = Get-Content (Join-Path $PSScriptRoot 'pins.json') -Raw | ConvertFrom-Json
-$version = (Get-Content (Join-Path $root 'src-tauri/tauri.conf.json') -Raw | ConvertFrom-Json).version
+$tauriConfPath = Join-Path $root 'src-tauri/tauri.conf.json'
+$version = (Get-Content $tauriConfPath -Raw | ConvertFrom-Json).version
 $delivery = Join-Path $root 'delivery'
 New-Item -ItemType Directory -Force -Path $delivery | Out-Null
+$binariesDir = Join-Path $root 'src-tauri/binaries'
 
 function Assert-Prerequisites {
     foreach ($tool in @('node', 'npm', 'cargo', 'python')) {
@@ -45,6 +55,13 @@ function Assert-Prerequisites {
     Write-Host "[ok] toolchain present"
 }
 
+function Get-TargetTriple {
+    $output = & rustc -vV
+    $line = $output | Where-Object { $_ -like 'host:*' } | Select-Object -First 1
+    if (-not $line) { throw 'rustc did not report a host triple.' }
+    return ($line -replace '^host:\s*', '').Trim()
+}
+
 function Get-PinnedArtifact {
     param([string]$Name, [pscustomobject]$Pin)
 
@@ -53,7 +70,8 @@ function Get-PinnedArtifact {
         return
     }
     if ($Pin.url -like 'https://developer.microsoft.com*') {
-        throw "WebView2 fixed-version runtime must be downloaded manually on a trusted network and placed in src-tauri/webview2-fixed-runtime/ (see docs/build-webview2.md)."
+        Write-Host "[note] $Name must be placed in src-tauri/webview2-fixed-runtime/ manually (docs/bypass-smartscreen.md)."
+        return
     }
 
     $target = Join-Path $root $Pin.target
@@ -86,14 +104,17 @@ function Get-PinnedArtifact {
 
 Assert-Prerequisites
 
-Get-PinnedArtifact -Name 'ffmpeg' -Pin $pins.ffmpeg
-foreach ($entry in $pins.models.PSObject.Properties) {
-    Get-PinnedArtifact -Name $entry.Name -Pin $entry.Value
-}
-
-if ($UpdatePins) {
-    $pins | ConvertTo-Json -Depth 8 | Set-Content (Join-Path $PSScriptRoot 'pins.json') -Encoding utf8
-    Write-Host "pins.json updated. Review and commit before the first real build."
+if ($WithoutPinnedBinaries) {
+    Write-Host '[warn] -WithoutPinnedBinaries: FFmpeg/models/WebView2 runtime are NOT embedded.'
+} else {
+    Get-PinnedArtifact -Name 'ffmpeg' -Pin $pins.ffmpeg
+    foreach ($entry in $pins.models.PSObject.Properties) {
+        Get-PinnedArtifact -Name $entry.Name -Pin $entry.Value
+    }
+    if ($UpdatePins) {
+        $pins | ConvertTo-Json -Depth 8 | Set-Content (Join-Path $PSScriptRoot 'pins.json') -Encoding utf8
+        Write-Host 'pins.json updated. Review and commit before the first real build.'
+    }
 }
 
 Write-Host '[1/4] frontend'
@@ -104,14 +125,23 @@ try {
 } finally { Pop-Location }
 
 Write-Host '[2/4] python sidecar'
+$sidecarTarget = Join-Path $binariesDir ("cutting-edge-backend-" + (Get-TargetTriple) + ".exe")
 Push-Location (Join-Path $root 'backend')
 try {
-    python -m venv .venv
-    .\.venv\Scripts\python.exe -m pip install --upgrade pip
-    .\.venv\Scripts\python.exe -m pip install -r requirements.txt
-    .\.venv\Scripts\python.exe -m pip install pyinstaller==6.22.3
-    .\.venv\Scripts\pyinstaller.exe --noconfirm --clean packaging\sidecar.spec
+    if (-not (Test-Path '.venv')) { python -m venv .venv }
+    $py = Join-Path (Get-Location) '.venv/Scripts/python.exe'
+    & $py -m pip install --upgrade pip
+    & $py -m pip install -r requirements.txt
+    & $py -m pip install pyinstaller==6.22.3
+    & (Join-Path (Get-Location) '.venv/Scripts/pyinstaller.exe') --noconfirm --clean packaging/sidecar.spec
 } finally { Pop-Location }
+
+$builtSidecar = Join-Path $root 'backend/dist/cutting-edge-backend.exe'
+if (-not (Test-Path $builtSidecar)) { throw "sidecar executable not produced at $builtSidecar" }
+New-Item -ItemType Directory -Force -Path $binariesDir | Out-Null
+Copy-Item $builtSidecar $sidecarTarget -Force
+$sidecarSize = [math]::Round((Get-Item $sidecarTarget).Length / 1MB, 1)
+Write-Host "[ok  ] sidecar staged ($sidecarSize MB) -> $sidecarTarget"
 
 Write-Host '[3/4] tauri shell'
 Push-Location (Join-Path $root 'src-tauri')
@@ -125,10 +155,22 @@ if ($SkipInstaller) {
 }
 
 Write-Host '[4/4] nsis installer'
-Push-Location (Join-Path $root 'src-tauri')
+$confBackup = Get-Content $tauriConfPath -Raw
 try {
-    npx --yes @tauri-apps/cli@2 build --bundles nsis
-} finally { Pop-Location }
+    if ($WithoutPinnedBinaries) {
+        $conf = $confBackup | ConvertFrom-Json
+        $conf.bundle.windows.webviewInstallMode = [pscustomobject]@{ type = 'skip' }
+        $conf | ConvertTo-Json -Depth 12 | Set-Content $tauriConfPath -Encoding utf8
+        Write-Host '[note] WebView2 fixed runtime missing: using the machine runtime for this build.'
+    }
+
+    Push-Location (Join-Path $root 'src-tauri')
+    try {
+        npx --yes @tauri-apps/cli@2 build --bundles nsis
+    } finally { Pop-Location }
+} finally {
+    Set-Content -Path $tauriConfPath -Value $confBackup -Encoding utf8
+}
 
 $built = Get-ChildItem -Path (Join-Path $root 'src-tauri/target/release/bundle/nsis') -Filter '*.exe' |
     Sort-Object LastWriteTime -Descending | Select-Object -First 1
@@ -139,7 +181,7 @@ Copy-Item $built.FullName $final -Force
 $hash = (Get-FileHash $final -Algorithm SHA256).Hash.ToLowerInvariant()
 Set-Content -Path "$final.sha256" -Value "$hash  CuttingEdgeV2-Setup-v$version.exe" -Encoding ascii
 
-$sizeGb = [math]::Round((Get-Item $final).Length / 1GB, 2)
+$sizeMb = [math]::Round((Get-Item $final).Length / 1MB, 1)
 Write-Host "`n[delivered] $final"
-Write-Host "[size     ] $sizeGb GB (budget 3.5 GB)"
+Write-Host "[size     ] $sizeMb MB (delivery budget 3.5 GB with models and FFmpeg)"
 Write-Host "[sha256   ] $hash"
