@@ -38,6 +38,13 @@ CC-BY-SA (as code) · SSPL · BUSL · proprietary · non-commercial weights.
 | ruff | 0.8.4 | MIT | Python lint/format |
 | pytest / pytest-cov | 8.3.4 / 6.0.0 | MIT | Backend tests |
 | PyInstaller | 6.22.3 | GPLv2+ **with bootloader exception** | Sidecar packaging |
+| @radix-ui/react-* (dialog, select, tabs, switch, slider, progress, tooltip, dropdown-menu, checkbox, separator, scroll-area) | 1.x / 2.x | MIT | Accessible primitives (P1) |
+| framer-motion | 11.15.0 | MIT | Wizard step transitions |
+| sonner | 1.7.1 | MIT | Toasts |
+| cmdk | 1.0.4 | MIT | Command palette |
+| @dnd-kit/core · sortable · utilities | 6.3.1 · 10.0.0 · 3.2.2 | MIT | Media list reordering |
+| @fontsource/vazirmatn · inter · jetbrains-mono | 5.1.1 | OFL-1.1 | Bundled fonts (no CDN) |
+| axe-core | 4.10.2 | MPL-2.0 | Accessibility test runner (dev only) |
 | Tauri | 2.x | MIT / Apache-2.0 | Desktop shell |
 | tauri-plugin-shell | 2.x | MIT / Apache-2.0 | Sidecar spawning |
 

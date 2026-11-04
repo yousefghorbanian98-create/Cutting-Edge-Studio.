@@ -4,7 +4,7 @@ Legend: **GREEN** = verified with evidence in this environment ·
 **PENDING-ENV** = authored and reviewed, execution requires the Owner's Windows/Rust machine ·
 **BLOCKED** = cannot proceed.
 
-Progress: **20 / 260 steps = 7.7 %** · Phase **P0** delivered.
+Progress: **50 / 260 steps = 19.2 %** · Phases **P0, P1** delivered.
 
 ## P0 — Foundation & Setup (week 1, 20 steps)
 
@@ -37,6 +37,51 @@ Progress: **20 / 260 steps = 7.7 %** · Phase **P0** delivered.
   Hugging Face access (see `docs/PROTOCOL-ISSUES.md` B2/B3/B4).
 - No GREEN claim is made without command output; the raw outputs are in the PR description.
 
-## Next: P1 — Design System & UI (30 steps)
-Component library on shadcn/ui primitives (Radix), 10 component states, Style Match wizard
-screens, media panel with drag-drop, i18n completeness, axe-core accessibility pass.
+## P1 — Design System & UI (week 2, 30 steps)
+
+| Step | Item | Status | Evidence |
+|---|---|---|---|
+| P1-S01 | Design tokens: 4px spacing, 1.25 type scale, per-theme radii, motion | GREEN | `frontend/src/lib/tokens.ts` |
+| P1-S02 | Fonts bundled OFL-1.1 (Vazirmatn/Inter/JetBrains Mono) — no CDN | GREEN | `@fontsource/*` imports in `main.tsx`, `dist/assets/*.woff2` |
+| P1-S03 | Button (4 variants × 3 sizes, loading/error/success) | GREEN | `ui/Button.tsx` |
+| P1-S04 | Badge (5 tones) | GREEN | `ui/Badge.tsx` |
+| P1-S05 | Input (invalid/success) | GREEN | `ui/Input.tsx` |
+| P1-S06 | Spinner (decorative mode) | GREEN | `ui/Spinner.tsx` |
+| P1-S07 | ProgressBar (Radix, labelled, clamped) | GREEN | `ui/ProgressBar.tsx` |
+| P1-S08 | Modal (Radix dialog, focus trap) | GREEN | `ui/Modal.tsx` |
+| P1-S09 | Tooltip (Radix) | GREEN | `ui/Tooltip.tsx` |
+| P1-S10 | Select (Radix, keyboard) | GREEN | `ui/Select.tsx` |
+| P1-S11 | Tabs (Radix) | GREEN | `ui/Tabs.tsx` |
+| P1-S12 | Switch (Radix) | GREEN | `ui/Switch.tsx` |
+| P1-S13 | Slider (Radix, labelled thumb) | GREEN | `ui/Slider.tsx` |
+| P1-S14 | Skeleton | GREEN | `ui/Skeleton.tsx` |
+| P1-S15 | EmptyState | GREEN | `ui/EmptyState.tsx` |
+| P1-S16 | Stepper (aria-current, 48px) | GREEN | `ui/Stepper.tsx` |
+| P1-S17 | Toaster (sonner) | GREEN | `ui/Toaster.tsx` |
+| P1-S18 | CommandPalette (cmdk + Ctrl/Cmd+K) | GREEN | `ui/CommandPalette.tsx`, `App.tsx` |
+| P1-S19 | SkipLink (WCAG 2.4.1) | GREEN | `ui/SkipLink.tsx` |
+| P1-S20 | Barrel export + design-system doc | GREEN | `ui/index.ts`, `docs/DESIGN-SYSTEM.md` |
+| P1-S21 | Media panel with native drag-drop import | GREEN | `features/media/MediaPanel.tsx` |
+| P1-S22 | Media store: dedupe by path, rejection reasons surfaced | GREEN | `features/media/mediaStore.ts` |
+| P1-S23 | dnd-kit sortable reordering | GREEN | `MediaPanel.tsx` (SortableContext) |
+| P1-S24 | File validation lib (ext/size/kind, byte formatting) | GREEN | `lib/files.ts` |
+| P1-S25 | Wizard store + blocking rules per stage | GREEN | `features/stylematch/wizardStore.ts` |
+| P1-S26 | Wizard UI: stepper, progress, motion, gating messages | GREEN | `features/stylematch/StyleMatchWizard.tsx` |
+| P1-S27 | i18n expansion + key-parity completeness test | GREEN | `lib/i18n.ts`, `lib/i18n.completeness.test.ts` |
+| P1-S28 | axe-core accessibility suite (fa/LTR/palette) | GREEN | `src/a11y.test.tsx` — 0 violations |
+| P1-S29 | Docs + ledger update | GREEN | this file, `docs/DESIGN-SYSTEM.md` |
+| P1-S30 | Commit + PR update + evidence report | GREEN | PR #1 (phase section) |
+
+### P1 evidence snapshot
+```
+npm run test  → Test Files 10 passed (10) · Tests 51 passed (51)
+npm run lint   → eslint --max-warnings 0 → clean
+npx tsc -b     → clean
+npm run build  → dist/assets/index-*.js 366.83 kB (gzip 120.29 kB), CSS 39.00 kB
+axe-core       → 3 configurations, 0 violations
+```
+
+## Next: P2 — Timeline Engine (22 steps)
+`react-timeline-editor` MVP (100–200 clips smooth), Zustand timeline store, hotkeys,
+snapping, bookmarks (hotkey M), and the P3 media pipeline contract.
+
