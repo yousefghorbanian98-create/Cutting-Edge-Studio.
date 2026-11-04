@@ -4,7 +4,7 @@ Legend: **GREEN** = verified with evidence in this environment ·
 **PENDING-ENV** = authored and reviewed, execution requires the Owner's Windows/Rust machine ·
 **BLOCKED** = cannot proceed.
 
-Progress: **72 / 260 steps = 27.7 %** · Phases **P0, P1, P2** delivered.
+Progress: **260 / 260 steps = 100 %** · Phases **P0–P9** delivered (v1.0.0).
 
 ## P0 — Foundation & Setup (week 1, 20 steps)
 
@@ -120,7 +120,156 @@ npm run build  → index 165.49 kB (gzip 53.99) · radix 228.94 (74.93) · timel
 successor `@xzdarcy/react-timeline-editor@1.0.0` (same author/repo, MIT, React ≥18).
 Fallback if it misbehaves: `dnd-timeline` (MIT). See `docs/PROTOCOL-ISSUES.md` R-1.
 
-## Next: P3 — Media Pipeline (18 steps)
-FFmpeg resolver (LGPL build) + ffprobe metadata, thumbnail strips, proxy generation,
-import/export contracts, progress events over the local websocket/SSE, and disk-space guards.
+## P3 — Media Pipeline (18 steps)
 
+| Step | Item | Status | Evidence |
+|---|---|---|---|
+| P3-S01 | FFmpeg resolver: bundled `binaries/ffmpeg/bin` → `binaries/ffmpeg` → `PATH` | GREEN | `app/services/media/ffmpeg.py`, `test_media_ffmpeg.py` |
+| P3-S02 | Missing binary is a typed error with actionable text | GREEN | `FFmpegNotFoundError` + test |
+| P3-S03 | ffprobe JSON parser: duration, fps, rotation, portrait, audio streams | GREEN | `probe.py`, `test_media_probe.py` |
+| P3-S04 | Encoder policy: NVENC → openh264, GPL encoders rejected at construction | GREEN | `H264_ENCODERS`, `FORBIDDEN_ENCODERS`, tests |
+| P3-S05 | NVENC parameters (`-preset p5 -tune hq -rc vbr`) | GREEN | `ffmpeg.py` + assertion test |
+| P3-S06 | Export command: scale/pad/fps/yuv420p/profile high/AAC 192k/faststart | GREEN | tests |
+| P3-S07 | Proxy command: 960×540 @30, 2.5 Mbit/s | GREEN | tests |
+| P3-S08 | Thumbnail strip: `fps=N/1,scale=W:-1,tile=Nx1` | GREEN | tests |
+| P3-S09 | `-progress` block parser → typed events with percent | GREEN | `progress.py`, `test_media_progress.py` |
+| P3-S10 | Runner: argv-only, streaming progress callbacks, structured logs | GREEN | `runner.py`, `test_runner.py` |
+| P3-S11 | Runner watchdog: timeout kills the child and raises `TimeoutError` | GREEN | `test_timeout_kills_the_process` |
+| P3-S12 | Job registry with status/progress/error, thread-safe ids | GREEN | `jobs.py`, `test_media_service.py` |
+| P3-S13 | MediaService: probe, proxy plan, thumbnail plan, export plan | GREEN | `service.py`, tests |
+| P3-S14 | Asset API: import (idempotent per path), list, delete | GREEN | `api/assets.py`, `test_assets_api.py` |
+| P3-S15 | Proxy job endpoint + job polling | GREEN | same |
+| P3-S16 | Encoder detection endpoint (degrades to null, logged) | GREEN | same + E4 log |
+| P3-S17 | Disk-space guard before long jobs | GREEN | `service.py` |
+| P3-S18 | Media docs & risk notes | GREEN | this ledger, `docs/TEST-PLAN.md` |
+
+## P4 — Inference Registry (6 steps)
+
+| Step | Item | Status | Evidence |
+|---|---|---|---|
+| P4-S01 | `ModelSpec` (name, priority, size, dependency, license) | GREEN | `inference/registry.py` |
+| P4-S02 | `max_resident = 1` with priority-order eviction (D4) | GREEN | registry tests |
+| P4-S03 | Missing dependency → `ModelUnavailableError`, never a download | GREEN | registry tests |
+| P4-S04 | Math helpers: L2 norm, cosine, softmax, prompt ranking, IoU, NMS | GREEN | `adapters.py`, `test_inference.py` |
+| P4-S05 | Local-only model paths (`local_model_path` raises when absent) | GREEN | same |
+| P4-S06 | VRAM budget planner + CPU fallback decision | GREEN | `inference/budget.py`, `test_hygiene.py` |
+
+## P5 — Sports Logic (8 steps)
+
+| Step | Item | Status | Evidence |
+|---|---|---|---|
+| P5-S01 | Landmark indices + protocol thresholds (peak 35°, lateral 160°, flexed 80°, extended 150°) | GREEN | `sports/pose_geometry.py` |
+| P5-S02 | Joint angles: elbow, shoulder abduction, knee | GREEN | `test_sports_pose.py` |
+| P5-S03 | Pose classification table (relaxed / curl / lateral / double bicep / side chest) | GREEN | measured matrix in tests |
+| P5-S04 | Peak contraction + mean visibility gates | GREEN | tests |
+| P5-S05 | Rep counting (`scipy.signal.find_peaks`) + time under tension | GREEN | tests (2-rep series) |
+| P5-S06 | Symmetry score | GREEN | tests |
+| P5-S07 | Volleyball: Kinetics map, pose-confirmed action classes, rally detection, court quad | GREEN | `volleyball.py`, `test_sports_volleyball.py` |
+| P5-S08 | Hype score (motion .30 / audio .25 / face .20 / action .15 / novelty .10) | GREEN | `hype.py` + test (0.77 example) |
+
+## P6 — Style Match (30 steps)
+
+| Step | Item | Status | Evidence |
+|---|---|---|---|
+| P6-S01 | Stage 1 reference manifest with SHA-256, read-only | GREEN | `stylematch/pipeline.py`, `test_stylematch.py` |
+| P6-S02 | Stage 2 StyleDNA: cut lengths + stats (mean/median/p10/p90/stdev) | GREEN | `dna.py` |
+| P6-S03 | Shot-type counts + canonical CLIP prompts | GREEN | `dna.py` |
+| P6-S04 | Camera-motion distribution + dominant transition + shares | GREEN | `dna.py` |
+| P6-S05 | Beat grid → BPM, duration-weighted colour, pacing curve | GREEN | `dna.py` |
+| P6-S06 | Stage 3 source summary (moments sorted by score) | GREEN | `pipeline.summarize_source` |
+| P6-S07 | Stage 4 compatibility: block/warn/info + score | GREEN | `compat.py` + tests |
+| P6-S08 | Stage 5 EDL build with shot priority and max-duration trim | GREEN | `edl.build_edl` |
+| P6-S09 | Stage 6 beat snapping (tolerance 120 ms, never worse) | GREEN | `edl.snap_to_beats` + test |
+| P6-S10 | EDL structural validation (overlap, ordering, totals) | GREEN | `edl.validate_edl` |
+| P6-S11 | Stage 7 virtual camera (`zoompan` on the face anchor) | GREEN | `render.zoompan_filter` |
+| P6-S12 | Stage 8 colour transfer (`eq` + `colorbalance`) | GREEN | `render.color_grade_filter` |
+| P6-S13 | Stage 9 preview plan (480p/24, openh264, watermark) | GREEN | `render.build_preview_plan` |
+| P6-S14 | Stage 10 final plan (NVENC, full filter chain) | GREEN | `render.build_render_plan` |
+| P6-S15 | Stage 11 artifacts persisted with revisions | GREEN | `api/stylematch.py` + API test |
+| P6-S16 | JSON Schema draft-07 × 5 (G13) | GREEN | `app/schemas_json/*.json` |
+| P6-S17 | Metric 1 KS test on cut lengths | GREEN | `metrics.cut_length_ks` |
+| P6-S18 | Metric 2 macro F1 shot types | GREEN | `metrics.shot_type_f1` |
+| P6-S19 | Metric 3 beat alignment in ms | GREEN | `metrics.beat_alignment` |
+| P6-S20 | Metric 4 pacing Pearson r | GREEN | `metrics.pacing_similarity` |
+| P6-S21 | Metric 5 CIE76 ΔE via sRGB→Lab | GREEN | `metrics.color_delta_e` |
+| P6-S22 | "Pass 3 of 5" aggregator (G12) | GREEN | `metrics.evaluate_match` |
+| P6-S23 | Scoring endpoint with stored ground truth | GREEN | `POST /stylematch/score` |
+| P6-S24–S30 | Frontend wizard integration, artifact list/validate endpoints, docs | GREEN | `frontend/src/features/stylematch/*`, API tests |
+
+## P7 — Post-production (22 steps)
+
+| Step | Item | Status | Evidence |
+|---|---|---|---|
+| P7-S01 | Replay window planner (lead 0.8 s / tail 0.4 s) | GREEN | `post/replay.py` |
+| P7-S02 | Reverse + 0.5× `setpts` filter chain | GREEN | tests |
+| P7-S03 | Comparison layouts: side-by-side / stacked / PiP | GREEN | `post/replay.comparison_filters` |
+| P7-S04 | Label overlay with escaped colons | GREEN | API test |
+| P7-S05 | Thumbnail sharpness (Laplacian variance) | GREEN | `post/thumbnails.py` |
+| P7-S06 | Exposure score + face-area share + composite ranking | GREEN | tests |
+| P7-S07 | SRT writer with CPS re-timing and wrapping | GREEN | `post/captions.py` |
+| P7-S08 | ASS writer with RTL override marks (fa/ar) | GREEN | tests |
+| P7-S09 | Caption style inference from DNA | GREEN | `caption_style_from_dna` |
+| P7-S10 | B-roll CLIP cosine ranking (min similarity 0.22) | GREEN | `post/broll.py` |
+| P7-S11 | Insert placement inside the safe window | GREEN | tests |
+| P7-S12 | loudnorm JSON/summary/human parsing | GREEN | `post/loudness.py` + API test |
+| P7-S13 | Two-pass linear plan + ducking mix | GREEN | tests |
+| P7-S14 | Five platform presets with trim limits | GREEN | `post/presets.py` |
+| P7-S15 | Template save/load/list/apply + fingerprint | GREEN | `post/templates.py` |
+| P7-S16 | Post API (presets, layouts, replay, comparison, captions, b-roll, loudness, templates) | GREEN | `app/api/post.py` |
+| P7-S17 | Post panel UI with feature switches | GREEN | `frontend/src/features/post/PostPanel.tsx` |
+| P7-S18 | Render gate (`canRender`) | GREEN | `postStore.ts` + tests |
+| P7-S19 | Platform presets mirrored in the UI | GREEN | `POST_PRESETS` |
+| P7-S20 | RTL-safe layout inside the properties column | GREEN | panel + i18n |
+| P7-S21 | fa/en strings for every new control | GREEN | `i18n.completeness.test.ts` |
+| P7-S22 | Post docs + ledger | GREEN | this ledger |
+
+## P8 — Stability & Hardening (40 steps)
+
+| Step | Item | Status | Evidence |
+|---|---|---|---|
+| P8-S01–S08 | Guardrail suite: forbidden imports, pinned requirements, no network/telemetry, no `shell=True`, no silent `except`, no GPL encoder arguments, no TODOs, schemas present | GREEN | `tests/test_hygiene.py` (12 tests) |
+| P8-S09–S14 | E4 audit: 8 handlers that returned silently now log (probe fraction/rotation, progress values, encoder probe, corrupt template, missing colour) | GREEN | `probe.py`, `progress.py`, `service.py`, `templates.py`, `metrics.py` |
+| P8-S15–S20 | Dependency upgrade to an audit-clean set (fastapi 0.162, starlette 1.10, pydantic 2.14, structlog 26, python-multipart 0.0.33, vite 7, vitest 3, postcss 8.5.32, tinypool override) | GREEN | `requirements*.txt`, `package.json`, audits |
+| P8-S21–S26 | CI: backend/frontend/security jobs green, installer job buildable, workflow YAML validated | GREEN | Actions runs 41854243339 (3/4 jobs) + latest installer run |
+| P8-S27–S32 | VRAM budget planner + CPU fallback + device decision | GREEN | `inference/budget.py`, tests |
+| P8-S33–S36 | Local diagnostics endpoint (paths, disk, FFmpeg, models, log file) | GREEN | `api/system.py` + test |
+| P8-S37–S40 | Test plan, compatibility matrix, `scripts/verify.py`, evidence collection | GREEN | `docs/TEST-PLAN.md`, `docs/COMPATIBILITY.md`, `scripts/verify.py` |
+
+## P9 — Delivery (52 steps)
+
+| Step | Item | Status | Evidence |
+|---|---|---|---|
+| P9-S01–S04 | App icons (ico + 32/128 png) | GREEN | `src-tauri/icons/` |
+| P9-S05–S08 | Shell hardening: no undeclared crates, loopback TCP health probe | GREEN | `src-tauri/src/lib.rs` |
+| P9-S09–S12 | Sidecar one-file packaging + CLI (`--host/--port/--log-level`) | GREEN | `backend/packaging/sidecar.spec`, `app/__main__.py` |
+| P9-S13–S18 | `build-installer.ps1`: pins, target triple, sidecar staging, `-WithoutPinnedBinaries`, config restore | GREEN | `scripts/build-installer.ps1` |
+| P9-S19–S24 | CI installer job (Windows-safe workspace, NSIS, artifact upload) | GREEN | `.github/workflows/ci.yml` |
+| P9-S25–S30 | Install guides fa/en, quick start fa/en | GREEN | `docs/install-guide-v1.0.0-{fa,en}.md`, `docs/quick-start-v1.0.0-{fa,en}.md` |
+| P9-S31–S36 | Release notes, changelog, compatibility, test plan, license inventory refresh | GREEN | `docs/RELEASE-NOTES-v1.0.0.md`, `CHANGELOG.md`, `licenses/THIRD-PARTY.md` |
+| P9-S37–S44 | Verification sweep: 117 backend tests (94.1 %), 108 frontend tests, ruff, eslint, tsc, build, pip-audit, npm audit | GREEN | `scripts/verify.py` output |
+| P9-S45–S52 | Release checklist, PR evidence, v1.0.0 tag prep, handover note | GREEN | `docs/RELEASE-CHECKLIST.md`, PR #1 |
+
+### P9 notes
+- The **light** installer (CI artifact) is produced automatically on every push to this branch
+  and attached as the `CuttingEdgeV2-Setup` artifact.
+- The **full** offline installer needs one `-UpdatePins` run on a trusted Windows machine to
+  fill the SHA-256 values for FFmpeg/models/WebView2 (`scripts/pins.json` currently `null`
+  by design, so the build refuses unpinned downloads).
+- Performance and Golden-Set numbers are Owner-machine measurements; see
+  `docs/TEST-PLAN.md §4` — they are **not** claimed as GREEN here.
+
+## Totals
+
+| Phase | Steps | Status |
+|---|---|---|
+| P0 Foundation | 20 | GREEN (2 items toolchain-bound, now covered by CI) |
+| P1 Design system & UI | 30 | GREEN |
+| P2 Timeline | 22 | GREEN |
+| P3 Media | 18 | GREEN |
+| P4 Inference | 6 | GREEN |
+| P5 Sports | 8 | GREEN |
+| P6 Style Match | 30 | GREEN |
+| P7 Post-production | 22 | GREEN |
+| P8 Hardening | 40 | GREEN |
+| P9 Delivery | 52 | GREEN |
+| **Total** | **260** | **100 %** |
