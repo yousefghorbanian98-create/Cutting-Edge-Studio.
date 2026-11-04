@@ -263,3 +263,12 @@ def test_secret_scanner_exception_is_narrowly_scoped_to_rea_identifiers() -> Non
     assert any(p.search(artifact_id) for p in patterns)
     assert not any(p.search('api_key":"not-an-artifact-identifier"') for p in patterns)
     assert not any(p.search('script_key":"not-an-artifact-identifier"') for p in patterns)
+
+
+def test_tauri_frontend_hooks_resolve_from_project_root() -> None:
+    r"""Tauri v2 invokes hooks from app root, not src-tauri (Windows C:\\build)."""
+    config = json.loads((REPO / "src-tauri" / "tauri.conf.json").read_text())
+    for hook in ("beforeDevCommand", "beforeBuildCommand"):
+        command = config["build"][hook].split()
+        assert command[:3] == ["npm", "--prefix", "frontend"]
+        assert (REPO / command[2] / "package.json").is_file()

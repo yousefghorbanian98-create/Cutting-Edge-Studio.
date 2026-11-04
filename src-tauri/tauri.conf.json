@@ -4,8 +4,8 @@
   "version": "1.0.0",
   "identifier": "com.cuttingedge.v2",
   "build": {
-    "beforeDevCommand": "npm --prefix ../frontend run dev",
-    "beforeBuildCommand": "npm --prefix ../frontend run build",
+    "beforeDevCommand": "npm --prefix frontend run dev",
+    "beforeBuildCommand": "npm --prefix frontend run build",
     "devUrl": "http://localhost:1420",
     "frontendDist": "../frontend/dist"
   },

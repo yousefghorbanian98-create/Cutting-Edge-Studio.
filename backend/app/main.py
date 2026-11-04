@@ -11,6 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api import (
     assets,
     health,
+    inspection,
     post,
     projects,
     settings_api,
@@ -22,6 +23,7 @@ from app.api import (
 from app.config import ALLOWED_ORIGINS, API_PREFIX, Settings, get_settings
 from app.db import create_db_engine, create_session_factory, init_db
 from app.logging import configure_logging, get_logger
+from app.services.media.inspection import FFmpegInspector, InspectionService
 from app.services.media.jobs import JobRegistry
 from app.services.media.service import MediaService, Prober
 
@@ -43,6 +45,9 @@ def create_app(settings: Settings | None = None, prober: Prober | None = None) -
         init_db(engine)
         app.state.engine = engine
         app.state.session_factory = create_session_factory(engine)
+        app.state.inspection = InspectionService(
+            app.state.session_factory, app.state.jobs, FFmpegInspector(resolved)
+        )
         LOG.info(
             "backend.startup",
             version=resolved.version,
@@ -52,6 +57,7 @@ def create_app(settings: Settings | None = None, prober: Prober | None = None) -
         try:
             yield
         finally:
+            app.state.inspection.shutdown()
             engine.dispose()
             LOG.info("backend.shutdown")
 
@@ -81,6 +87,7 @@ def create_app(settings: Settings | None = None, prober: Prober | None = None) -
         post,
         system,
         workspace,
+        inspection,
     ):
         app.include_router(module.router, prefix=API_PREFIX)
     return app

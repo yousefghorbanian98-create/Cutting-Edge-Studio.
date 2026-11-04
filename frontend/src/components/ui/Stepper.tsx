@@ -9,16 +9,17 @@ export interface Step {
 interface StepperProps {
   steps: readonly Step[];
   currentIndex: number;
+  completedIndices?: readonly number[];
   onSelect?: (index: number) => void;
   className?: string;
 }
 
 /** 48px wizard step indicator (§10 layout for the Style Match wizard). */
-export function Stepper({ steps, currentIndex, onSelect, className }: StepperProps) {
+export function Stepper({ steps, currentIndex, onSelect, className, completedIndices }: StepperProps) {
   return (
     <ol className={cn('flex h-12 items-center gap-2 overflow-x-auto px-1', className)} aria-label="wizard steps">
       {steps.map((step, index) => {
-        const done = index < currentIndex;
+        const done = completedIndices ? completedIndices.includes(index) : index < currentIndex;
         const active = index === currentIndex;
         return (
           <li key={step.id} className="flex items-center gap-2">

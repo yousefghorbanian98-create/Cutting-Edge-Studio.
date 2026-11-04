@@ -31,6 +31,8 @@ class Job:
     created_at: datetime = field(default_factory=lambda: datetime.now(tz=UTC))
     updated_at: datetime = field(default_factory=lambda: datetime.now(tz=UTC))
     error: str | None = None
+    project_id: str | None = None
+    cancel_event: threading.Event = field(default_factory=threading.Event, repr=False)
 
 
 class JobRegistry:
@@ -40,8 +42,8 @@ class JobRegistry:
         self._jobs: dict[str, Job] = {}
         self._lock = threading.Lock()
 
-    def create(self, kind: str) -> Job:
-        job = Job(id=uuid.uuid4().hex[:12], kind=kind)
+    def create(self, kind: str, *, project_id: str | None = None) -> Job:
+        job = Job(id=uuid.uuid4().hex[:12], kind=kind, project_id=project_id)
         with self._lock:
             self._jobs[job.id] = job
         LOG.info("job.created", job_id=job.id, kind=kind)

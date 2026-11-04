@@ -3,6 +3,8 @@ import { ShieldCheck } from 'lucide-react';
 import { Badge, Button, ProgressBar, Stepper, type Step } from '../../components/ui';
 import { translate } from '../../lib/i18n';
 import { useAppStore } from '../../store/useAppStore';
+import { useWorkspaceStore } from '../workspace/workspaceStore';
+import { InspectionPanel } from './InspectionPanel';
 import { useMediaStore } from '../media/mediaStore';
 import { useWizardStore, WIZARD_STEPS, canAdvance } from './wizardStore';
 
@@ -12,6 +14,9 @@ const STEP_LABEL_KEYS = ['wizard.step.1', 'wizard.step.2', 'wizard.step.3', 'wiz
 export function StyleMatchWizard() {
   const language = useAppStore((state) => state.language);
   const clips = useMediaStore((state) => state.clips);
+  const projectId=useMediaStore(state=>state.projectId);
+  const importing=useMediaStore(state=>state.importing);
+  const navigating=useWorkspaceStore(state=>state.navigating);
   const stepIndex = useWizardStore((state) => state.stepIndex);
   const next = useWizardStore((state) => state.next);
   const back = useWizardStore((state) => state.back);
@@ -24,8 +29,8 @@ export function StyleMatchWizard() {
     label: translate(language, STEP_LABEL_KEYS[index] ?? ''),
   }));
   const requirement = {
-    referenceSelected: referencePath !== null && clips.some(clip => clip.role === 'reference' && clip.path === referencePath),
-    clipCount: clips.length,
+    referenceSelected: referencePath !== null && clips.some(clip => clip.role === 'reference' && clip.path === referencePath && clip.available !== false),
+    clipCount: clips.filter(clip=>clip.role==='source').length,
   };
   const reference = clips.find(clip => clip.role === 'reference');
   const blocked = !canAdvance(stepIndex, requirement);
@@ -33,7 +38,7 @@ export function StyleMatchWizard() {
   const isLast = stepIndex === WIZARD_STEPS.length - 1;
 
   return (
-    <div className="flex h-full flex-col gap-3">
+    <div className="flex h-full min-h-0 flex-col gap-3">
       <div className="flex items-center justify-between">
         <h3 className="text-xs font-semibold text-[var(--text-primary)]">{translate(language, 'wizard.title')}</h3>
         <Badge tone="success">
@@ -42,7 +47,7 @@ export function StyleMatchWizard() {
         </Badge>
       </div>
 
-      <Stepper steps={steps} currentIndex={stepIndex} onSelect={goTo} />
+      <Stepper completedIndices={[]} steps={steps} currentIndex={stepIndex} onSelect={goTo} />
 
       <ProgressBar value={progress} label={translate(language, 'wizard.progress')} />
 
@@ -53,7 +58,7 @@ export function StyleMatchWizard() {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -6 }}
         transition={{ duration: 0.18 }}
-        className="flex-1 rounded-[var(--radius-control)] border border-white/5 bg-[var(--bg-secondary)] p-3 text-xs text-[var(--text-secondary)]"
+        className="min-h-0 flex-1 overflow-auto rounded-[var(--radius-control)] border border-white/5 bg-[var(--bg-secondary)] p-3 text-xs text-[var(--text-secondary)]"
       >
         {blocked ? (
           <p role="status" className="text-[var(--warning)]">
@@ -65,6 +70,10 @@ export function StyleMatchWizard() {
           <p>{steps[stepIndex]?.label}</p>
         )}
 
+        {stepIndex === 2 ? <InspectionPanel key={projectId ?? 'empty'} projectId={projectId}
+          referenceId={clips.find(c=>c.role==='reference' && c.path===referencePath)?.assetId ?? null}
+          sourceIds={clips.filter(c=>c.role==='source' && c.assetId).map(c=>c.assetId!)}
+          blocked={importing || navigating || clips.some(c=>(c.role==='source' || c.path===referencePath) && c.available===false)} />:null}
         {stepIndex === 0 ? (
           <div className="mt-3 space-y-1">
             <p className="text-[10px] uppercase tracking-wide text-[var(--text-secondary)]">
