@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------------------------------------------------------------
+   Design tokens (P1 expands the component layer; themes live here).
+   THEME PRO — DaVinci Dark Pro (default)
+   --------------------------------------------------------------- */
+:root,
+:root[data-theme='pro'] {
+  --bg-primary: #0a0a0b;
+  --bg-secondary: #111113;
+  --bg-tertiary: #1a1a1d;
+  --surface-default: #161618;
+  --surface-hover: #1e1e21;
+  --text-primary: #f5f5f5;
+  --text-secondary: #a0a0a5;
+  --accent-primary: #ff6b35;
+  --accent-hover: #ff8255;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --radius-panel: 8px;
+  --radius-control: 6px;
+  --duration-fast: 120ms;
+  --duration-base: 250ms;
+}
+
+/* THEME GLASS — CapCut Modern Glass (CSS only: no canvas/WebGL particles) */
+:root[data-theme='glass'] {
+  --bg-primary: #0f0a1e;
+  --bg-secondary: rgba(255, 255, 255, 0.03);
+  --bg-tertiary: rgba(255, 255, 255, 0.06);
+  --surface-default: rgba(255, 255, 255, 0.04);
+  --surface-hover: rgba(255, 255, 255, 0.08);
+  --text-primary: #f0eaff;
+  --text-secondary: #b9a9d6;
+  --accent-primary: #a855f7;
+  --accent-hover: #ec4899;
+  --success: #34d399;
+  --warning: #fbbf24;
+  --error: #f87171;
+  --radius-panel: 20px;
+  --radius-control: 12px;
+  --duration-fast: 180ms;
+  --duration-base: 350ms;
+  --glass-blur: 16px;
+  --glass-bg: rgba(255, 255, 255, 0.05);
+}
+
+/* THEME MINIMAL — Linear/Vercel */
+:root[data-theme='minimal'] {
+  --bg-primary: #09090b;
+  --bg-secondary: #0f0f11;
+  --bg-tertiary: #16161a;
+  --surface-default: #121215;
+  --surface-hover: #1a1a1f;
+  --text-primary: #fafafa;
+  --text-secondary: #8a8a92;
+  --accent-primary: #5b8def;
+  --accent-hover: #7aa2f7;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --radius-panel: 6px;
+  --radius-control: 4px;
+  --duration-fast: 100ms;
+  --duration-base: 200ms;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: Vazirmatn, Inter, system-ui, sans-serif;
+  transition: background-color var(--duration-base) ease;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
