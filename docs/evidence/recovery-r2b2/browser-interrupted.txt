@@ -1,0 +1,5 @@
+PASS Crash recovery marks orphaned job interrupted, never done 
+PASS Explicit post-crash retry reruns real tools and commits a new report 
+PASS Persian audio labels and RTL render actual recovered results 
+PASS No browser JavaScript errors 
+PASS No external browser HTTP requests 

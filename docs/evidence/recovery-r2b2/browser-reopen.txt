@@ -1,0 +1,4 @@
+PASS Fresh backend/browser restores same durable report 
+PASS Independent worker guard stops genuine analysis after backend SIGKILL worker PID 56084; stopped after 51 ms
+PASS No browser JavaScript errors 
+PASS No external browser HTTP requests 

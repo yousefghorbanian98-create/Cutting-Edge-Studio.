@@ -1,0 +1,14 @@
+PASS Four genuine imported assets, explicit reference/source identity 
+PASS Experimental local audio available; model analysis still blocked 
+PASS Actual library subprocess; stage progress with no premature report {"pid":55139,"percent":37.5,"message":"Inspecting 2/4: owned-90.mp4"}
+PASS Real 90/120 BPM estimates, silence, no-audio and independently verified original hashes [{"name":"مرجع بدون صوت.mp4","status":"no-audio"},{"name":"owned-90.mp4","status":"estimated","bpm":89.10290948275862,"beats":17},{"name":"owned-120.mp4","status":"estimated","bpm":117.45383522727273,"beats":21},{"name":"owned-None.mp4","status":"no-beats","bpm":null,"beats":0}]
+PASS Decode and rhythm reports cannot be confused 
+PASS Reload restores audio report without another start 
+PASS Cancellation reaps genuine librosa worker; no fake report or 100% 
+PASS Cancellation cleans temporary PCM/result workspace 
+PASS Real ffprobe failure is visible, without estimated results 
+PASS Restored bytes do not silently renew old provenance 
+PASS New project has no inherited audio report and cannot start with no inputs 
+PASS Cross-project audio job reads return 404 
+PASS No browser JavaScript errors 
+PASS No external browser HTTP requests 

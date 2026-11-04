@@ -1,6 +1,6 @@
 # Evidence-driven recovery loop and competitor benchmark
 
-Date: 2026-11-04 · Branch `arena/dbb53bc2-cutting-edge-studio` · PR #1
+Date: 2026-11-05 · Branch `arena/dbb53bc2-cutting-edge-studio` · PR #1
 
 ## Decision
 
@@ -16,6 +16,7 @@ A competitor benchmark is now part of the plan, but **does not block essential p
 | R1b | Project/session reopening | Recover active project/media and preserve original display names; save/reopen timeline; no lost saved workspace on restart | LOCAL PASS: 26/26 real browser checks across an actual backend restart; see R1b report |
 | R2a | Real-media decode job foundation | Registered IDs; full decode/hash/probe; observed progress; cancel/errors; durable reports; restart/crash and project isolation | LOCAL PASS: 26/26 browser checks; diagnostic LGPL shared FFmpeg only, not Windows runtime acceptance |
 | R2b1 | Ready-library rhythm adapter and honest model loading | Real librosa measurements, no fabricated silence tempo; unwired loaders rejected; resident count respected | ADAPTER LOCAL PASS: 3/3 owned synthetic fixtures, 227 optional-environment tests; job/UI and distribution remain OPEN |
+| R2b2 | Isolated project audio-rhythm jobs and existing UI | Genuine FFmpeg/librosa process; original provenance; cancel/failure/restart/crash, no-audio/silence and operation isolation | LOCAL SYNTHETIC PASS: 23/23 fresh browser checks, 256 optional / 253 base tests + 3 skips, 161 frontend; default-disabled; real-music/native Windows gates OPEN |
 | R2 | Honest analysis orchestration | Explicit reference selection; actual pretrained/OSS analysis jobs and progress; missing models block with actionable errors; no synthetic labels presented as inference | OPEN |
 | R3 | Real edit preview/export | Actual EDL-to-render job, approved encoder probe, progress/cancel/error, playable output; no GPL encoder substitutions | OPEN |
 | C1 | Competitor benchmark specification | Identical authorized inputs/tasks, version/platform/license recorded, evidence taxonomy and scoring fixed before observing products | SPECIFIED; competitor observations still UNKNOWN |
@@ -27,7 +28,9 @@ A competitor benchmark is now part of the plan, but **does not block essential p
 
 R1b evidence: [RECOVERY-R1B-REPORT.md](RECOVERY-R1B-REPORT.md), code `df8ccdc`; 168 backend tests (94.38% coverage), 143 frontend tests, 26/26 workspace checks and 18/18 R1 regression checks. Only acknowledged saved state is restart-safe; crash journaling, large-scale performance and Windows acceptance are not claimed. R2a subsequently passed locally; full pretrained analysis gate R2 remains open.
 
-R2a evidence: [RECOVERY-R2A-REPORT.md](RECOVERY-R2A-REPORT.md), code `675478c`; 199 backend tests (94.59% coverage), 154 frontend tests, 26/26 real inspection checks and 18/18 import/playback regression. Actual SIGKILL/restart produced interrupted, not false success. Source-built diagnostic LGPL shared tools are NOT the approved BtbN Windows distribution. Tauri hook root-path repair is authored; new Windows execution is unaccepted. R2b1 subsequently validated a standalone librosa adapter; next is isolated audio job/UI wiring (R2b2), alongside genuine approved model adapters/artifacts. See [RECOVERY-R2B1-REPORT.md](RECOVERY-R2B1-REPORT.md), code `d1decc2`: 227 tests with real optional analysis, 224 base tests + 3 explicit skips, 94.86% coverage and unchanged frontend 154 tests. No new browser or full R2 acceptance is claimed.
+R2a evidence: [RECOVERY-R2A-REPORT.md](RECOVERY-R2A-REPORT.md), code `675478c`; 199 backend tests (94.59% coverage), 154 frontend tests, 26/26 real inspection checks and 18/18 import/playback regression. Actual SIGKILL/restart produced interrupted, not false success. Source-built diagnostic LGPL shared tools are NOT the approved BtbN Windows distribution. Tauri hook root-path repair is authored; new Windows execution is unaccepted. R2b1 subsequently validated a standalone librosa adapter; R2b2 subsequently added isolated audio job/UI wiring; genuine approved model adapters/artifacts remain open. See [RECOVERY-R2B1-REPORT.md](RECOVERY-R2B1-REPORT.md), code `d1decc2`: 227 tests with real optional analysis, 224 base tests + 3 explicit skips, 94.86% coverage and unchanged frontend 154 tests. Those R2b1 results are historical; no full R2 acceptance is claimed.
+
+R2b2 evidence: [RECOVERY-R2B2-REPORT.md](RECOVERY-R2B2-REPORT.md), code `d3e9c2a`: 256 optional-profile tests (93.80% coverage), 253 base tests + 3 skips, 161 frontend tests and 23/23 fresh browser checks. Actual library-worker cancellation/reaping and SIGKILL recovery were observed. Audio jobs default disabled; synthetic stimuli are not real-music quality, model analysis or Windows distribution acceptance. Per-stage deadlines are not a total project deadline; crash PCM cache cleanup/extraction-stage hardening remain open.
 
 R1 source playback is **not** timeline-composited playback or rendered-preview acceptance. R2/R3 must not be marked complete because a wizard or button changes local state.
 

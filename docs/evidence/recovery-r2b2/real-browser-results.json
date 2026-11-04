@@ -1,0 +1,1248 @@
+{
+  "checks": [
+    {
+      "phase": "prepare",
+      "name": "Four genuine imported assets, explicit reference/source identity",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "prepare",
+      "name": "Experimental local audio available; model analysis still blocked",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "prepare",
+      "name": "Actual library subprocess; stage progress with no premature report",
+      "passed": true,
+      "detail": "{\"pid\":55139,\"percent\":37.5,\"message\":\"Inspecting 2/4: owned-90.mp4\"}"
+    },
+    {
+      "phase": "prepare",
+      "name": "Real 90/120 BPM estimates, silence, no-audio and independently verified original hashes",
+      "passed": true,
+      "detail": "[{\"name\":\"مرجع بدون صوت.mp4\",\"status\":\"no-audio\"},{\"name\":\"owned-90.mp4\",\"status\":\"estimated\",\"bpm\":89.10290948275862,\"beats\":17},{\"name\":\"owned-120.mp4\",\"status\":\"estimated\",\"bpm\":117.45383522727273,\"beats\":21},{\"name\":\"owned-None.mp4\",\"status\":\"no-beats\",\"bpm\":null,\"beats\":0}]"
+    },
+    {
+      "phase": "prepare",
+      "name": "Decode and rhythm reports cannot be confused",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "prepare",
+      "name": "Reload restores audio report without another start",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "prepare",
+      "name": "Cancellation reaps genuine librosa worker; no fake report or 100%",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "prepare",
+      "name": "Cancellation cleans temporary PCM/result workspace",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "prepare",
+      "name": "Real ffprobe failure is visible, without estimated results",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "prepare",
+      "name": "Restored bytes do not silently renew old provenance",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "prepare",
+      "name": "New project has no inherited audio report and cannot start with no inputs",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "prepare",
+      "name": "Cross-project audio job reads return 404",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "prepare",
+      "name": "No browser JavaScript errors",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "prepare",
+      "name": "No external browser HTTP requests",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "reopen",
+      "name": "Fresh backend/browser restores same durable report",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "reopen",
+      "name": "Independent worker guard stops genuine analysis after backend SIGKILL",
+      "passed": true,
+      "detail": "worker PID 56084; stopped after 51 ms"
+    },
+    {
+      "phase": "reopen",
+      "name": "No browser JavaScript errors",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "reopen",
+      "name": "No external browser HTTP requests",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "interrupted",
+      "name": "Crash recovery marks orphaned job interrupted, never done",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "interrupted",
+      "name": "Explicit post-crash retry reruns real tools and commits a new report",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "interrupted",
+      "name": "Persian audio labels and RTL render actual recovered results",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "interrupted",
+      "name": "No browser JavaScript errors",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "interrupted",
+      "name": "No external browser HTTP requests",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "external": [],
+  "requests": [
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/health"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/health"
+    },
+    {
+      "phase": "prepare",
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects"
+    },
+    {
+      "phase": "prepare",
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/uploads"
+    },
+    {
+      "phase": "prepare",
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/uploads"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/6aa67967d4114f33970eda51e2b6e906/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/uploads"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/9a0f983c2cbf47178742e5d05c95d379/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/aed4578f93424d4b985ade13aa874126/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/uploads"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/f19e9006c8de4491b379d0aa1fc4cee8/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/inspection/capabilities"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/inspection/latest"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/inspection/capabilities"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/inspection/latest"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/capabilities"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/latest"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/capabilities"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/latest"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/workspace"
+    },
+    {
+      "phase": "prepare",
+      "method": "PUT",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/workspace"
+    },
+    {
+      "phase": "prepare",
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/30b6e59900a7"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/30b6e59900a7"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/30b6e59900a7"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/30b6e59900a7"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/30b6e59900a7"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/30b6e59900a7"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/30b6e59900a7"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/30b6e59900a7"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/30b6e59900a7"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/30b6e59900a7"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/30b6e59900a7"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/30b6e59900a7"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/30b6e59900a7"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/30b6e59900a7"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/30b6e59900a7"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/30b6e59900a7"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/30b6e59900a7"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/30b6e59900a7"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/30b6e59900a7"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/30b6e59900a7"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/30b6e59900a7"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/30b6e59900a7"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/30b6e59900a7"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/30b6e59900a7"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/30b6e59900a7"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/30b6e59900a7"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/30b6e59900a7"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/30b6e59900a7"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/30b6e59900a7"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/30b6e59900a7"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/30b6e59900a7"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/inspection/capabilities"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/inspection/latest"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/inspection/capabilities"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/inspection/latest"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/capabilities"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/latest"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/capabilities"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/latest"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/workspace"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/assets"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/health"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/health"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/f19e9006c8de4491b379d0aa1fc4cee8/content"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/inspection/capabilities"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/inspection/latest"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/inspection/capabilities"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/inspection/latest"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/capabilities"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/latest"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/capabilities"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/latest"
+    },
+    {
+      "phase": "prepare",
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/269eecf65b3d"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/269eecf65b3d"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/269eecf65b3d"
+    },
+    {
+      "phase": "prepare",
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/269eecf65b3d/cancel"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/269eecf65b3d"
+    },
+    {
+      "phase": "prepare",
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/b217169f49c0"
+    },
+    {
+      "phase": "prepare",
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/20600e359e2d"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/20600e359e2d"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/20600e359e2d"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/20600e359e2d"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/20600e359e2d"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/20600e359e2d"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/20600e359e2d"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/20600e359e2d"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/20600e359e2d"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/20600e359e2d"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/20600e359e2d"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/20600e359e2d"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/20600e359e2d"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/20600e359e2d"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/20600e359e2d"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/20600e359e2d"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/20600e359e2d"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/20600e359e2d"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/20600e359e2d"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/20600e359e2d"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/20600e359e2d"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/20600e359e2d"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/20600e359e2d"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/20600e359e2d"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/20600e359e2d"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/20600e359e2d"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/20600e359e2d"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/20600e359e2d"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/20600e359e2d"
+    },
+    {
+      "phase": "prepare",
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/464a9c84105b4d1d937683bb7474db4f/workspace"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/464a9c84105b4d1d937683bb7474db4f/rhythm/capabilities"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/464a9c84105b4d1d937683bb7474db4f/rhythm/latest"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/464a9c84105b4d1d937683bb7474db4f/rhythm/capabilities"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/464a9c84105b4d1d937683bb7474db4f/rhythm/latest"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects"
+    },
+    {
+      "phase": "prepare",
+      "method": "PUT",
+      "url": "http://127.0.0.1:1421/api/v1/projects/464a9c84105b4d1d937683bb7474db4f/workspace"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/workspace"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/assets"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/capabilities"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/latest"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/capabilities"
+    },
+    {
+      "phase": "prepare",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/latest"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/health"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/health"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/workspace"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/assets"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/f19e9006c8de4491b379d0aa1fc4cee8/content"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/inspection/capabilities"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/inspection/latest"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/inspection/capabilities"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/inspection/latest"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/capabilities"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/latest"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/capabilities"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/latest"
+    },
+    {
+      "phase": "reopen",
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs"
+    },
+    {
+      "phase": "reopen",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/9db7e0f2348d"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/health"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/health"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/workspace"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/assets"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/f19e9006c8de4491b379d0aa1fc4cee8/content"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/inspection/capabilities"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/inspection/latest"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/inspection/capabilities"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/inspection/latest"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/capabilities"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/latest"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/capabilities"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/latest"
+    },
+    {
+      "phase": "interrupted",
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/539f29553b86"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/539f29553b86"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/539f29553b86"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/539f29553b86"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/539f29553b86"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/539f29553b86"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/539f29553b86"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/539f29553b86"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/539f29553b86"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/539f29553b86"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/539f29553b86"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/539f29553b86"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/539f29553b86"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/539f29553b86"
+    },
+    {
+      "phase": "interrupted",
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm/jobs/539f29553b86"
+    }
+  ],
+  "limits": [
+    "Diagnostic Linux LGPL shared tools and external dynamic SoXR, NOT approved Windows shipping runtime.",
+    "Audio estimates only; no shot/pose/sports/StyleDNA/EDL/export acceptance.",
+    "Percentages are observed extraction/file stages, NOT library iterations or ETA."
+  ],
+  "assets": [
+    {
+      "id": "6aa67967d4114f33970eda51e2b6e906",
+      "project_id": "0acb314ddef44f71a39896fa7012e58a",
+      "name": "owned-90.mp4",
+      "size_bytes": 219545,
+      "available": true,
+      "path": "/tmp/ce-r2b2-data/projects/0acb314ddef44f71a39896fa7012e58a/imports/83d72a94ef6c407ca85092c2d061fb00.mp4",
+      "role": "source",
+      "kind": "video",
+      "duration": 12,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920,
+      "video_codec": "h264",
+      "audio_codec": "aac",
+      "has_audio": true,
+      "created_at": "2026-11-04T21:44:58.572851Z",
+      "updated_at": "2026-11-04T21:44:58.572856Z"
+    },
+    {
+      "id": "9a0f983c2cbf47178742e5d05c95d379",
+      "project_id": "0acb314ddef44f71a39896fa7012e58a",
+      "name": "owned-120.mp4",
+      "size_bytes": 227488,
+      "available": true,
+      "path": "/tmp/ce-r2b2-data/projects/0acb314ddef44f71a39896fa7012e58a/imports/8c676f67d33444a7b54ce1557fef6b76.mp4",
+      "role": "source",
+      "kind": "video",
+      "duration": 12,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920,
+      "video_codec": "h264",
+      "audio_codec": "aac",
+      "has_audio": true,
+      "created_at": "2026-11-04T21:44:58.643927Z",
+      "updated_at": "2026-11-04T21:44:58.643930Z"
+    },
+    {
+      "id": "aed4578f93424d4b985ade13aa874126",
+      "project_id": "0acb314ddef44f71a39896fa7012e58a",
+      "name": "owned-None.mp4",
+      "size_bytes": 193064,
+      "available": true,
+      "path": "/tmp/ce-r2b2-data/projects/0acb314ddef44f71a39896fa7012e58a/imports/dd9599597d304537948fd82c6d77cf4d.mp4",
+      "role": "source",
+      "kind": "video",
+      "duration": 12,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920,
+      "video_codec": "h264",
+      "audio_codec": "aac",
+      "has_audio": true,
+      "created_at": "2026-11-04T21:44:58.823862Z",
+      "updated_at": "2026-11-04T21:44:58.823865Z"
+    },
+    {
+      "id": "f19e9006c8de4491b379d0aa1fc4cee8",
+      "project_id": "0acb314ddef44f71a39896fa7012e58a",
+      "name": "مرجع بدون صوت.mp4",
+      "size_bytes": 317426,
+      "available": true,
+      "path": "/tmp/ce-r2b2-data/references/0acb314ddef44f71a39896fa7012e58a/5301681017394412a3bc46cbf0a2334c.mp4",
+      "role": "reference",
+      "kind": "video",
+      "duration": 20,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920,
+      "video_codec": "h264",
+      "audio_codec": null,
+      "has_audio": false,
+      "created_at": "2026-11-04T21:44:59.122532Z",
+      "updated_at": "2026-11-04T21:44:59.122535Z"
+    }
+  ],
+  "project": "0acb314ddef44f71a39896fa7012e58a",
+  "route": "/api/v1/projects/0acb314ddef44f71a39896fa7012e58a/rhythm",
+  "firstJob": "30b6e59900a7",
+  "firstWorker": {
+    "pid": 55139,
+    "cmd": "/home/user/Cutting-Edge-Studio./backend/.venv/bin/python\u0000-m\u0000app.services.audio.worker\u0000/tmp/ce-r2b2-data/cache/rhythm-hfesubcl/audio.wav\u0000/tmp/ce-r2b2-data/cache/rhythm-hfesubcl/result.json\u0000"
+  },
+  "completed": {
+    "operation": "rhythm",
+    "id": "539f29553b86",
+    "project_id": "0acb314ddef44f71a39896fa7012e58a",
+    "reference_asset_id": "f19e9006c8de4491b379d0aa1fc4cee8",
+    "source_asset_ids": [
+      "6aa67967d4114f33970eda51e2b6e906",
+      "9a0f983c2cbf47178742e5d05c95d379",
+      "aed4578f93424d4b985ade13aa874126"
+    ],
+    "state": "done",
+    "percent": 100,
+    "message": "Measurements saved; model analysis not performed",
+    "error": null,
+    "stale": false,
+    "report": {
+      "version": 1,
+      "scope": "audio-rhythm-only",
+      "method": "ffmpeg-pcm+librosa.beat.beat_track",
+      "files": [
+        {
+          "asset_id": "f19e9006c8de4491b379d0aa1fc4cee8",
+          "role": "reference",
+          "name": "مرجع بدون صوت.mp4",
+          "sha256": "608c99b934d917e644a708fee9d06e8aae57fd2b58f9c72c6b8ef9384701e9f3",
+          "size_bytes": 317426,
+          "mtime_ns": "1793828699063161610",
+          "duration": 20,
+          "has_audio": false,
+          "status": "no-audio",
+          "estimate": null
+        },
+        {
+          "asset_id": "6aa67967d4114f33970eda51e2b6e906",
+          "role": "source",
+          "name": "owned-90.mp4",
+          "sha256": "0165ff480e10f49924f3c12b47fb1145b6849f1b7e1139c70a8115b8c26ea3c4",
+          "size_bytes": 219545,
+          "mtime_ns": "1793828722779281396",
+          "duration": 12,
+          "has_audio": true,
+          "status": "estimated",
+          "estimate": {
+            "time_origin": "extracted-pcm-start",
+            "sha256": "4aefb198a7aec4ada006ab54cc26c37c59f5ddb31f74bea6822feb6580ead379",
+            "samples_analyzed": 265216,
+            "duration_seconds": 12.027936507936507,
+            "tempo_bpm": 89.10290948275862,
+            "beat_times_seconds": [
+              0.5340589569160997,
+              1.18421768707483,
+              1.8575963718820863,
+              2.5309750566893423,
+              3.1811337868480725,
+              3.8545124716553287,
+              4.527891156462585,
+              5.178049886621316,
+              5.851428571428571,
+              6.524807256235827,
+              7.198185941043084,
+              7.848344671201814,
+              8.52172335600907,
+              9.195102040816327,
+              9.845260770975056,
+              10.518639455782314,
+              11.19201814058957
+            ],
+            "library_version": "0.11.0",
+            "method": "librosa.beat.beat_track",
+            "scope": "audio-rhythm-only"
+          }
+        },
+        {
+          "asset_id": "9a0f983c2cbf47178742e5d05c95d379",
+          "role": "source",
+          "name": "owned-120.mp4",
+          "sha256": "49876645852714d173a848bc234bd602745c21d35f4e71b7d0038fff23a24114",
+          "size_bytes": 227488,
+          "mtime_ns": "1793828698595159246",
+          "duration": 12,
+          "has_audio": true,
+          "status": "estimated",
+          "estimate": {
+            "time_origin": "extracted-pcm-start",
+            "sha256": "ae62ad160f6c125a18bbf4706f130f282191ea06c48ba61c87d168c7561a5e52",
+            "samples_analyzed": 265216,
+            "duration_seconds": 12.027936507936507,
+            "tempo_bpm": 117.45383522727273,
+            "beat_times_seconds": [
+              1.0216780045351475,
+              1.509297052154195,
+              2.020136054421769,
+              2.5309750566893423,
+              3.01859410430839,
+              3.5294331065759637,
+              4.017052154195011,
+              4.527891156462585,
+              5.015510204081632,
+              5.526349206349207,
+              6.013968253968254,
+              6.524807256235827,
+              7.012426303854875,
+              7.523265306122449,
+              8.010884353741497,
+              8.52172335600907,
+              9.009342403628118,
+              9.520181405895691,
+              10.031020408163265,
+              10.518639455782314,
+              11.029478458049887
+            ],
+            "library_version": "0.11.0",
+            "method": "librosa.beat.beat_track",
+            "scope": "audio-rhythm-only"
+          }
+        },
+        {
+          "asset_id": "aed4578f93424d4b985ade13aa874126",
+          "role": "source",
+          "name": "owned-None.mp4",
+          "sha256": "d3600c22f1ca661af2124f1135fb8f4797f2dca94e8aeaaf6dde9c450991d056",
+          "size_bytes": 193064,
+          "mtime_ns": "1793828698783160195",
+          "duration": 12,
+          "has_audio": true,
+          "status": "no-beats",
+          "estimate": {
+            "time_origin": "extracted-pcm-start",
+            "sha256": "87cf6afd5897afde4c17ce362769272d788b7689601499fa3ce09ed2ff54f8c0",
+            "samples_analyzed": 265216,
+            "duration_seconds": 12.027936507936507,
+            "tempo_bpm": null,
+            "beat_times_seconds": [],
+            "library_version": "0.11.0",
+            "method": "librosa.beat.beat_track",
+            "scope": "audio-rhythm-only"
+          }
+        }
+      ],
+      "unavailable": [
+        "shot boundaries",
+        "pose/action inference",
+        "StyleDNA",
+        "EDL"
+      ]
+    }
+  },
+  "crashJob": "9db7e0f2348d",
+  "crashWorker": {
+    "pid": 56084,
+    "cmd": "/home/user/Cutting-Edge-Studio./backend/.venv/bin/python\u0000-m\u0000app.services.audio.worker\u0000/tmp/ce-r2b2-data/cache/rhythm-fuprmqv4/audio.wav\u0000/tmp/ce-r2b2-data/cache/rhythm-fuprmqv4/result.json\u0000"
+  }
+}
