@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Protocol
 
 from app.config import Settings
+from app.logging import get_logger
 from app.services.media.ffmpeg import (
     FFmpegBinaries,
     available_h264_encoder,
@@ -18,6 +19,8 @@ from app.services.media.ffmpeg import (
 )
 from app.services.media.probe import MediaInfo, parse_probe
 from app.services.media.runner import run_command
+
+LOG = get_logger(__name__)
 
 
 class Prober(Protocol):
@@ -59,11 +62,13 @@ class MediaService:
         """Ask FFmpeg which allowed H.264 encoder is present (NVENC first)."""
         try:
             binaries = self.binaries()
-        except Exception:
+        except Exception as error:
+            LOG.warning("media.encoder.probe_unavailable", reason=str(error))
             return None
         try:
             result = run_command([str(binaries.ffmpeg), "-hide_banner", "-encoders"], timeout=30)
-        except Exception:
+        except Exception as error:
+            LOG.warning("media.encoder.probe_failed", reason=str(error))
             return None
         return available_h264_encoder(parse_encoders(result.stdout))
 

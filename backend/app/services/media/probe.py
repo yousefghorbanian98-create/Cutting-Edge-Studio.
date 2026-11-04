@@ -7,6 +7,10 @@ from dataclasses import dataclass, field
 from fractions import Fraction
 from typing import Any
 
+from app.logging import get_logger
+
+LOG = get_logger(__name__)
+
 
 @dataclass(frozen=True)
 class MediaInfo:
@@ -44,6 +48,7 @@ def _parse_fraction(value: str | None) -> float:
     try:
         return float(Fraction(value))
     except (ValueError, ZeroDivisionError):
+        LOG.debug("probe.fraction.unparsable", value=value)
         return 0.0
 
 
@@ -54,12 +59,14 @@ def _rotation_of(stream: dict[str, Any]) -> int:
         try:
             return int(float(rotate))
         except (TypeError, ValueError):
+            LOG.warning("probe.rotation.unparsable", value=rotate)
             return 0
     for side_data in stream.get("side_data_list") or []:
         if "rotation" in side_data:
             try:
                 return abs(int(float(side_data["rotation"])))
             except (TypeError, ValueError):
+                LOG.warning("probe.rotation.unparsable", value=side_data["rotation"])
                 return 0
     return 0
 

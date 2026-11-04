@@ -8,6 +8,10 @@ from typing import Any
 import numpy as np
 from scipy import stats
 
+from app.logging import get_logger
+
+LOG = get_logger(__name__)
+
 
 def _as_array(values: list[float]) -> np.ndarray:
     return np.asarray(values, dtype=float) if values else np.asarray([], dtype=float)
@@ -122,6 +126,11 @@ def color_delta_e(generated: dict[str, float], reference: dict[str, float]) -> d
         left = _srgb_to_lab((generated["r"], generated["g"], generated["b"]))
         right = _srgb_to_lab((reference["r"], reference["g"], reference["b"]))
     except KeyError:
+        LOG.warning(
+            "stylematch.metrics.color_missing",
+            generated=sorted(generated),
+            reference=sorted(reference),
+        )
         return {"metric": "color_delta_e", "passed": False, "value": None, "note": "missing rgb"}
     delta = math.dist(left, right)
     return {

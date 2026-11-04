@@ -4,6 +4,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from app.logging import get_logger
+
+LOG = get_logger(__name__)
+
 
 @dataclass(frozen=True)
 class ProgressEvent:
@@ -20,6 +24,7 @@ def _to_float(value: str) -> float:
     try:
         return float(value)
     except (TypeError, ValueError):
+        LOG.debug("progress.value.unparsable", value=value)
         return 0.0
 
 

@@ -8,8 +8,11 @@ from hashlib import sha256
 from pathlib import Path
 from typing import Any
 
+from app.logging import get_logger
+
 #: Templates live in the user data dir, never inside the installer.
 TEMPLATE_DIR = "templates"
+LOG = get_logger(__name__)
 
 
 @dataclass(frozen=True)
@@ -62,6 +65,7 @@ def list_templates(root: Path) -> list[dict[str, Any]]:
         try:
             payload = json.loads(path.read_text(encoding="utf-8"))
         except json.JSONDecodeError:
+            LOG.warning("post.template.corrupt", file=path.name)
             continue
         items.append(
             {"id": path.stem, "name": payload.get("name", path.stem), "size": path.stat().st_size}

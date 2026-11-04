@@ -73,7 +73,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: trivy filesystem (HIGH/CRITICAL)
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           scan-type: fs
           severity: HIGH,CRITICAL
@@ -84,8 +84,15 @@ jobs:
     name: Installer — Windows NSIS build
     if: github.event_name == 'workflow_dispatch' || github.event_name == 'push'
     runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: repo
     steps:
+      # The repository name ends with a dot and Win32 strips trailing dots from folder
+      # names, so checkout lands in an explicit `repo/` directory instead.
       - uses: actions/checkout@v4
+        with:
+          path: repo
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -98,8 +105,8 @@ jobs:
         with:
           path: |
             ~/.cargo/registry
-            src-tauri/target
-          key: cargo-${{ hashFiles('src-tauri/Cargo.toml') }}
+            repo/src-tauri/target
+          key: cargo-${{ hashFiles('repo/src-tauri/Cargo.toml') }}
       - name: Build installer (light build, no pinned FFmpeg/models)
         shell: pwsh
         run: ./scripts/build-installer.ps1 -WithoutPinnedBinaries
@@ -108,5 +115,5 @@ jobs:
           name: CuttingEdgeV2-Setup
           if-no-files-found: error
           path: |
-            delivery/*.exe
-            delivery/*.sha256
+            repo/delivery/*.exe
+            repo/delivery/*.sha256
