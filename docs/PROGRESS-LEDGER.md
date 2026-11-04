@@ -15,7 +15,10 @@ Progress: **260 / 260 authored steps = 100 %** · **Release acceptance: BLOCKED*
 Recovery loop resumed by owner on 2026-11-04. See [RECOVERY-ROADMAP.md](RECOVERY-ROADMAP.md).
 R1 real import/source playback passed locally (18 browser checks). R1b save/reopen also passed
 locally (26 browser checks across a real backend restart; [report](RECOVERY-R1B-REPORT.md)).
-R2 real analysis, R3 rendering and Windows gates remain open. Competitor benchmark C1 is
+R2a real-media inspection passed locally (26 browser checks including a deliberate backend crash,
+199 backend tests / 94.59%, 154 frontend tests; [report](RECOVERY-R2A-REPORT.md), code `675478c`).
+This is decoding/probing/hashing only, not pretrained model analysis. Full R2, R3 rendering and
+Windows gates remain open. Competitor benchmark C1 is
 specified; actual CapCut/Filmora behavior is still unobserved.
 
 ## P0 — Foundation & Setup (week 1, 20 steps)

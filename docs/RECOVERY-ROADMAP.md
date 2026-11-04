@@ -14,6 +14,7 @@ A competitor benchmark is now part of the plan, but **does not block essential p
 |---|---|---|---|
 | R1 | Real project/media import and source playback | Browser-selected bytes reach local backend; ffprobe metadata + real DB asset IDs; source preview uses ID-based, range-capable media route; errors visible, no fake success | LOCAL PASS: 18/18 live browser checks, see R1 report |
 | R1b | Project/session reopening | Recover active project/media and preserve original display names; save/reopen timeline; no lost saved workspace on restart | LOCAL PASS: 26/26 real browser checks across an actual backend restart; see R1b report |
+| R2a | Real-media decode job foundation | Registered IDs; full decode/hash/probe; observed progress; cancel/errors; durable reports; restart/crash and project isolation | LOCAL PASS: 26/26 browser checks; diagnostic LGPL shared FFmpeg only, not Windows runtime acceptance |
 | R2 | Honest analysis orchestration | Explicit reference selection; actual pretrained/OSS analysis jobs and progress; missing models block with actionable errors; no synthetic labels presented as inference | OPEN |
 | R3 | Real edit preview/export | Actual EDL-to-render job, approved encoder probe, progress/cancel/error, playable output; no GPL encoder substitutions | OPEN |
 | C1 | Competitor benchmark specification | Identical authorized inputs/tasks, version/platform/license recorded, evidence taxonomy and scoring fixed before observing products | SPECIFIED; competitor observations still UNKNOWN |
@@ -23,7 +24,9 @@ A competitor benchmark is now part of the plan, but **does not block essential p
 | R5 | Differentiation and performance | Implement only prioritized gaps after working import→analysis→render; benchmark sports workflows and Persian subtitles | OPEN |
 | R6 | Release acceptance | Clean Windows install/uninstall; genuine model quality; NVENC/openh264 performance; fully offline run | BLOCKED by preceding gates |
 
-R1b evidence: [RECOVERY-R1B-REPORT.md](RECOVERY-R1B-REPORT.md), code `df8ccdc`; 168 backend tests (94.38% coverage), 143 frontend tests, 26/26 workspace checks and 18/18 R1 regression checks. Only acknowledged saved state is restart-safe; crash journaling, large-scale performance and Windows acceptance are not claimed. Next active gate is R2.
+R1b evidence: [RECOVERY-R1B-REPORT.md](RECOVERY-R1B-REPORT.md), code `df8ccdc`; 168 backend tests (94.38% coverage), 143 frontend tests, 26/26 workspace checks and 18/18 R1 regression checks. Only acknowledged saved state is restart-safe; crash journaling, large-scale performance and Windows acceptance are not claimed. R2a subsequently passed locally; full pretrained analysis gate R2 remains open.
+
+R2a evidence: [RECOVERY-R2A-REPORT.md](RECOVERY-R2A-REPORT.md), code `675478c`; 199 backend tests (94.59% coverage), 154 frontend tests, 26/26 real inspection checks and 18/18 import/playback regression. Actual SIGKILL/restart produced interrupted, not false success. Source-built diagnostic LGPL shared tools are NOT the approved BtbN Windows distribution. Tauri hook root-path repair is authored; new Windows execution is unaccepted. Next: genuine approved model adapters and artifacts (R2b).
 
 R1 source playback is **not** timeline-composited playback or rendered-preview acceptance. R2/R3 must not be marked complete because a wizard or button changes local state.
 

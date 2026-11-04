@@ -1,0 +1,7 @@
+675478c feat: run durable real-media decode inspections with observed progress
+fdcbc26 docs: record R1b restart recovery evidence and advance the recovery queue
+df8ccdc feat(workspace): save and reopen versioned local editing projects
+d03a50c docs: schedule REA competitor benchmark and record R1 recovery evidence
+8dfb977 feat(media): connect browser imports and source playback to real backend assets
+9122d6a test: audit local app with REA and browser evidence; document release blockers
+b93edd6 fix: harden media pipeline from local E2E findings and configure light runtime before cargo

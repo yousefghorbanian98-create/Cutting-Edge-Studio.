@@ -6,20 +6,21 @@
 ## A. Automated checks (local results and earlier CI evidence)
 
 - [x] Backend: `ruff check .` + `ruff format --check .`
-- [x] Backend: `pytest --cov=app` → 168 passed locally, coverage 94.38 %
+- [x] Backend: `pytest --cov=app` → 199 passed locally, coverage 94.59 %
 - [x] Backend: `pip-audit -r requirements.txt --strict` → no known vulnerabilities
-- [x] Frontend: `npm run lint`, `npm test` (143), `npm run build`
+- [x] Frontend: `npm run lint`, `npm test` (154), `npm run build`
 - [x] Frontend: `npm audit --audit-level=high` → 0 high/critical; 8 moderate dev-tool findings remain
-- [x] Security: gitleaks + trivy (CRITICAL) passed prior R1/docs CI run 41881964341; new R1b CI pending
+- [x] Security: gitleaks + trivy (CRITICAL) passed prior R1b push CI run 41891179779; new R2a CI is separate, not yet accepted
 - [x] Guardrails: `tests/test_hygiene.py` (offline, licences, E4)
-- [ ] Installer: verify a successful Windows NSIS build produces `CuttingEdgeV2-Setup-v1.0.0.exe` + `.sha256`
+- [ ] Installer: root-relative Tauri hooks repaired after ENOENT C:\frontend\package.json in 41891179779; verify a successful Windows NSIS build produces `CuttingEdgeV2-Setup-v1.0.0.exe` + `.sha256`
 
 ## A2. Integration acceptance (not cleared by unit tests)
 
 - [x] Browser media import creates backend assets with usable local paths (R1 local evidence)
 - [x] Source playback through registered asset IDs and HTTP ranges (not edit rendering)
 - [x] Project/media/timeline saved workspace reopens after actual backend restart (R1b Linux/browser, 26 checks; [report](RECOVERY-R1B-REPORT.md))
-- [ ] Wizard starts real analysis and shows backend progress/results
+- [x] R2a only: real-media full decode/hash/probe jobs, observed progress, cancellation, failure, restart/crash recovery and project isolation (26 local browser checks; [report](RECOVERY-R2A-REPORT.md)); diagnostic LGPL shared tools, not approved Windows runtime
+- [ ] Wizard starts genuine pretrained model analysis and shows backend progress/results
 - [ ] Preview/export controls invoke the approved renderer and play the result
 - [ ] Packaged Tauri has working sidecar API routing without Vite
 - [ ] Real model/beat/shot/color measurements replace synthetic analysis fixtures

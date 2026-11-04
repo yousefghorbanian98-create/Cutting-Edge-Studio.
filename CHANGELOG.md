@@ -3,6 +3,14 @@
 All notable changes to Cutting Edge v2. Format: [Keep a Changelog](https://keepachangelog.com/),
 versioning: [SemVer](https://semver.org/).
 
+## Recovery R2a — 2026-11-04
+
+- Added project-scoped real-media inspection jobs using registered IDs, SHA-256, ffprobe and full FFmpeg null decode, with observed progress, cancellation, durable terminal reports and explicit restart interruption.
+- Added honest decode-only UI results, missing-model notices, stale-input warnings and project-isolated polling; wizard navigation no longer implies completed analysis.
+- Fixed subprocess stderr deadlock/cancellation cleanup and bounded retained output; repaired Tauri frontend hook prefixes exposed by Windows check annotations.
+- Local verification: 199 backend tests (94.59%), 154 frontend tests, 26/26 actual inspection browser checks and 18/18 import/playback regression; see `docs/RECOVERY-R2A-REPORT.md`.
+- **Full R2/model inference, approved BtbN Windows runtime, export and installer acceptance remain OPEN/BLOCKED.** Diagnostic source-built LGPL shared tools are not bundled or a shipping acceptance claim.
+
 ## [1.0.0] — 2026-11-04
 
 ### Added

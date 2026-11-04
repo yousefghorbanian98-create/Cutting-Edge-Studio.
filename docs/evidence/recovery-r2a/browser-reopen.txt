@@ -1,0 +1,7 @@
+PASS Fresh browser has no last-project shadow document
+PASS Backend genuinely restarted with the same SQLite data 22948 -> 33709
+PASS Independent browser after backend restart recovers identical committed measurements
+PASS Missing input produces a stale report warning instead of a new analysis claim
+PASS An actual unfinished job is running before the deliberate crash
+PASS Test backend was deliberately killed without graceful job completion SIGKILL 33709
+PASS No browser page exceptions []

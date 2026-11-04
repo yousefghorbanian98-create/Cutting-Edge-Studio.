@@ -1,0 +1,15 @@
+PASS Eleven actual imported assets belong to one project
+PASS Local decode available but inference explicitly blocked
+PASS Real running job has observed intermediate progress and no premature report {"percent":4.484848636363636,"message":"Inspecting 1/11: مرجع.mp4"}
+PASS All eleven files fully decode with observed frames/time and independently matching SHA256 [{"name":"مرجع.mp4","frames":600,"seconds":20},{"name":"clip1.mp4","frames":180,"seconds":6},{"name":"clip2.mp4","frames":180,"seconds":6},{"name":"clip3.mp4","frames":180,"seconds":6},{"name":"clip4.mp4","frames":180,"seconds":6},{"name":"clip5.mp4","frames":180,"seconds":6},{"name":"clip6.mp4","frames":180,"seconds":6},{"name":"clip7.mp4","frames":180,"seconds":6},{"name":"clip8.mp4","frames":180,"seconds":6},{"name":"clip9.mp4","frames":180,"seconds":6},{"name":"clip10.mp4","frames":180,"seconds":6}]
+PASS Inspection stores no synthetic DNA or EDL
+PASS Browser reload restores committed report without starting a second job
+PASS Final model analysis and preview render remain blocked
+PASS Cancellation terminates a genuine job without a fabricated report
+PASS Real FFprobe failure is visible and never becomes success
+PASS Changed file invalidates the earlier measured report
+PASS Explicit retry succeeds only after actual decoding and persistence
+PASS A new project cannot inherit another project report or start with missing inputs
+PASS Cross-project inspection reads are rejected
+PASS Reopening the original project recovers its report, not the blank project
+PASS No browser page exceptions []
