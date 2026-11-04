@@ -67,7 +67,7 @@ CC-BY-SA (as code) · SSPL · BUSL · proprietary · non-commercial weights.
 | faster-whisper (base) | MIT | ASR for captions; weights pinned by SHA-256 |
 | Piper TTS + voices | MIT code / per-voice | Each voice license audited before bundling |
 | TransNet V2 | MIT | Shot boundary detection |
-| librosa 0.11.0 | ISC | Experimental standalone rhythm adapter tested in R2b1; not default runtime/job/UI. Notice in `LIBROSA-ISC.md`; native/transitive/Windows packaging review remains open. |
+| librosa 0.11.0 | ISC | Experimental rhythm adapter and isolated project-job/UI glue tested in R2b1/R2b2; default-disabled, not default runtime. Notice in `LIBROSA-ISC.md`; native/transitive/Windows packaging review remains open. |
 | color-matcher | BSD-3-Clause | Color transfer |
 | OpenCV | Apache-2.0 | Optical flow, HoughLines, Laplacian |
 | Konva.js | MIT | Telestration canvas |
@@ -137,3 +137,13 @@ shared libsoxr for these tests; the default prebuilt wheel was not assumed to me
 dynamic-only LGPL policy. No test native binaries/source archives are bundled. Audit each
 transitive licence, native component and Windows artifact before enabling distribution.
 See `docs/RECOVERY-R2B1-REPORT.md` and its linkage/provenance evidence.
+
+### R2b2 reuse and remaining distribution gate
+
+Existing FFmpeg PCM conversion, librosa beat tracking, psutil process identity/liveness,
+JobRegistry/Artifact/runner, FastAPI/Pydantic and the existing React/Radix/Zod panel are reused.
+No custom detector, training, imported n8n workflow or new scheduler is claimed.
+Alternatives and the exact integration boundary are recorded in `docs/RECOVERY-R2B2-REPORT.md`.
+No dependency was added to default requirements. The explicit experimental flag defaults false.
+Linux source-built diagnostic FFmpeg/SoXR and local browser checks do not certify Windows
+linkage/licences, packaged worker startup, model inference, musical quality or distribution.

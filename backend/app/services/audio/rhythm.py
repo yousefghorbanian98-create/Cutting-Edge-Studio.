@@ -102,8 +102,8 @@ def _measure(path: Path) -> RhythmMeasurement:
 def analyze_pcm_wav(path: Path) -> RhythmMeasurement:
     """Delegate rhythm estimation to librosa, with bounded PCM input and file provenance.
 
-    This synchronous adapter has no cancellation/deadline isolation yet; do not invoke
-    it on an API thread. Future job wiring must supply that boundary before exposure.
+    This synchronous library adapter must not run on an API thread. Experimental
+    project jobs invoke it through the cancellable/deadlined worker process.
     """
     try:
         result = _measure(path)

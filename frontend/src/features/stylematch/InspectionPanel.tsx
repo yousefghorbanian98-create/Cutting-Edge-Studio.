@@ -3,26 +3,31 @@ import { Button, ProgressBar } from '../../components/ui';
 import { api, ApiError } from '../../lib/api';
 import { translate } from '../../lib/i18n';
 import { useAppStore } from '../../store/useAppStore';
-import { inspectionCapabilitiesSchema, inspectionSchema, type InspectionCapabilities, type InspectionResponse } from './inspectionSchema';
+import { inspectionCapabilitiesSchema, inspectionSchema, type InspectionCapabilities, type InspectionResponse, type InspectionOperation } from './inspectionSchema';
 
 interface Props {
   projectId: string | null;
   referenceId: string | null;
   sourceIds: string[];
   blocked: boolean;
+  operation?: InspectionOperation;
 }
+const RHYTHM_KEYS=new Set(['title','scope','start','progress','results','none','state.queued','state.running','state.done','state.failed','state.cancelled','state.interrupted']);
 const active = (job: InspectionResponse | null) => job?.state === 'queued' || job?.state === 'running';
 
 /** Decode verification is intentionally NOT labelled model analysis/DNA completion. */
-export function InspectionPanel({projectId,referenceId,sourceIds,blocked}: Props) {
+export function InspectionPanel({projectId,referenceId,sourceIds,blocked,operation='decode'}: Props) {
   const language=useAppStore(state=>state.language);
-  const t=(key:string)=>translate(language,`inspection.${key}`);
+  const t=(key:string)=>translate(language,`${operation==='rhythm' && RHYTHM_KEYS.has(key)?'rhythm':'inspection'}.${key}`);
   const [capabilities,setCapabilities]=useState<InspectionCapabilities|null>(null);
   const [job,setJob]=useState<InspectionResponse|null>(null);
   const [error,setError]=useState<string|null>(null);
   const [loading,setLoading]=useState(false);
   const [refresh,setRefresh]=useState(0);
   const alive=useRef(true);
+  const context=useRef({projectId,operation});
+  context.current={projectId,operation};
+  const current=()=>alive.current && context.current.projectId===projectId && context.current.operation===operation;
   useEffect(()=>{alive.current=true;return()=>{alive.current=false;};},[]);
 
   useEffect(()=>{
@@ -31,8 +36,8 @@ export function InspectionPanel({projectId,referenceId,sourceIds,blocked}: Props
     setLoading(true);
     setError(null);
     void Promise.all([
-      api.inspectionCapabilities(projectId,controller.signal),
-      api.latestInspection(projectId,controller.signal).catch(error=>{
+      api.inspectionCapabilities(projectId,controller.signal,operation),
+      api.latestInspection(projectId,controller.signal,operation).catch(error=>{
         if(error instanceof ApiError && error.status===404){
           console.warn('inspection.no-saved-job',projectId);
           return null;
@@ -41,9 +46,11 @@ export function InspectionPanel({projectId,referenceId,sourceIds,blocked}: Props
       }),
     ]).then(([caps,latest])=>{
       if(controller.signal.aborted)return;
-      setCapabilities(inspectionCapabilitiesSchema.parse(caps));
+      const parsedCaps=inspectionCapabilitiesSchema.parse(caps);
+      if(parsedCaps.operation!==operation)throw new Error("Capabilities operation changed");
+      setCapabilities(parsedCaps);
       const parsed=latest?inspectionSchema.parse(latest):null;
-      if(parsed && parsed.project_id!==projectId)throw new Error('Inspection belongs to another project');
+      if(parsed && (parsed.project_id!==projectId || parsed.operation!==operation))throw new Error('Inspection belongs to another project or operation');
       setJob(parsed);
     }).catch(error=>{
       if(controller.signal.aborted)return;
@@ -51,16 +58,16 @@ export function InspectionPanel({projectId,referenceId,sourceIds,blocked}: Props
       setError(String(error));
     }).finally(()=>{if(!controller.signal.aborted)setLoading(false);});
     return()=>controller.abort();
-  },[projectId,refresh]);
+  },[projectId,refresh,operation]);
 
   useEffect(()=>{
     if(!projectId || !job || !active(job) || error || loading)return;
     const controller=new AbortController();
     const timer=setTimeout(()=>{
-      void api.getInspection(projectId,job.id,controller.signal).then(response=>{
+      void api.getInspection(projectId,job.id,controller.signal,operation).then(response=>{
         if(controller.signal.aborted)return;
         const parsed=inspectionSchema.parse(response);
-        if(parsed.project_id!==projectId || parsed.id!==job.id)throw new Error('Inspection identity changed');
+        if(parsed.project_id!==projectId || parsed.id!==job.id || parsed.operation!==operation)throw new Error('Inspection identity changed');
         setJob(parsed);
       }).catch(error=>{
         if(controller.signal.aborted)return;
@@ -69,31 +76,31 @@ export function InspectionPanel({projectId,referenceId,sourceIds,blocked}: Props
       });
     },500);
     return()=>{clearTimeout(timer);controller.abort();};
-  },[projectId,job,error,loading]);
+  },[projectId,job,error,loading,operation]);
 
   const start=async()=>{
     if(!projectId || !referenceId)return;
     setLoading(true);setError(null);
     try{
-      const response=inspectionSchema.parse(await api.startInspection(projectId,referenceId,sourceIds));
-      if(response.project_id!==projectId)throw new Error('Inspection belongs to another project');
-      if(alive.current)setJob(response);
+      const response=inspectionSchema.parse(await api.startInspection(projectId,referenceId,sourceIds,operation));
+      if(response.project_id!==projectId || response.operation!==operation)throw new Error('Inspection belongs to another project or operation');
+      if(current())setJob(response);
     }catch(error){
       console.error('inspection.start.failed',error);
-      if(alive.current)setError(String(error));
-    }finally{if(alive.current)setLoading(false);}
+      if(current())setError(String(error));
+    }finally{if(current())setLoading(false);}
   };
   const cancel=async()=>{
     if(!projectId || !job)return;
     setLoading(true);setError(null);
     try{
-      const response=inspectionSchema.parse(await api.cancelInspection(projectId,job.id));
-      if(response.project_id!==projectId || response.id!==job.id)throw new Error('Inspection identity changed');
-      if(alive.current)setJob(response);
+      const response=inspectionSchema.parse(await api.cancelInspection(projectId,job.id,operation));
+      if(response.project_id!==projectId || response.id!==job.id || response.operation!==operation)throw new Error('Inspection identity changed');
+      if(current())setJob(response);
     }catch(error){
       console.error('inspection.cancel.failed',error);
-      if(alive.current)setError(String(error));
-    }finally{if(alive.current)setLoading(false);}
+      if(current())setError(String(error));
+    }finally{if(current())setLoading(false);}
   };
   const stale=!!job && (job.stale || job.reference_asset_id!==referenceId || JSON.stringify([...job.source_asset_ids].sort())!==JSON.stringify([...sourceIds].sort()));
   const valid=!!projectId && !!referenceId && sourceIds.length>0 && sourceIds.length<=100 && !blocked;
@@ -116,7 +123,7 @@ export function InspectionPanel({projectId,referenceId,sourceIds,blocked}: Props
       {job.error?<p role="alert">{job.error}</p>:null}
       {stale?<p role="alert">{t('stale')}</p>:null}
       {job.state==='done' && job.report?<ul aria-label={t('results')} className="max-h-32 overflow-auto text-[10px]">
-        {job.report.files.map(file=><li key={file.asset_id}>{file.name} · {file.duration.toFixed(2)}s · {file.width}×{file.height} · {file.decoded_frames} {t('frames')} · {file.has_audio?t('audio'):t('noAudio')}</li>)}
+        {job.report.scope==='media-inspection-only' ? job.report.files.map(file=><li key={file.asset_id}>{file.name} · {file.duration.toFixed(2)}s · {file.width}×{file.height} · {file.decoded_frames} {t('frames')} · {file.has_audio?t('audio'):t('noAudio')}</li>) : job.report.files.map(file=><li key={file.asset_id}>{file.name} · {translate(language,`rhythm.result.${file.status}`)}{file.estimate && file.estimate.tempo_bpm!==null ? ` · ${file.estimate.tempo_bpm.toFixed(2)} BPM · ${file.estimate.beat_times_seconds.length} ${translate(language,'rhythm.beats')}` : ''}</li>)}
       </ul>:null}
     </div>:!loading?<p role="status">{t('none')}</p>:null}
     <p role="status" className="text-[var(--warning)]">{t('modelsBlocked')}</p>

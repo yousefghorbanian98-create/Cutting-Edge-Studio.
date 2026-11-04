@@ -1,4 +1,4 @@
-"""Real-media inspection orchestration, not fixture-driven Style Match analysis."""
+"""Project-scoped decode/rhythm jobs sharing one existing durable worker and API flow."""
 
 from __future__ import annotations
 
@@ -9,11 +9,12 @@ from app.api.assets import _to_read
 from app.deps import SessionDep, SettingsDep
 from app.logging import get_logger
 from app.models import MediaAsset, Project
-from app.schemas_inspection import InspectionRead, InspectionRequest
+from app.schemas_inspection import InspectionRead, InspectionRequest, Operation
+from app.schemas_media import AssetRead
+from app.services.audio.processor import rhythm_unavailable
 from app.services.media.ffmpeg import FFmpegNotFoundError, resolve_binaries
-from app.services.media.inspection import InspectionBusyError, InspectionService
+from app.services.media.inspection import InspectionBusyError
 
-router = APIRouter(prefix="/projects/{project_id}/inspection", tags=["media-inspection"])
 LOG = get_logger(__name__)
 
 
@@ -22,45 +23,7 @@ def _project(session: SessionDep, project_id: str) -> None:
         raise HTTPException(status_code=404, detail="Project not found")
 
 
-def _service(request: Request) -> InspectionService:
-    return request.app.state.inspection
-
-
-@router.get("/capabilities")
-def capabilities(project_id: str, session: SessionDep, settings: SettingsDep) -> dict[str, object]:
-    """Existence of local weights is not advertised as working inference."""
-    _project(session, project_id)
-    reason = None
-    try:
-        resolve_binaries(settings, allow_path_fallback=False)
-    except FFmpegNotFoundError as error:
-        LOG.warning("inspection.tools.unavailable", error=str(error))
-        reason = str(error)
-    return {
-        "inspection": {"available": reason is None, "reason": reason},
-        "model_analysis": {
-            "available": False,
-            "reason": (
-                "Verified pretrained weights and wired inference adapters are required. "
-                "Configure pinned local models on the build machine; "
-                "no runtime downloads are performed."
-            ),
-            "unavailable": ["beats", "shot boundaries", "pose/action inference", "StyleDNA", "EDL"],
-            "models_directory": str(settings.home_dir / "models"),
-        },
-    }
-
-
-@router.post("/jobs", response_model=InspectionRead, status_code=202)
-def start(
-    project_id: str,
-    payload: InspectionRequest,
-    request: Request,
-    session: SessionDep,
-    settings: SettingsDep,
-) -> InspectionRead:
-    """Resolve all inputs inside this project, then start one bounded decode worker."""
-    _project(session, project_id)
+def _assets(session: SessionDep, project_id: str, payload: InspectionRequest) -> list[AssetRead]:
     ids = [payload.reference_asset_id, *payload.source_asset_ids]
     if len(set(ids)) != len(ids):
         raise HTTPException(
@@ -81,50 +44,119 @@ def start(
         raise HTTPException(
             status_code=422, detail="Input media is unavailable or has no usable duration"
         )
+    return assets
+
+
+def _unavailable(settings: SettingsDep, operation: Operation) -> str | None:
     try:
         resolve_binaries(settings, allow_path_fallback=False)
-        return _service(request).start(session, project_id, payload, assets)
-    except InspectionBusyError as error:
-        LOG.warning("inspection.busy", project_id=project_id, error=str(error))
-        raise HTTPException(status_code=409, detail=str(error)) from error
-    except Exception as error:
-        LOG.error("inspection.start.unavailable", project_id=project_id, error=str(error))
-        raise HTTPException(
-            status_code=503, detail=f"Cannot start media inspection: {error}"
-        ) from error
+    except FFmpegNotFoundError as error:
+        LOG.warning("inspection.tools.unavailable", error=str(error))
+        return str(error)
+    return rhythm_unavailable(settings) if operation == "rhythm" else None
 
 
-@router.get("/latest", response_model=InspectionRead)
-def latest(project_id: str, request: Request, session: SessionDep) -> InspectionRead:
-    """Recover the latest accepted job/report after UI or backend restart."""
-    return get_job(project_id, None, request, session)
+def _require_tools(settings: SettingsDep, operation: Operation) -> None:
+    reason = _unavailable(settings, operation)
+    if reason is not None:
+        LOG.warning("inspection.operation.unavailable", operation=operation, reason=reason)
+        raise HTTPException(status_code=503, detail=reason)
 
 
-@router.get("/jobs/{job_id}", response_model=InspectionRead)
-def get_job(
-    project_id: str, job_id: str | None, request: Request, session: SessionDep
-) -> InspectionRead:
-    """Jobs cannot be read through another project's route."""
-    _project(session, project_id)
-    try:
-        return _service(request).read(session, project_id, job_id)
-    except FileNotFoundError as error:
-        LOG.warning("inspection.not_found", project_id=project_id, error=str(error))
-        raise HTTPException(status_code=404, detail=str(error)) from error
-    except Exception as error:
-        LOG.error("inspection.read.failed", project_id=project_id, error=str(error))
-        raise HTTPException(status_code=503, detail=f"Cannot read inspection: {error}") from error
+def _routes(operation: Operation) -> APIRouter:
+    """Reuse existing request/identity/error semantics, without a second job framework."""
+    path = {"decode": "inspection", "rhythm": "rhythm"}[operation]
+    routes = APIRouter(prefix=f"/projects/{{project_id}}/{path}", tags=[path])
+
+    @routes.get("/capabilities")
+    def capabilities(
+        project_id: str, session: SessionDep, settings: SettingsDep
+    ) -> dict[str, object]:
+        _project(session, project_id)
+        reason = _unavailable(settings, operation)
+        return {
+            "inspection": {"available": reason is None, "reason": reason},
+            "operation": operation,
+            "model_analysis": {
+                "available": False,
+                "reason": (
+                    "Verified pretrained weights and wired inference adapters are required. "
+                    "Configure pinned local models on the build machine; "
+                    "no runtime downloads are performed."
+                ),
+                "unavailable": ["shot boundaries", "pose/action inference", "StyleDNA", "EDL"],
+                "models_directory": str(settings.home_dir / "models"),
+            },
+        }
+
+    @routes.post("/jobs", response_model=InspectionRead, status_code=202)
+    def start(
+        project_id: str,
+        payload: InspectionRequest,
+        request: Request,
+        session: SessionDep,
+        settings: SettingsDep,
+    ) -> InspectionRead:
+        _project(session, project_id)
+        assets = _assets(session, project_id, payload)
+        _require_tools(settings, operation)
+        try:
+            return request.app.state.inspection.start(
+                session, project_id, payload, assets, operation=operation
+            )
+        except InspectionBusyError as error:
+            LOG.warning("inspection.busy", project_id=project_id, error=str(error))
+            raise HTTPException(status_code=409, detail=str(error)) from error
+        except Exception as error:
+            LOG.error("inspection.start.unavailable", project_id=project_id, error=str(error))
+            raise HTTPException(
+                status_code=503, detail=f"Cannot start {operation}: {error}"
+            ) from error
+
+    def read_job(
+        project_id: str, job_id: str | None, request: Request, session: SessionDep
+    ) -> InspectionRead:
+        _project(session, project_id)
+        try:
+            return request.app.state.inspection.read(
+                session, project_id, job_id, operation=operation
+            )
+        except FileNotFoundError as error:
+            LOG.warning("inspection.not_found", project_id=project_id, error=str(error))
+            raise HTTPException(status_code=404, detail=str(error)) from error
+        except Exception as error:
+            LOG.error("inspection.read.failed", project_id=project_id, error=str(error))
+            raise HTTPException(
+                status_code=503, detail=f"Cannot read measurements: {error}"
+            ) from error
+
+    routes.add_api_route("/jobs/{job_id}", read_job, methods=["GET"], response_model=InspectionRead)
+
+    @routes.get("/latest", response_model=InspectionRead)
+    def latest(project_id: str, request: Request, session: SessionDep) -> InspectionRead:
+        return read_job(project_id, None, request, session)
+
+    @routes.post("/jobs/{job_id}/cancel", response_model=InspectionRead)
+    def cancel(
+        project_id: str, job_id: str, request: Request, session: SessionDep
+    ) -> InspectionRead:
+        _project(session, project_id)
+        try:
+            return request.app.state.inspection.cancel(
+                session, project_id, job_id, operation=operation
+            )
+        except FileNotFoundError as error:
+            LOG.warning("inspection.cancel.not_found", project_id=project_id, error=str(error))
+            raise HTTPException(status_code=404, detail=str(error)) from error
+        except Exception as error:
+            LOG.error("inspection.cancel.failed", project_id=project_id, error=str(error))
+            raise HTTPException(
+                status_code=503, detail=f"Cannot cancel measurements: {error}"
+            ) from error
+
+    return routes
 
 
-@router.post("/jobs/{job_id}/cancel", response_model=InspectionRead)
-def cancel(project_id: str, job_id: str, request: Request, session: SessionDep) -> InspectionRead:
-    """Request cancellation; the worker stops the child before reporting cancelled."""
-    _project(session, project_id)
-    try:
-        return _service(request).cancel(session, project_id, job_id)
-    except FileNotFoundError as error:
-        LOG.warning("inspection.cancel.not_found", project_id=project_id, error=str(error))
-        raise HTTPException(status_code=404, detail=str(error)) from error
-    except Exception as error:
-        LOG.error("inspection.cancel.failed", project_id=project_id, error=str(error))
-        raise HTTPException(status_code=503, detail=f"Cannot cancel inspection: {error}") from error
+router = APIRouter()
+router.include_router(_routes("decode"))
+router.include_router(_routes("rhythm"))

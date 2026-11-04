@@ -1,14 +1,16 @@
-"""Real decode inspection using existing FFmpeg/progress/job/SQLite infrastructure.
+"""Local measurements using existing FFmpeg/progress/job/SQLite infrastructure.
 
 This is NOT the model-driven Style Match pipeline. No supplied labels, synthetic DNA,
-model downloads or encoders are used. Completed reports are stored in existing artifacts.
+model downloads or video encoders are used. Completed reports are stored in existing artifacts.
 """
 
 from __future__ import annotations
 
 import hashlib
 import threading
+import time
 from collections.abc import Callable
+from os import stat_result
 from pathlib import Path
 from typing import Protocol
 
@@ -23,8 +25,10 @@ from app.schemas_inspection import (
     InspectionRead,
     InspectionReport,
     InspectionRequest,
+    Operation,
 )
 from app.schemas_media import AssetRead
+from app.schemas_rhythm import RhythmFile, RhythmReport
 from app.services.media.ffmpeg import FFmpegBinaries, probe_command, resolve_binaries
 from app.services.media.jobs import Job, JobRegistry
 from app.services.media.probe import parse_probe
@@ -36,8 +40,38 @@ KIND = "media-inspection"
 ACTIVE = {"queued", "running"}
 
 
+def operation_kind(operation: Operation) -> str:
+    return KIND if operation == "decode" else "audio-rhythm"
+
+
+def hash_input(path: Path, cancel: threading.Event) -> str:
+    """Hash original bytes with cooperative cancellation/deadline checks between reads."""
+    digest = hashlib.sha256()
+    deadline = time.monotonic() + 60
+    with path.open("rb") as source:
+        while chunk := source.read(1024 * 1024):
+            if cancel.is_set():
+                raise CommandCancelledError("Media task cancelled")
+            if time.monotonic() > deadline:
+                raise TimeoutError("Media hashing exceeded its 60 second limit")
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def require_unchanged(path: Path, before: stat_result, name: str) -> stat_result:
+    """Reject changed input identity instead of attaching measurements to new bytes."""
+    after = path.stat()
+    if (before.st_size, before.st_mtime_ns, before.st_ctime_ns) != (
+        after.st_size,
+        after.st_mtime_ns,
+        after.st_ctime_ns,
+    ):
+        raise ValueError(f"Input changed during inspection: {name}; run again")
+    return after
+
+
 class InspectionBusyError(RuntimeError):
-    """Only one decode-inspection worker is allowed at a time."""
+    """Only one local measurement worker is allowed at a time."""
 
 
 class Inspector(Protocol):
@@ -45,7 +79,7 @@ class Inspector(Protocol):
 
     def inspect(
         self, asset: AssetRead, cancel: threading.Event, progress: Callable[[float], None]
-    ) -> InspectedFile:
+    ) -> InspectedFile | RhythmFile:
         """Measure the actual asset, or raise on cancellation/failure."""
 
 
@@ -92,12 +126,7 @@ class FFmpegInspector:
         binaries = resolve_binaries(self.settings, allow_path_fallback=False)
         path = Path(asset.path)
         before = path.stat()
-        digest = hashlib.sha256()
-        with path.open("rb") as source:
-            while chunk := source.read(1024 * 1024):
-                if cancel.is_set():
-                    raise CommandCancelledError("Media inspection cancelled")
-                digest.update(chunk)
+        digest = hash_input(path, cancel)
         info = parse_probe(
             run_command(probe_command(binaries, path), timeout=60, cancel_event=cancel).stdout
         )
@@ -116,20 +145,14 @@ class FFmpegInspector:
             on_progress=measured,
             total_seconds=info.duration,
         )
-        after = path.stat()
-        if (before.st_size, before.st_mtime_ns, before.st_ctime_ns) != (
-            after.st_size,
-            after.st_mtime_ns,
-            after.st_ctime_ns,
-        ):
-            raise ValueError(f"Input changed during inspection: {asset.name}; run again")
+        after = require_unchanged(path, before, asset.name)
         if info.video_codec and frames == 0:
             raise ValueError(f"No video frames decoded: {asset.name}")
         return InspectedFile(
             asset_id=asset.id,
             role=asset.role,
             name=asset.name,
-            sha256=digest.hexdigest(),
+            sha256=digest,
             size_bytes=after.st_size,
             mtime_ns=str(after.st_mtime_ns),
             duration=info.duration,
@@ -148,15 +171,26 @@ class InspectionService:
     """One bounded worker, existing JobRegistry live progress, existing Artifact durability."""
 
     def __init__(
-        self, factory: sessionmaker[Session], jobs: JobRegistry, inspector: Inspector
+        self,
+        factory: sessionmaker[Session],
+        jobs: JobRegistry,
+        inspector: Inspector,
+        rhythm_inspector: Inspector | None = None,
     ) -> None:
         self.factory, self.jobs, self.inspector = factory, jobs, inspector
+        self.rhythm_inspector = rhythm_inspector
         self.lock = threading.Lock()
         self.active: Job | None = None
         self.worker: threading.Thread | None = None
 
     def start(
-        self, session: Session, project_id: str, payload: InspectionRequest, assets: list[AssetRead]
+        self,
+        session: Session,
+        project_id: str,
+        payload: InspectionRequest,
+        assets: list[AssetRead],
+        *,
+        operation: Operation = "decode",
     ) -> InspectionRead:
         """Commit the accepted job before starting any work; never queue unlimited decodes."""
         with self.lock:
@@ -164,8 +198,10 @@ class InspectionService:
                 raise InspectionBusyError(
                     "A media inspection is already running; wait or cancel it first"
                 )
-            job = self.jobs.create(KIND, project_id=project_id)
+            kind = operation_kind(operation)
+            job = self.jobs.create(kind, project_id=project_id)
             initial = InspectionRead(
+                operation=operation,
                 id=job.id,
                 project_id=project_id,
                 reference_asset_id=payload.reference_asset_id,
@@ -178,9 +214,9 @@ class InspectionService:
                     Artifact(
                         id=job.id,
                         project_id=project_id,
-                        kind=KIND,
+                        kind=kind,
                         revision=session.query(Artifact)
-                        .filter_by(project_id=project_id, kind=KIND)
+                        .filter_by(project_id=project_id, kind=kind)
                         .count()
                         + 1,
                         payload_json=initial.model_dump_json(),
@@ -218,13 +254,13 @@ class InspectionService:
         initial: InspectionRead,
         state: str,
         error: str | None = None,
-        report: InspectionReport | None = None,
+        report: InspectionReport | RhythmReport | None = None,
     ) -> None:
         result = initial.model_copy(
             update={
                 "state": state,
                 "percent": 100 if state == "done" else job.percent,
-                "message": "Decode inspection finished; model analysis not performed"
+                "message": "Measurements saved; model analysis not performed"
                 if state == "done"
                 else state,
                 "error": error,
@@ -246,6 +282,12 @@ class InspectionService:
                 job.id, state=state, percent=result.percent, error=error, message=result.message
             )
 
+    def _inspector(self, operation: Operation) -> Inspector:
+        inspector = self.inspector if operation == "decode" else self.rhythm_inspector
+        if inspector is None:
+            raise RuntimeError("Rhythm processor is not configured")
+        return inspector
+
     def _run(self, job: Job, initial: InspectionRead, assets: list[AssetRead]) -> None:
         try:
             self.jobs.update(job.id, state="running", message="Hashing and probing input files")
@@ -261,9 +303,14 @@ class InspectionService:
                         job.id, percent=min(99, 100 * (index + percent / 100) / len(assets))
                     )
 
-                files.append(self.inspector.inspect(asset, job.cancel_event, progress))
+                inspector = self._inspector(initial.operation)
+                files.append(inspector.inspect(asset, job.cancel_event, progress))
                 self.jobs.update(job.id, percent=min(99, 100 * (index + 1) / len(assets)))
-            report = InspectionReport(files=files)
+            report = (
+                InspectionReport(files=files)
+                if initial.operation == "decode"
+                else RhythmReport(files=files)
+            )
             with self.lock:
                 _check_cancel(job)
                 with self.factory() as session:
@@ -276,11 +323,11 @@ class InspectionService:
             LOG.error("inspection.failed", job_id=job.id, error=str(error))
             self._finish(job, initial, "failed", error=str(error))
 
-    def _validate_report(self, session: Session, report: InspectionReport) -> None:
+    def _validate_report(self, session: Session, report: InspectionReport | RhythmReport) -> None:
         if self._stale(session, report):
             raise ValueError("Inspection inputs changed or were deleted; run again")
 
-    def _stale(self, session: Session, report: InspectionReport) -> bool:
+    def _stale(self, session: Session, report: InspectionReport | RhythmReport) -> bool:
         rows = {
             row.id: row
             for row in session.scalars(
@@ -305,10 +352,19 @@ class InspectionService:
                 return True
         return False
 
-    def read(self, session: Session, project_id: str, job_id: str | None = None) -> InspectionRead:
+    def read(
+        self,
+        session: Session,
+        project_id: str,
+        job_id: str | None = None,
+        *,
+        operation: Operation = "decode",
+    ) -> InspectionRead:
         """Recover terminal reports, and explicitly mark jobs interrupted by backend restart."""
         with self.lock:
-            query = select(Artifact).where(Artifact.project_id == project_id, Artifact.kind == KIND)
+            query = select(Artifact).where(
+                Artifact.project_id == project_id, Artifact.kind == operation_kind(operation)
+            )
             query = (
                 query.where(Artifact.id == job_id)
                 if job_id
@@ -318,6 +374,10 @@ class InspectionService:
             if row is None:
                 raise FileNotFoundError("No media inspection found for this project")
             record = InspectionRead.model_validate_json(row.payload_json)
+            if (record.id, record.project_id, record.operation) != (row.id, project_id, operation):
+                raise ValueError(
+                    "Stored measurement identity or operation does not match its artifact"
+                )
             live = self.jobs.get(record.id)
             if live is not None:
                 record = record.model_copy(
@@ -343,9 +403,11 @@ class InspectionService:
                 record.stale = self._stale(session, record.report)
             return record
 
-    def cancel(self, session: Session, project_id: str, job_id: str) -> InspectionRead:
+    def cancel(
+        self, session: Session, project_id: str, job_id: str, *, operation: Operation = "decode"
+    ) -> InspectionRead:
         """Request cancellation without fabricating terminal success."""
-        record = self.read(session, project_id, job_id)
+        record = self.read(session, project_id, job_id, operation=operation)
         with self.lock:
             job = self.jobs.get(job_id)
             if job is not None and job.state in ACTIVE:

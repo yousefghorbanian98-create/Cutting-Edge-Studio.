@@ -6,6 +6,10 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from app.schemas_rhythm import RhythmReport
+
+Operation = Literal["decode", "rhythm"]
+
 AssetId = Annotated[str, Field(pattern=r"^[a-f0-9]{32}$")]
 
 
@@ -60,6 +64,7 @@ class InspectionReport(BaseModel):
 class InspectionRead(BaseModel):
     """Durable job identity and terminal result, with live observed progress."""
 
+    operation: Operation = "decode"
     id: str
     project_id: str
     reference_asset_id: str
@@ -69,11 +74,17 @@ class InspectionRead(BaseModel):
     message: str = ""
     error: str | None = None
     stale: bool = False
-    report: InspectionReport | None = None
+    report: Annotated[InspectionReport | RhythmReport, Field(discriminator="scope")] | None = None
 
     @model_validator(mode="after")
     def completed_report_required(self) -> InspectionRead:
         """Reject success-shaped records without measured, committed report data."""
         if self.state == "done" and (self.report is None or self.percent != 100):
             raise ValueError("Completed inspection has no measured report")
+        if self.report is not None:
+            expected = (
+                "media-inspection-only" if self.operation == "decode" else "audio-rhythm-only"
+            )
+            if self.report.scope != expected:
+                raise ValueError("Report scope disagrees with job operation")
         return self

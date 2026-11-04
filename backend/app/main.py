@@ -23,6 +23,7 @@ from app.api import (
 from app.config import ALLOWED_ORIGINS, API_PREFIX, Settings, get_settings
 from app.db import create_db_engine, create_session_factory, init_db
 from app.logging import configure_logging, get_logger
+from app.services.audio.processor import FFmpegRhythmInspector
 from app.services.media.inspection import FFmpegInspector, InspectionService
 from app.services.media.jobs import JobRegistry
 from app.services.media.service import MediaService, Prober
@@ -46,7 +47,10 @@ def create_app(settings: Settings | None = None, prober: Prober | None = None) -
         app.state.engine = engine
         app.state.session_factory = create_session_factory(engine)
         app.state.inspection = InspectionService(
-            app.state.session_factory, app.state.jobs, FFmpegInspector(resolved)
+            app.state.session_factory,
+            app.state.jobs,
+            FFmpegInspector(resolved),
+            rhythm_inspector=FFmpegRhythmInspector(resolved),
         )
         LOG.info(
             "backend.startup",

@@ -1,4 +1,4 @@
-import type { InspectionResponse, InspectionCapabilities } from '../features/stylematch/inspectionSchema';
+import type { InspectionResponse, InspectionCapabilities, InspectionOperation } from '../features/stylematch/inspectionSchema';
 import type { WorkspaceResponse, WorkspaceSnapshot } from '../features/workspace/schema';
 
 /** Typed client for the local FastAPI sidecar. Relative URLs only: no host. */
@@ -70,12 +70,13 @@ export function assetContentUrl(id: string): string {
   return `${BASE}/assets/${encodeURIComponent(id)}/content`;
 }
 
+const measurementPath = (operation:InspectionOperation) => operation === 'rhythm' ? 'rhythm' : 'inspection';
 export const api = {
-  inspectionCapabilities: (id:string, signal?:AbortSignal) => request<InspectionCapabilities>(`/projects/${encodeURIComponent(id)}/inspection/capabilities`,{signal}),
-  latestInspection: (id:string, signal?:AbortSignal) => request<InspectionResponse>(`/projects/${encodeURIComponent(id)}/inspection/latest`,{signal}),
-  getInspection: (id:string, job:string, signal?:AbortSignal) => request<InspectionResponse>(`/projects/${encodeURIComponent(id)}/inspection/jobs/${encodeURIComponent(job)}`,{signal}),
-  startInspection: (id:string, reference_asset_id:string, source_asset_ids:string[]) => request<InspectionResponse>(`/projects/${encodeURIComponent(id)}/inspection/jobs`,{method:'POST',body:JSON.stringify({reference_asset_id,source_asset_ids})}),
-  cancelInspection: (id:string,job:string) => request<InspectionResponse>(`/projects/${encodeURIComponent(id)}/inspection/jobs/${encodeURIComponent(job)}/cancel`,{method:'POST'}),
+  inspectionCapabilities: (id:string, signal?:AbortSignal, operation:InspectionOperation="decode") => request<InspectionCapabilities>(`/projects/${encodeURIComponent(id)}/${measurementPath(operation)}/capabilities`,{signal}),
+  latestInspection: (id:string, signal?:AbortSignal, operation:InspectionOperation="decode") => request<InspectionResponse>(`/projects/${encodeURIComponent(id)}/${measurementPath(operation)}/latest`,{signal}),
+  getInspection: (id:string, job:string, signal?:AbortSignal, operation:InspectionOperation="decode") => request<InspectionResponse>(`/projects/${encodeURIComponent(id)}/${measurementPath(operation)}/jobs/${encodeURIComponent(job)}`,{signal}),
+  startInspection: (id:string, reference_asset_id:string, source_asset_ids:string[], operation:InspectionOperation="decode") => request<InspectionResponse>(`/projects/${encodeURIComponent(id)}/${measurementPath(operation)}/jobs`,{method:'POST',body:JSON.stringify({reference_asset_id,source_asset_ids})}),
+  cancelInspection: (id:string,job:string, operation:InspectionOperation="decode") => request<InspectionResponse>(`/projects/${encodeURIComponent(id)}/${measurementPath(operation)}/jobs/${encodeURIComponent(job)}/cancel`,{method:'POST'}),
   health: () => request<HealthResponse>('/health'),
   listProjects: () => request<ProjectResponse[]>('/projects'),
   listAssets: (id: string) => request<AssetResponse[]>(`/projects/${encodeURIComponent(id)}/assets`),

@@ -73,6 +73,8 @@ class Settings(BaseSettings):
     inference_threads: int | None = None
     #: Hard requirement: runtime stays offline. Guarded by tests.
     offline: bool = True
+    # Experimental local-build gate; optional/native distribution audit is separate.
+    audio_rhythm_enabled: bool = False
 
     @property
     def db_path(self) -> Path:

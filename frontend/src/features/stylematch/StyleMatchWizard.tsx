@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ShieldCheck } from 'lucide-react';
 import { Badge, Button, ProgressBar, Stepper, type Step } from '../../components/ui';
 import { translate } from '../../lib/i18n';
 import { useAppStore } from '../../store/useAppStore';
 import { useWorkspaceStore } from '../workspace/workspaceStore';
+import type { InspectionOperation } from './inspectionSchema';
 import { InspectionPanel } from './InspectionPanel';
 import { useMediaStore } from '../media/mediaStore';
 import { useWizardStore, WIZARD_STEPS, canAdvance } from './wizardStore';
@@ -12,6 +14,7 @@ const STEP_LABEL_KEYS = ['wizard.step.1', 'wizard.step.2', 'wizard.step.3', 'wiz
 
 /** Style Match wizard (LOCK-01: the default flow of the app). */
 export function StyleMatchWizard() {
+  const [operation,setOperation]=useState<InspectionOperation>('decode');
   const language = useAppStore((state) => state.language);
   const clips = useMediaStore((state) => state.clips);
   const projectId=useMediaStore(state=>state.projectId);
@@ -70,10 +73,14 @@ export function StyleMatchWizard() {
           <p>{steps[stepIndex]?.label}</p>
         )}
 
-        {stepIndex === 2 ? <InspectionPanel key={projectId ?? 'empty'} projectId={projectId}
+        {stepIndex === 2 ? <>
+          <div className="my-2 flex flex-wrap gap-1" aria-label={translate(language,'inspection.mode')}>
+            {(['decode','rhythm'] as const).map(mode=><Button key={mode} size="sm" variant={operation===mode?'primary':'ghost'} aria-pressed={operation===mode} onClick={()=>setOperation(mode)}>{translate(language,`inspection.mode.${mode}`)}</Button>)}
+          </div>
+          <InspectionPanel key={`${projectId ?? 'empty'}:${operation}`} projectId={projectId} operation={operation}
           referenceId={clips.find(c=>c.role==='reference' && c.path===referencePath)?.assetId ?? null}
           sourceIds={clips.filter(c=>c.role==='source' && c.assetId).map(c=>c.assetId!)}
-          blocked={importing || navigating || clips.some(c=>(c.role==='source' || c.path===referencePath) && c.available===false)} />:null}
+          blocked={importing || navigating || clips.some(c=>(c.role==='source' || c.path===referencePath) && c.available===false)} /></>:null}
         {stepIndex === 0 ? (
           <div className="mt-3 space-y-1">
             <p className="text-[10px] uppercase tracking-wide text-[var(--text-secondary)]">

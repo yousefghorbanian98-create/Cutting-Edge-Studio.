@@ -48,6 +48,7 @@ def run_command(
     total_seconds: float | None = None,
     cwd: Path | None = None,
     cancel_event: threading.Event | None = None,
+    env: dict[str, str] | None = None,
 ) -> CommandResult:
     """Run a command without a shell, streaming ``-progress`` blocks to ``on_progress``."""
     LOG.info("media.command.start", argv=[str(part) for part in args])
@@ -65,6 +66,7 @@ def run_command(
             encoding="utf-8",
             errors="replace",
             cwd=str(cwd) if cwd else None,
+            env=env,
         )
         timed_out = threading.Event()
         stopped = threading.Event()

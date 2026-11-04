@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 import argparse
+import sys
 
 import uvicorn
 
 from app.config import get_settings
-from app.main import create_app
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -24,7 +24,15 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
 def main(argv: list[str] | None = None) -> None:
     """Run the backend on loopback only (never exposed to the LAN)."""
-    args = parse_args(argv)
+    arguments = sys.argv[1:] if argv is None else argv
+    if arguments and arguments[0] == "--audio-rhythm-worker":
+        from app.services.audio.worker import worker_main
+
+        worker_main(arguments[1:])
+        return
+    from app.main import create_app
+
+    args = parse_args(arguments)
     if args.host not in {"127.0.0.1", "localhost", "::1"}:
         msg = f"refusing to bind {args.host}: the sidecar is loopback-only (LOCK-05)"
         raise SystemExit(msg)

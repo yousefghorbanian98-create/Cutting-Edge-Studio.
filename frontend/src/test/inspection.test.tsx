@@ -45,7 +45,7 @@ describe('media inspection panel — fixtures only, no inferred sports/DNA claim
   });
   it('submits registered IDs and displays only observed server progress and measured results',async()=>{
     render(<InspectionPanel {...props}/>);await flush();await start();
-    expect(calls.start).toHaveBeenCalledWith('project-fixture','reference-fixture',['source-fixture']);
+    expect(calls.start).toHaveBeenCalledWith('project-fixture','reference-fixture',['source-fixture'],'decode');
     expect(screen.getByText('Inspection queued')).toBeInTheDocument();
     expect(screen.queryByText(/Measured fixture.mp4/)).not.toBeInTheDocument();
     await tick();
@@ -64,7 +64,7 @@ describe('media inspection panel — fixtures only, no inferred sports/DNA claim
     calls.latest.mockResolvedValue(running);
     render(<InspectionPanel {...props}/>);await flush();
     fireEvent.click(screen.getByRole('button',{name:'Cancel inspection'}));await flush();
-    expect(calls.cancel).toHaveBeenCalledWith('project-fixture','job-fixture');
+    expect(calls.cancel).toHaveBeenCalledWith('project-fixture','job-fixture','decode');
     expect(screen.getByText('Inspecting actual media')).toBeInTheDocument();
     calls.job.mockResolvedValue({...running,state:'cancelled',message:'cancelled'});await tick();
     expect(screen.getByText('Inspection cancelled')).toBeInTheDocument();
@@ -117,7 +117,7 @@ describe('media inspection panel — fixtures only, no inferred sports/DNA claim
     await act(async()=>{resolveOld(done);});
     expect(screen.queryByText(/Measured fixture.mp4/)).not.toBeInTheDocument();
     calls.start.mockResolvedValue({...queued,project_id:'project-new'});
-    await start();expect(calls.start).toHaveBeenCalledWith('project-new','reference-fixture',['source-fixture']);
+    await start();expect(calls.start).toHaveBeenCalledWith('project-new','reference-fixture',['source-fixture'],'decode');
   });
   it('ignores an old start response after leaving the project',async()=>{
     let resolveOld: (value:unknown)=>void=()=>{};
@@ -134,5 +134,55 @@ describe('media inspection panel — fixtures only, no inferred sports/DNA claim
     expect(screen.queryByText('Media decode verified — model analysis not performed')).not.toBeInTheDocument();
     expect(inspectionSchema.safeParse({...done,percent:20}).success).toBe(false);
     expect(inspectionSchema.safeParse({...done,report:{...done.report,scope:'style-dna'}}).success).toBe(false);
+  });
+});
+
+const pcmFixture={sha256:'b'.repeat(64),samples_analyzed:44100,duration_seconds:2,tempo_bpm:120,beat_times_seconds:[0.5,1,1.5],library_version:'0.11.0',method:'librosa.beat.beat_track',scope:'audio-rhythm-only'};
+const rhythmDone={...done,operation:'rhythm',report:{version:1,scope:'audio-rhythm-only',method:'ffmpeg-pcm+librosa.beat.beat_track',unavailable:['StyleDNA'],files:[
+  {...done.report.files[0],name:'Click fixture.mp4',has_audio:true,status:'estimated',estimate:pcmFixture},
+  {...done.report.files[0],asset_id:'silent',name:'Silent fixture.mp4',has_audio:true,status:'no-beats',estimate:{...pcmFixture,tempo_bpm:null,beat_times_seconds:[]}},
+  {...done.report.files[0],asset_id:'no-audio',name:'No audio fixture.mp4',status:'no-audio',estimate:null},
+]}};
+
+describe('audio rhythm panel — injected boundary fixtures, not real analysis acceptance',()=>{
+  beforeEach(()=>{calls.capabilities.mockResolvedValue({...capabilities,operation:'rhythm'});});
+  it('renders estimated, silent and missing-stream outcomes without inventing BPM',async()=>{
+    calls.latest.mockResolvedValue(rhythmDone);
+    render(<InspectionPanel {...props} operation="rhythm"/>);await flush();
+    expect(screen.getByText(/First audio stream only, using librosa/)).toBeInTheDocument();
+    expect(screen.getByText(/Click fixture.mp4.*120.00 BPM.*3 estimated beats/)).toBeInTheDocument();
+    expect(screen.getByText(/Silent fixture.mp4.*no beats detected/)).toBeInTheDocument();
+    expect(screen.getByText(/No audio fixture.mp4.*rhythm not computed/)).toBeInTheDocument();
+    expect(screen.getByText(/Silent fixture.mp4/)).not.toHaveTextContent('BPM');
+    expect(screen.getByText('Audio report saved — model analysis not performed')).toBeInTheDocument();
+  });
+  it('submits audio operation and holds observed stage progress without timers inventing completion',async()=>{
+    calls.start.mockResolvedValue({...queued,operation:'rhythm'});
+    calls.job.mockResolvedValue({...running,operation:'rhythm',percent:50,message:'Library stage'});
+    render(<InspectionPanel {...props} operation="rhythm"/>);await flush();
+    fireEvent.click(screen.getByRole('button',{name:'Measure audio rhythm'}));await flush();await tick();
+    expect(calls.start).toHaveBeenCalledWith('project-fixture','reference-fixture',['source-fixture'],'rhythm');
+    await tick();await tick();
+    expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuenow','50');
+    expect(screen.queryByText(/Audio report saved/)).not.toBeInTheDocument();
+  });
+  it('blocks disabled experimental dependencies with the server reason',async()=>{
+    calls.capabilities.mockResolvedValue({...capabilities,operation:'rhythm',inspection:{available:false,reason:'Experimental build disabled; no runtime downloads'}});
+    render(<InspectionPanel {...props} operation="rhythm"/>);await flush();
+    expect(screen.getByRole('button',{name:'Measure audio rhythm'})).toBeDisabled();
+    expect(screen.getByRole('alert')).toHaveTextContent('Experimental build disabled');
+  });
+  it('rejects a decode response on the audio route rather than mislabelling it',async()=>{
+    calls.latest.mockResolvedValue(done);
+    render(<InspectionPanel {...props} operation="rhythm"/>);await flush();
+    expect(screen.getByRole('alert')).toHaveTextContent('another project');
+    expect(screen.queryByText(/Audio report saved/)).not.toBeInTheDocument();
+  });
+  it.each([
+    {...rhythmDone,operation:'decode'},
+    {...rhythmDone,report:{...rhythmDone.report,files:[{...rhythmDone.report.files[0],status:'no-audio'}]}},
+    {...rhythmDone,report:{...rhythmDone.report,files:[{...rhythmDone.report.files[0],estimate:{...pcmFixture,beat_times_seconds:[1,.5]}}]}},
+  ])('rejects inconsistent audio success records',record=>{
+    expect(inspectionSchema.safeParse(record).success).toBe(false);
   });
 });
