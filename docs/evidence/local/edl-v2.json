@@ -1,0 +1,353 @@
+{
+  "version": "1.1",
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "total_duration": 30.0,
+  "segments": [
+    {
+      "source": "/tmp/ce-media/clips/clip1.mp4",
+      "in_point": 0.8,
+      "out_point": 1.8,
+      "timeline_start": 0.0,
+      "duration": 1.0,
+      "shot_type": "closeup",
+      "speed": 1.0,
+      "transition_in": "cut",
+      "transition_duration": 0.0
+    },
+    {
+      "source": "/tmp/ce-media/clips/clip10.mp4",
+      "in_point": 0.8,
+      "out_point": 1.8,
+      "timeline_start": 1.0,
+      "duration": 1.0,
+      "shot_type": "closeup",
+      "speed": 1.0,
+      "transition_in": "cut",
+      "transition_duration": 0.0
+    },
+    {
+      "source": "/tmp/ce-media/clips/clip2.mp4",
+      "in_point": 0.8,
+      "out_point": 1.8,
+      "timeline_start": 2.0,
+      "duration": 1.0,
+      "shot_type": "closeup",
+      "speed": 1.0,
+      "transition_in": "cut",
+      "transition_duration": 0.0
+    },
+    {
+      "source": "/tmp/ce-media/clips/clip3.mp4",
+      "in_point": 0.8,
+      "out_point": 1.8,
+      "timeline_start": 3.0,
+      "duration": 1.0,
+      "shot_type": "closeup",
+      "speed": 1.0,
+      "transition_in": "cut",
+      "transition_duration": 0.0
+    },
+    {
+      "source": "/tmp/ce-media/clips/clip4.mp4",
+      "in_point": 0.8,
+      "out_point": 1.8,
+      "timeline_start": 4.0,
+      "duration": 1.0,
+      "shot_type": "closeup",
+      "speed": 1.0,
+      "transition_in": "cut",
+      "transition_duration": 0.0
+    },
+    {
+      "source": "/tmp/ce-media/clips/clip5.mp4",
+      "in_point": 0.8,
+      "out_point": 1.8,
+      "timeline_start": 5.0,
+      "duration": 1.0,
+      "shot_type": "closeup",
+      "speed": 1.0,
+      "transition_in": "cut",
+      "transition_duration": 0.0
+    },
+    {
+      "source": "/tmp/ce-media/clips/clip6.mp4",
+      "in_point": 0.8,
+      "out_point": 1.8,
+      "timeline_start": 6.0,
+      "duration": 1.0,
+      "shot_type": "closeup",
+      "speed": 1.0,
+      "transition_in": "cut",
+      "transition_duration": 0.0
+    },
+    {
+      "source": "/tmp/ce-media/clips/clip7.mp4",
+      "in_point": 0.8,
+      "out_point": 1.8,
+      "timeline_start": 7.0,
+      "duration": 1.0,
+      "shot_type": "closeup",
+      "speed": 1.0,
+      "transition_in": "cut",
+      "transition_duration": 0.0
+    },
+    {
+      "source": "/tmp/ce-media/clips/clip8.mp4",
+      "in_point": 0.8,
+      "out_point": 1.8,
+      "timeline_start": 8.0,
+      "duration": 1.0,
+      "shot_type": "closeup",
+      "speed": 1.0,
+      "transition_in": "cut",
+      "transition_duration": 0.0
+    },
+    {
+      "source": "/tmp/ce-media/clips/clip9.mp4",
+      "in_point": 0.8,
+      "out_point": 1.8,
+      "timeline_start": 9.0,
+      "duration": 1.0,
+      "shot_type": "closeup",
+      "speed": 1.0,
+      "transition_in": "cut",
+      "transition_duration": 0.0
+    },
+    {
+      "source": "/tmp/ce-media/clips/clip1.mp4",
+      "in_point": 4.0,
+      "out_point": 5.0,
+      "timeline_start": 10.0,
+      "duration": 1.0,
+      "shot_type": "detail",
+      "speed": 1.0,
+      "transition_in": "cut",
+      "transition_duration": 0.0
+    },
+    {
+      "source": "/tmp/ce-media/clips/clip10.mp4",
+      "in_point": 4.0,
+      "out_point": 5.0,
+      "timeline_start": 11.0,
+      "duration": 1.0,
+      "shot_type": "detail",
+      "speed": 1.0,
+      "transition_in": "cut",
+      "transition_duration": 0.0
+    },
+    {
+      "source": "/tmp/ce-media/clips/clip2.mp4",
+      "in_point": 4.0,
+      "out_point": 5.0,
+      "timeline_start": 12.0,
+      "duration": 1.0,
+      "shot_type": "detail",
+      "speed": 1.0,
+      "transition_in": "cut",
+      "transition_duration": 0.0
+    },
+    {
+      "source": "/tmp/ce-media/clips/clip3.mp4",
+      "in_point": 4.0,
+      "out_point": 5.0,
+      "timeline_start": 13.0,
+      "duration": 1.0,
+      "shot_type": "detail",
+      "speed": 1.0,
+      "transition_in": "cut",
+      "transition_duration": 0.0
+    },
+    {
+      "source": "/tmp/ce-media/clips/clip4.mp4",
+      "in_point": 4.0,
+      "out_point": 5.0,
+      "timeline_start": 14.0,
+      "duration": 1.0,
+      "shot_type": "detail",
+      "speed": 1.0,
+      "transition_in": "cut",
+      "transition_duration": 0.0
+    },
+    {
+      "source": "/tmp/ce-media/clips/clip5.mp4",
+      "in_point": 4.0,
+      "out_point": 5.0,
+      "timeline_start": 15.0,
+      "duration": 1.0,
+      "shot_type": "detail",
+      "speed": 1.0,
+      "transition_in": "cut",
+      "transition_duration": 0.0
+    },
+    {
+      "source": "/tmp/ce-media/clips/clip6.mp4",
+      "in_point": 4.0,
+      "out_point": 5.0,
+      "timeline_start": 16.0,
+      "duration": 1.0,
+      "shot_type": "detail",
+      "speed": 1.0,
+      "transition_in": "cut",
+      "transition_duration": 0.0
+    },
+    {
+      "source": "/tmp/ce-media/clips/clip7.mp4",
+      "in_point": 4.0,
+      "out_point": 5.0,
+      "timeline_start": 17.0,
+      "duration": 1.0,
+      "shot_type": "detail",
+      "speed": 1.0,
+      "transition_in": "cut",
+      "transition_duration": 0.0
+    },
+    {
+      "source": "/tmp/ce-media/clips/clip8.mp4",
+      "in_point": 4.0,
+      "out_point": 5.0,
+      "timeline_start": 18.0,
+      "duration": 1.0,
+      "shot_type": "detail",
+      "speed": 1.0,
+      "transition_in": "cut",
+      "transition_duration": 0.0
+    },
+    {
+      "source": "/tmp/ce-media/clips/clip9.mp4",
+      "in_point": 4.0,
+      "out_point": 5.0,
+      "timeline_start": 19.0,
+      "duration": 1.0,
+      "shot_type": "detail",
+      "speed": 1.0,
+      "transition_in": "cut",
+      "transition_duration": 0.0
+    },
+    {
+      "source": "/tmp/ce-media/clips/clip1.mp4",
+      "in_point": 2.4,
+      "out_point": 3.4,
+      "timeline_start": 20.0,
+      "duration": 1.0,
+      "shot_type": "medium",
+      "speed": 1.0,
+      "transition_in": "cut",
+      "transition_duration": 0.0
+    },
+    {
+      "source": "/tmp/ce-media/clips/clip10.mp4",
+      "in_point": 2.4,
+      "out_point": 3.4,
+      "timeline_start": 21.0,
+      "duration": 1.0,
+      "shot_type": "medium",
+      "speed": 1.0,
+      "transition_in": "cut",
+      "transition_duration": 0.0
+    },
+    {
+      "source": "/tmp/ce-media/clips/clip2.mp4",
+      "in_point": 2.4,
+      "out_point": 3.4,
+      "timeline_start": 22.0,
+      "duration": 1.0,
+      "shot_type": "medium",
+      "speed": 1.0,
+      "transition_in": "cut",
+      "transition_duration": 0.0
+    },
+    {
+      "source": "/tmp/ce-media/clips/clip3.mp4",
+      "in_point": 2.4,
+      "out_point": 3.4,
+      "timeline_start": 23.0,
+      "duration": 1.0,
+      "shot_type": "medium",
+      "speed": 1.0,
+      "transition_in": "cut",
+      "transition_duration": 0.0
+    },
+    {
+      "source": "/tmp/ce-media/clips/clip4.mp4",
+      "in_point": 2.4,
+      "out_point": 3.4,
+      "timeline_start": 24.0,
+      "duration": 1.0,
+      "shot_type": "medium",
+      "speed": 1.0,
+      "transition_in": "cut",
+      "transition_duration": 0.0
+    },
+    {
+      "source": "/tmp/ce-media/clips/clip5.mp4",
+      "in_point": 2.4,
+      "out_point": 3.4,
+      "timeline_start": 25.0,
+      "duration": 1.0,
+      "shot_type": "medium",
+      "speed": 1.0,
+      "transition_in": "cut",
+      "transition_duration": 0.0
+    },
+    {
+      "source": "/tmp/ce-media/clips/clip6.mp4",
+      "in_point": 2.4,
+      "out_point": 3.4,
+      "timeline_start": 26.0,
+      "duration": 1.0,
+      "shot_type": "medium",
+      "speed": 1.0,
+      "transition_in": "cut",
+      "transition_duration": 0.0
+    },
+    {
+      "source": "/tmp/ce-media/clips/clip7.mp4",
+      "in_point": 2.4,
+      "out_point": 3.4,
+      "timeline_start": 27.0,
+      "duration": 1.0,
+      "shot_type": "medium",
+      "speed": 1.0,
+      "transition_in": "cut",
+      "transition_duration": 0.0
+    },
+    {
+      "source": "/tmp/ce-media/clips/clip8.mp4",
+      "in_point": 2.4,
+      "out_point": 3.4,
+      "timeline_start": 28.0,
+      "duration": 1.0,
+      "shot_type": "medium",
+      "speed": 1.0,
+      "transition_in": "cut",
+      "transition_duration": 0.0
+    },
+    {
+      "source": "/tmp/ce-media/clips/clip9.mp4",
+      "in_point": 2.4,
+      "out_point": 3.4,
+      "timeline_start": 29.0,
+      "duration": 1.0,
+      "shot_type": "medium",
+      "speed": 1.0,
+      "transition_in": "cut",
+      "transition_duration": 0.0
+    }
+  ],
+  "color": {
+    "r": 115.95,
+    "g": 160.45,
+    "b": 131.4,
+    "contrast": 0.57,
+    "saturation": 0.5
+  },
+  "audio": {
+    "has_music": true,
+    "loudness_lufs": -14.0
+  },
+  "notes": [
+    "snapped 0 cuts to the beat grid"
+  ]
+}

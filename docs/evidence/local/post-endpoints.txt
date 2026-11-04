@@ -1,0 +1,21 @@
+== post-production endpoints
+  [PASS] replay plan — 200 {'start': 0.2, 'end': 3.4, 'speed': 0.5, 'filters': 'reverse,setpts=PT
+  [PASS] comparison graph — 200 {'layout': 'picture_in_picture', 'filter_graph': "[0:v]scale
+  [PASS] persian caption file — 200 {'format': 'ass', 'content': '[Script Info]\nScriptType: v4.
+  [PASS] loudness plan — 200 mode=linear
+  [PASS] loudness rejects garbage — 422
+  [PASS] b-roll ranking — 200 2 ranked
+
+== templates lifecycle
+  [PASS] template saved — 201 {'id': 'e2e-template', 'name': 'e2e-template'}
+  [PASS] template read back — 200
+  [PASS] template applied — 200 {'caption_style': {'font_size': 24}}
+
+== style match validate + score
+  [PASS] edl validates — 200 {'problems': []}
+
+== proxy job (no H.264 encoder in this build)
+  [PASS] proxy job ends in a typed state — done proxy not required
+  [PASS] proxy failure is explained — success needs no error text
+
+  12/12 checks passed

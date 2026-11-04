@@ -7,6 +7,11 @@ rust-version = "1.77"
 license = "MIT"
 publish = false
 
+# main.rs calls this library by its Tauri convention name.
+[lib]
+name = "cutting_edge_v2_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
 [build-dependencies]
 tauri-build = { version = "2", features = [] }
 

@@ -1,0 +1,71 @@
+PASS Persian RTL default
+PASS Reference gate blocks next
+PASS English LTR toggle
+PASS 10 media entries displayed
+PASS Duplicate import gives feedback
+PASS Timeline receives clip
+PASS Wizard reaches final UI step
+PASS Platform control updates summary
+PASS Command palette opens
+PASS Glass theme applies
+PASS Minimal theme applies
+PASS No browser page errors
+{
+  "checks": [
+    {
+      "name": "Persian RTL default",
+      "passed": true
+    },
+    {
+      "name": "Reference gate blocks next",
+      "passed": true
+    },
+    {
+      "name": "English LTR toggle",
+      "passed": true
+    },
+    {
+      "name": "10 media entries displayed",
+      "passed": true
+    },
+    {
+      "name": "Duplicate import gives feedback",
+      "passed": true
+    },
+    {
+      "name": "Timeline receives clip",
+      "passed": true
+    },
+    {
+      "name": "Wizard reaches final UI step",
+      "passed": true
+    },
+    {
+      "name": "Platform control updates summary",
+      "passed": true
+    },
+    {
+      "name": "Command palette opens",
+      "passed": true
+    },
+    {
+      "name": "Glass theme applies",
+      "passed": true
+    },
+    {
+      "name": "Minimal theme applies",
+      "passed": true
+    },
+    {
+      "name": "No browser page errors",
+      "passed": true
+    }
+  ],
+  "gaps": [
+    "Start analysis changes local wizard state only; no backend analysis request.",
+    "Build preview button has no backend render request or visible output.",
+    "Media import is frontend metadata only; file paths are browser file names, not backend asset imports.",
+    "Preview panel remains a placeholder; this is not a complete desktop editing E2E."
+  ],
+  "errors": []
+}

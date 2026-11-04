@@ -4,7 +4,13 @@ Legend: **GREEN** = verified with evidence in this environment ·
 **PENDING-ENV** = authored and reviewed, execution requires the Owner's Windows/Rust machine ·
 **BLOCKED** = cannot proceed.
 
-Progress: **260 / 260 steps = 100 %** · Phases **P0–P9** delivered (v1.0.0).
+> **2026-11-04 acceptance correction:** the historical 260/260 count below means authored
+> implementation steps, **not verified release readiness**. The live browser audit found
+> disconnected import/analysis/render flows; compliant encoder, models and Windows installer
+> acceptance remain blocked. See [LOCAL-TEST-REPORT.md](LOCAL-TEST-REPORT.md), which supersedes
+> conflicting blanket GREEN/delivered claims in this ledger.
+
+Progress: **260 / 260 authored steps = 100 %** · **Release acceptance: BLOCKED**.
 
 ## P0 — Foundation & Setup (week 1, 20 steps)
 
@@ -250,8 +256,8 @@ Fallback if it misbehaves: `dnd-timeline` (MIT). See `docs/PROTOCOL-ISSUES.md` R
 | P9-S45–S52 | Release checklist, PR evidence, v1.0.0 tag prep, handover note | GREEN | `docs/RELEASE-CHECKLIST.md`, PR #1 |
 
 ### P9 notes
-- The **light** installer (CI artifact) is produced automatically on every push to this branch
-  and attached as the `CuttingEdgeV2-Setup` artifact.
+- The **light** installer job runs on pushes, but the last observed completed installer run
+  failed during cargo compilation. Artifact delivery is not confirmed; see the local report.
 - The **full** offline installer needs one `-UpdatePins` run on a trusted Windows machine to
   fill the SHA-256 values for FFmpeg/models/WebView2 (`scripts/pins.json` currently `null`
   by design, so the build refuses unpinned downloads).

@@ -8,6 +8,9 @@ import '@fontsource/inter/400.css';
 import '@fontsource/inter/600.css';
 import '@fontsource/jetbrains-mono/400.css';
 
+// The OSS editor relies on these positioning/sizing rules to render track rows.
+import '@xzdarcy/react-timeline-editor/dist/react-timeline-editor.css';
+
 import App from './App';
 import './index.css';
 import { useAppStore } from './store/useAppStore';

@@ -1,0 +1,69 @@
+{
+  "checks": [
+    {
+      "name": "Persian RTL default",
+      "passed": true
+    },
+    {
+      "name": "Reference gate blocks next",
+      "passed": true
+    },
+    {
+      "name": "English LTR toggle",
+      "passed": true
+    },
+    {
+      "name": "10 media entries displayed",
+      "passed": true
+    },
+    {
+      "name": "Duplicate import gives feedback",
+      "passed": true
+    },
+    {
+      "name": "Timeline receives clip",
+      "passed": true
+    },
+    {
+      "name": "Wizard reaches final UI step",
+      "passed": true
+    },
+    {
+      "name": "Platform control updates summary",
+      "passed": true
+    },
+    {
+      "name": "Command palette opens",
+      "passed": true
+    },
+    {
+      "name": "Glass theme applies",
+      "passed": true
+    },
+    {
+      "name": "Minimal theme applies",
+      "passed": true
+    },
+    {
+      "name": "No browser page errors",
+      "passed": true
+    }
+  ],
+  "gaps": [
+    "Start analysis changes local wizard state only; no backend analysis request.",
+    "Build preview button has no backend render request or visible output.",
+    "Media import is frontend metadata only; file paths are browser file names, not backend asset imports.",
+    "Preview panel remains a placeholder; this is not a complete desktop editing E2E."
+  ],
+  "errors": [],
+  "requests": [
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1420/api/v1/health"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1420/api/v1/health"
+    }
+  ]
+}

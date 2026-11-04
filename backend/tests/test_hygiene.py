@@ -9,6 +9,7 @@ from __future__ import annotations
 import ast
 import json
 import re
+import tomllib
 from pathlib import Path
 
 APP_DIR = Path(__file__).resolve().parents[1] / "app"
@@ -228,3 +229,21 @@ def test_no_todo_markers_in_shipped_code() -> None:
             if re.search(r"\b(TODO|FIXME|XXX)\b", line):
                 offenders.append(f"{path.relative_to(REPO)}:{number}")
     assert offenders == [], f"unfinished markers: {offenders}"
+
+
+def test_shell_library_name_matches_binary_entrypoint() -> None:
+    """Cargo must expose the library referenced by src/main.rs."""
+    manifest = tomllib.loads((REPO / "src-tauri" / "Cargo.toml").read_text(encoding="utf-8"))
+    library_name = manifest["lib"]["name"]
+    entrypoint = (REPO / "src-tauri" / "src" / "main.rs").read_text(encoding="utf-8")
+    assert f"{library_name}::run()" in entrypoint
+    assert "rlib" in manifest["lib"]["crate-type"]
+
+
+def test_light_build_selects_runtime_before_cargo() -> None:
+    """tauri-build copies FixedRuntime resources at compile time too."""
+    script = (REPO / "scripts" / "build-installer.ps1").read_text(encoding="utf-8")
+    runtime_override = script.index("$conf.bundle.windows.webviewInstallMode =")
+    cargo_build = script.index("cargo build --release")
+    restore_config = script.index("Set-Content -Path $tauriConfPath -Value $confBackup")
+    assert runtime_override < cargo_build < restore_config

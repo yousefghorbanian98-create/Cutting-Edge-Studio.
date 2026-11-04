@@ -1,15 +1,27 @@
 # Release checklist — v1.0.0
 
-## A. Automated (green in CI on this branch)
+> **2026-11-04:** release is **BLOCKED**. Local evidence and remaining integration gaps are in
+> [LOCAL-TEST-REPORT.md](LOCAL-TEST-REPORT.md). Historical CI passes do not certify a delivered installer.
+
+## A. Automated checks (local results and earlier CI evidence)
 
 - [x] Backend: `ruff check .` + `ruff format --check .`
-- [x] Backend: `pytest --cov=app` → 117 passed, coverage 94.10 %
+- [x] Backend: `pytest --cov=app` → 124 passed locally, coverage 94.01 %
 - [x] Backend: `pip-audit -r requirements.txt --strict` → no known vulnerabilities
 - [x] Frontend: `npm run lint`, `npm test` (108), `npm run build`
 - [x] Frontend: `npm audit --audit-level=high` → 0 high/critical
 - [x] Security: gitleaks + trivy (CRITICAL)
 - [x] Guardrails: `tests/test_hygiene.py` (offline, licences, E4)
-- [x] Installer: Windows NSIS build produces `CuttingEdgeV2-Setup-v1.0.0.exe` + `.sha256`
+- [ ] Installer: verify a successful Windows NSIS build produces `CuttingEdgeV2-Setup-v1.0.0.exe` + `.sha256`
+
+## A2. Integration acceptance (not cleared by unit tests)
+
+- [ ] Media import creates backend assets with usable local paths
+- [ ] Wizard starts real analysis and shows backend progress/results
+- [ ] Preview/export controls invoke the approved renderer and play the result
+- [ ] Packaged Tauri has working sidecar API routing without Vite
+- [ ] Real model/beat/shot/color measurements replace synthetic analysis fixtures
+- [ ] NVENC or openh264 export passes using the approved LGPL shared build
 
 ## B. Owner-machine acceptance (fill in, do not pre-check)
 
