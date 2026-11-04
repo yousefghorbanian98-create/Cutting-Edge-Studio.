@@ -54,6 +54,15 @@ function Assert-NativeSuccess {
     }
 }
 
+function Show-CompileErrors {
+    param([string]$LogPath, [string]$Label)
+    if (-not (Test-Path $LogPath)) { return }
+    $matches = Get-Content $LogPath | Where-Object { $_ -match '(error(\[E\d+\])?:)|^(error|warning: unused)' }
+    foreach ($line in ($matches | Select-Object -First 8)) {
+        Write-Output "::error title=$Label::$line"
+    }
+}
+
 function Invoke-Step {
     param([string]$Label, [scriptblock]$Action)
     Write-Host "::group::$Label"
@@ -171,7 +180,9 @@ Write-Host "[ok  ] sidecar staged ($sidecarSize MB) -> $sidecarTarget"
 Write-Host '[3/4] tauri shell'
 Push-Location (Join-Path $root 'src-tauri')
 try {
-    cargo build --release
+    $cargoLog = 'cargo-build.log'
+    cargo build --release --message-format=short 2>&1 | Tee-Object -FilePath $cargoLog
+    if ($LASTEXITCODE -ne 0) { Show-CompileErrors -LogPath $cargoLog -Label 'cargo build' }
     Assert-NativeSuccess 'cargo build'
 } finally { Pop-Location }
 
@@ -192,7 +203,9 @@ try {
 
     Push-Location (Join-Path $root 'src-tauri')
     try {
-        npx --yes @tauri-apps/cli@2 build --bundles nsis
+        $tauriLog = 'tauri-build.log'
+        npx --yes @tauri-apps/cli@2 build --bundles nsis 2>&1 | Tee-Object -FilePath $tauriLog
+        if ($LASTEXITCODE -ne 0) { Show-CompileErrors -LogPath $tauriLog -Label 'tauri build' }
         Assert-NativeSuccess 'tauri build'
     } finally { Pop-Location }
 } finally {
