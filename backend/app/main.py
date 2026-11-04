@@ -26,6 +26,7 @@ from app.logging import configure_logging, get_logger
 from app.services.audio.processor import FFmpegRhythmInspector
 from app.services.media.inspection import FFmpegInspector, InspectionService
 from app.services.media.jobs import JobRegistry
+from app.services.media.scenes import FFmpegSceneInspector
 from app.services.media.service import MediaService, Prober
 
 LOG = get_logger(__name__)
@@ -51,6 +52,7 @@ def create_app(settings: Settings | None = None, prober: Prober | None = None) -
             app.state.jobs,
             FFmpegInspector(resolved),
             rhythm_inspector=FFmpegRhythmInspector(resolved),
+            scene_inspector=FFmpegSceneInspector(resolved),
         )
         LOG.info(
             "backend.startup",

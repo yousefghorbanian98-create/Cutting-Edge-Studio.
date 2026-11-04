@@ -14,6 +14,7 @@ from app.schemas_media import AssetRead
 from app.services.audio.processor import rhythm_unavailable
 from app.services.media.ffmpeg import FFmpegNotFoundError, resolve_binaries
 from app.services.media.inspection import InspectionBusyError
+from app.services.media.scenes import scenes_unavailable
 
 LOG = get_logger(__name__)
 
@@ -53,6 +54,8 @@ def _unavailable(settings: SettingsDep, operation: Operation) -> str | None:
     except FFmpegNotFoundError as error:
         LOG.warning("inspection.tools.unavailable", error=str(error))
         return str(error)
+    if operation == "scenes":
+        return scenes_unavailable(settings)
     return rhythm_unavailable(settings) if operation == "rhythm" else None
 
 
@@ -65,7 +68,7 @@ def _require_tools(settings: SettingsDep, operation: Operation) -> None:
 
 def _routes(operation: Operation) -> APIRouter:
     """Reuse existing request/identity/error semantics, without a second job framework."""
-    path = {"decode": "inspection", "rhythm": "rhythm"}[operation]
+    path = {"decode": "inspection", "rhythm": "rhythm", "scenes": "scenes"}[operation]
     routes = APIRouter(prefix=f"/projects/{{project_id}}/{path}", tags=[path])
 
     @routes.get("/capabilities")
@@ -160,3 +163,4 @@ def _routes(operation: Operation) -> APIRouter:
 router = APIRouter()
 router.include_router(_routes("decode"))
 router.include_router(_routes("rhythm"))
+router.include_router(_routes("scenes"))

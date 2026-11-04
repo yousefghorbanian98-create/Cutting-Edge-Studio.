@@ -29,6 +29,7 @@ from app.schemas_inspection import (
 )
 from app.schemas_media import AssetRead
 from app.schemas_rhythm import RhythmFile, RhythmReport
+from app.schemas_scenes import SceneFile, SceneReport
 from app.services.media.ffmpeg import FFmpegBinaries, probe_command, resolve_binaries
 from app.services.media.jobs import Job, JobRegistry
 from app.services.media.probe import parse_probe
@@ -41,7 +42,7 @@ ACTIVE = {"queued", "running"}
 
 
 def operation_kind(operation: Operation) -> str:
-    return KIND if operation == "decode" else "audio-rhythm"
+    return {"decode": KIND, "rhythm": "audio-rhythm", "scenes": "shot-candidates"}[operation]
 
 
 def hash_input(path: Path, cancel: threading.Event) -> str:
@@ -79,7 +80,7 @@ class Inspector(Protocol):
 
     def inspect(
         self, asset: AssetRead, cancel: threading.Event, progress: Callable[[float], None]
-    ) -> InspectedFile | RhythmFile:
+    ) -> InspectedFile | RhythmFile | SceneFile:
         """Measure the actual asset, or raise on cancellation/failure."""
 
 
@@ -176,9 +177,11 @@ class InspectionService:
         jobs: JobRegistry,
         inspector: Inspector,
         rhythm_inspector: Inspector | None = None,
+        scene_inspector: Inspector | None = None,
     ) -> None:
         self.factory, self.jobs, self.inspector = factory, jobs, inspector
         self.rhythm_inspector = rhythm_inspector
+        self.scene_inspector = scene_inspector
         self.lock = threading.Lock()
         self.active: Job | None = None
         self.worker: threading.Thread | None = None
@@ -254,7 +257,7 @@ class InspectionService:
         initial: InspectionRead,
         state: str,
         error: str | None = None,
-        report: InspectionReport | RhythmReport | None = None,
+        report: InspectionReport | RhythmReport | SceneReport | None = None,
     ) -> None:
         result = initial.model_copy(
             update={
@@ -283,9 +286,13 @@ class InspectionService:
             )
 
     def _inspector(self, operation: Operation) -> Inspector:
-        inspector = self.inspector if operation == "decode" else self.rhythm_inspector
+        inspector = {
+            "decode": self.inspector,
+            "rhythm": self.rhythm_inspector,
+            "scenes": self.scene_inspector,
+        }[operation]
         if inspector is None:
-            raise RuntimeError("Rhythm processor is not configured")
+            raise RuntimeError(f"{operation} processor is not configured")
         return inspector
 
     def _run(self, job: Job, initial: InspectionRead, assets: list[AssetRead]) -> None:
@@ -306,11 +313,9 @@ class InspectionService:
                 inspector = self._inspector(initial.operation)
                 files.append(inspector.inspect(asset, job.cancel_event, progress))
                 self.jobs.update(job.id, percent=min(99, 100 * (index + 1) / len(assets)))
-            report = (
-                InspectionReport(files=files)
-                if initial.operation == "decode"
-                else RhythmReport(files=files)
-            )
+            report = {"decode": InspectionReport, "rhythm": RhythmReport, "scenes": SceneReport}[
+                initial.operation
+            ](files=files)
             with self.lock:
                 _check_cancel(job)
                 with self.factory() as session:
@@ -323,11 +328,15 @@ class InspectionService:
             LOG.error("inspection.failed", job_id=job.id, error=str(error))
             self._finish(job, initial, "failed", error=str(error))
 
-    def _validate_report(self, session: Session, report: InspectionReport | RhythmReport) -> None:
+    def _validate_report(
+        self, session: Session, report: InspectionReport | RhythmReport | SceneReport
+    ) -> None:
         if self._stale(session, report):
             raise ValueError("Inspection inputs changed or were deleted; run again")
 
-    def _stale(self, session: Session, report: InspectionReport | RhythmReport) -> bool:
+    def _stale(
+        self, session: Session, report: InspectionReport | RhythmReport | SceneReport
+    ) -> bool:
         rows = {
             row.id: row
             for row in session.scalars(

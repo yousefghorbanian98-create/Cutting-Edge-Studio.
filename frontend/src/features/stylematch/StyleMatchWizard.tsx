@@ -75,7 +75,7 @@ export function StyleMatchWizard() {
 
         {stepIndex === 2 ? <>
           <div className="my-2 flex flex-wrap gap-1" aria-label={translate(language,'inspection.mode')}>
-            {(['decode','rhythm'] as const).map(mode=><Button key={mode} size="sm" variant={operation===mode?'primary':'ghost'} aria-pressed={operation===mode} onClick={()=>setOperation(mode)}>{translate(language,`inspection.mode.${mode}`)}</Button>)}
+            {(['decode','rhythm','scenes'] as const).map(mode=><Button key={mode} size="sm" variant={operation===mode?'primary':'ghost'} aria-pressed={operation===mode} onClick={()=>setOperation(mode)}>{translate(language,`inspection.mode.${mode}`)}</Button>)}
           </div>
           <InspectionPanel key={`${projectId ?? 'empty'}:${operation}`} projectId={projectId} operation={operation}
           referenceId={clips.find(c=>c.role==='reference' && c.path===referencePath)?.assetId ?? null}

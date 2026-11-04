@@ -186,3 +186,45 @@ describe('audio rhythm panel — injected boundary fixtures, not real analysis a
     expect(inspectionSchema.safeParse(record).success).toBe(false);
   });
 });
+
+const sceneFixture={method:'ffmpeg.scdet',time_origin:'first-decoded-video-frame',threshold_percent:10,scaled_width:320,frames_analyzed:3,first_frame_pts_seconds:5,decoded_span_seconds:1,candidates:[{frame_index:2,time_seconds:1,score_percent:20}]};
+const scenesDone={...done,operation:'scenes',report:{version:1,scope:'shot-candidates-only',method:'ffprobe-lavfi+scdet',unavailable:['TransNetV2 inference','StyleDNA'],files:[
+  {...done.report.files[0],name:'Candidate fixture.mp4',has_video:true,status:'candidates',estimate:sceneFixture},
+  {...done.report.files[0],asset_id:'static-video',name:'Static fixture.mp4',has_video:true,status:'no-candidates',estimate:{...sceneFixture,candidates:[]}},
+  {...done.report.files[0],asset_id:'audio-only',name:'Audio fixture.wav',has_video:false,status:'no-video',estimate:null},
+]}};
+
+describe('cut candidate UI — explicit unit fixtures, not native detector acceptance',()=>{
+  beforeEach(()=>{calls.capabilities.mockResolvedValue({...capabilities,operation:'scenes'});});
+  it('shows native candidates, no-crossing and missing-video states without semantic claims',async()=>{
+    calls.latest.mockResolvedValue(scenesDone);
+    render(<InspectionPanel {...props} operation="scenes"/>);await flush();
+    expect(screen.getByText(/NOT model inference, semantic shots, StyleDNA/)).toBeInTheDocument();
+    expect(screen.getByText(/Candidate fixture.mp4.*1 candidates.*3 frames.*1.000s/)).toBeInTheDocument();
+    expect(screen.getByText(/Static fixture.mp4.*No candidates at this threshold/)).toBeInTheDocument();
+    expect(screen.getByText(/Audio fixture.wav.*No video stream; not measured/)).toBeInTheDocument();
+    expect(screen.getByText('Candidate report saved — model analysis not performed')).toBeInTheDocument();
+  });
+  it('routes the operation and retains observed stages without detector progress invention',async()=>{
+    calls.start.mockResolvedValue({...queued,operation:'scenes'});
+    calls.job.mockResolvedValue({...running,operation:'scenes',percent:10,message:'Native stage'});
+    render(<InspectionPanel {...props} operation="scenes"/>);await flush();
+    fireEvent.click(screen.getByRole('button',{name:'Measure cut candidates'}));await flush();await tick();await tick();
+    expect(calls.start).toHaveBeenCalledWith('project-fixture','reference-fixture',['source-fixture'],'scenes');
+    expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuenow','10');
+    expect(screen.queryByText(/Candidate report saved/)).not.toBeInTheDocument();
+  });
+  it('blocks disabled native profile rather than treating configured files as inference',async()=>{
+    calls.capabilities.mockResolvedValue({...capabilities,operation:'scenes',inspection:{available:false,reason:'Candidate profile disabled; build-time provisioning required'}});
+    render(<InspectionPanel {...props} operation="scenes"/>);await flush();
+    expect(screen.getByRole('button',{name:'Measure cut candidates'})).toBeDisabled();
+    expect(screen.getByRole('alert')).toHaveTextContent('disabled');
+  });
+  it.each([
+    {...scenesDone,operation:'rhythm'},
+    {...scenesDone,report:{...scenesDone.report,files:[{...scenesDone.report.files[0],status:'no-video'}]}},
+    {...scenesDone,report:{...scenesDone.report,files:[{...scenesDone.report.files[0],estimate:{...sceneFixture,frames_analyzed:2}}]}},
+  ])('rejects inconsistent or cross-operation success records',record=>{
+    expect(inspectionSchema.safeParse(record).success).toBe(false);
+  });
+});

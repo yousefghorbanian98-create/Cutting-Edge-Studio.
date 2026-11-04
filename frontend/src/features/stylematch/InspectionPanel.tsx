@@ -12,13 +12,13 @@ interface Props {
   blocked: boolean;
   operation?: InspectionOperation;
 }
-const RHYTHM_KEYS=new Set(['title','scope','start','progress','results','none','state.queued','state.running','state.done','state.failed','state.cancelled','state.interrupted']);
+const MODE_KEYS=new Set(['title','scope','start','progress','results','none','state.queued','state.running','state.done','state.failed','state.cancelled','state.interrupted']);
 const active = (job: InspectionResponse | null) => job?.state === 'queued' || job?.state === 'running';
 
 /** Decode verification is intentionally NOT labelled model analysis/DNA completion. */
 export function InspectionPanel({projectId,referenceId,sourceIds,blocked,operation='decode'}: Props) {
   const language=useAppStore(state=>state.language);
-  const t=(key:string)=>translate(language,`${operation==='rhythm' && RHYTHM_KEYS.has(key)?'rhythm':'inspection'}.${key}`);
+  const t=(key:string)=>translate(language,`${operation!=='decode' && MODE_KEYS.has(key)?operation==='scenes'?'scenes':'rhythm':'inspection'}.${key}`);
   const [capabilities,setCapabilities]=useState<InspectionCapabilities|null>(null);
   const [job,setJob]=useState<InspectionResponse|null>(null);
   const [error,setError]=useState<string|null>(null);
@@ -123,7 +123,7 @@ export function InspectionPanel({projectId,referenceId,sourceIds,blocked,operati
       {job.error?<p role="alert">{job.error}</p>:null}
       {stale?<p role="alert">{t('stale')}</p>:null}
       {job.state==='done' && job.report?<ul aria-label={t('results')} className="max-h-32 overflow-auto text-[10px]">
-        {job.report.scope==='media-inspection-only' ? job.report.files.map(file=><li key={file.asset_id}>{file.name} · {file.duration.toFixed(2)}s · {file.width}×{file.height} · {file.decoded_frames} {t('frames')} · {file.has_audio?t('audio'):t('noAudio')}</li>) : job.report.files.map(file=><li key={file.asset_id}>{file.name} · {translate(language,`rhythm.result.${file.status}`)}{file.estimate && file.estimate.tempo_bpm!==null ? ` · ${file.estimate.tempo_bpm.toFixed(2)} BPM · ${file.estimate.beat_times_seconds.length} ${translate(language,'rhythm.beats')}` : ''}</li>)}
+        {job.report.scope==='media-inspection-only' ? job.report.files.map(file=><li key={file.asset_id}>{file.name} · {file.duration.toFixed(2)}s · {file.width}×{file.height} · {file.decoded_frames} {t('frames')} · {file.has_audio?t('audio'):t('noAudio')}</li>) : job.report.scope==='audio-rhythm-only' ? job.report.files.map(file=><li key={file.asset_id}>{file.name} · {translate(language,`rhythm.result.${file.status}`)}{file.estimate && file.estimate.tempo_bpm!==null ? ` · ${file.estimate.tempo_bpm.toFixed(2)} BPM · ${file.estimate.beat_times_seconds.length} ${translate(language,'rhythm.beats')}` : ''}</li>) : job.report.files.map(file=><li key={file.asset_id}>{file.name} · {translate(language,`scenes.result.${file.status}`)}{file.estimate ? ` · ${file.estimate.candidates.length} ${translate(language,'scenes.count')} · ${file.estimate.frames_analyzed} ${t('frames')}${file.estimate.candidates.length ? ` · ${file.estimate.candidates.slice(0,12).map(c=>c.time_seconds.toFixed(3)+'s').join(', ')}${file.estimate.candidates.length>12?' …':''}` : ''}` : ''}</li>)}
       </ul>:null}
     </div>:!loading?<p role="status">{t('none')}</p>:null}
     <p role="status" className="text-[var(--warning)]">{t('modelsBlocked')}</p>

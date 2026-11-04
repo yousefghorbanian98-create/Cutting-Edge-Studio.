@@ -75,6 +75,7 @@ class Settings(BaseSettings):
     offline: bool = True
     # Experimental local-build gate; optional/native distribution audit is separate.
     audio_rhythm_enabled: bool = False
+    shot_candidates_enabled: bool = False
 
     @property
     def db_path(self) -> Path:

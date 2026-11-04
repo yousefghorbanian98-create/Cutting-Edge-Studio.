@@ -7,8 +7,9 @@ from typing import Annotated, Literal
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from app.schemas_rhythm import RhythmReport
+from app.schemas_scenes import SceneReport
 
-Operation = Literal["decode", "rhythm"]
+Operation = Literal["decode", "rhythm", "scenes"]
 
 AssetId = Annotated[str, Field(pattern=r"^[a-f0-9]{32}$")]
 
@@ -74,7 +75,10 @@ class InspectionRead(BaseModel):
     message: str = ""
     error: str | None = None
     stale: bool = False
-    report: Annotated[InspectionReport | RhythmReport, Field(discriminator="scope")] | None = None
+    report: (
+        Annotated[InspectionReport | RhythmReport | SceneReport, Field(discriminator="scope")]
+        | None
+    ) = None
 
     @model_validator(mode="after")
     def completed_report_required(self) -> InspectionRead:
@@ -82,9 +86,11 @@ class InspectionRead(BaseModel):
         if self.state == "done" and (self.report is None or self.percent != 100):
             raise ValueError("Completed inspection has no measured report")
         if self.report is not None:
-            expected = (
-                "media-inspection-only" if self.operation == "decode" else "audio-rhythm-only"
-            )
+            expected = {
+                "decode": "media-inspection-only",
+                "rhythm": "audio-rhythm-only",
+                "scenes": "shot-candidates-only",
+            }[self.operation]
             if self.report.scope != expected:
                 raise ValueError("Report scope disagrees with job operation")
         return self

@@ -70,7 +70,7 @@ export function assetContentUrl(id: string): string {
   return `${BASE}/assets/${encodeURIComponent(id)}/content`;
 }
 
-const measurementPath = (operation:InspectionOperation) => operation === 'rhythm' ? 'rhythm' : 'inspection';
+const measurementPath = (operation:InspectionOperation) => ({decode:'inspection',rhythm:'rhythm',scenes:'scenes'}[operation]);
 export const api = {
   inspectionCapabilities: (id:string, signal?:AbortSignal, operation:InspectionOperation="decode") => request<InspectionCapabilities>(`/projects/${encodeURIComponent(id)}/${measurementPath(operation)}/capabilities`,{signal}),
   latestInspection: (id:string, signal?:AbortSignal, operation:InspectionOperation="decode") => request<InspectionResponse>(`/projects/${encodeURIComponent(id)}/${measurementPath(operation)}/latest`,{signal}),
