@@ -115,6 +115,20 @@ jobs:
           New-Item -ItemType Directory -Force C:\build | Out-Null
           git clone --depth 1 --branch $env:GITHUB_REF_NAME "https://github.com/$env:GITHUB_REPOSITORY.git" C:\build
           if ($LASTEXITCODE -ne 0) { throw "git clone failed with exit code $LASTEXITCODE" }
+          git -C C:\build fetch --depth 1 origin $env:GITHUB_SHA
+          if ($LASTEXITCODE -ne 0) { throw "git fetch of triggering revision failed" }
+          git -C C:\build reset --hard $env:GITHUB_SHA
+          if ($LASTEXITCODE -ne 0) { throw "git reset to triggering revision failed" }
+      - name: Probe pinned LGPL shared tools on Windows (build machine only)
+        shell: pwsh
+        run: ./scripts/ci/windows-native-media.ps1 -OutputDir "${{ runner.temp }}/ce-native-media"
+      - name: Upload native tool probe evidence (no media or binaries)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: windows-native-media-probe
+          path: ${{ runner.temp }}/ce-native-media/probe.json
+          if-no-files-found: warn
       - uses: actions/setup-node@v4
         with:
           node-version: '22'

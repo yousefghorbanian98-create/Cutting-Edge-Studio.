@@ -286,3 +286,17 @@ def test_package_metadata_reuses_audited_runtime_requirements() -> None:
     assert "dependencies" not in config["project"]
     assert "dependencies" in config["project"]["dynamic"]
     assert config["tool"]["setuptools"]["dynamic"]["dependencies"]["file"] == ["requirements.txt"]
+
+
+def test_ffmpeg_pin_matches_reviewed_dated_publisher_digest() -> None:
+    pins = json.loads((REPO / "scripts/pins.json").read_text())
+    publisher = json.loads(
+        (REPO / "docs/evidence/native-media/publisher-metadata.json").read_text()
+    )
+    asset = publisher["assets"][0]
+    assert pins["ffmpeg"]["url"] == asset["browser_download_url"]
+    assert pins["ffmpeg"]["sha256"] == asset["digest"].removeprefix("sha256:")
+    assert "/download/latest/" not in pins["ffmpeg"]["url"]
+    assert publisher["tag_name"].startswith("autobuild-2026-10-31-")
+    assert "win64-lgpl-shared" in asset["name"]
+    assert len(pins["ffmpeg"]["sha256"]) == 64
