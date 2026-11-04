@@ -42,10 +42,20 @@ ignore = [
   "PLR0913",               # glue code needs many params (FFmpeg/CLIP configs)
   "EM101", "EM102", "TRY003",  # short error messages acceptable in adapters
   "S603", "S607",          # subprocess with resolved binary path is intentional
+  "BLE001",                # catch-all handlers are allowed only when they log + re-raise/report
   "A003",                  # OSS-mirroring attribute names
   # Runtime-evaluated annotations: FastAPI resolves endpoint deps and Pydantic
   # resolves model fields via get_type_hints(), so those imports must stay real.
   "TC001", "TC002", "TC003",
+  # Documentation policy: modules, classes and non-trivial public functions carry
+  # docstrings; trivial accessors/methods are covered by their name + tests.
+  "D102", "D103", "D105", "D107",
+  # Numeric literals appear in parsing/indexing code; domain thresholds use named constants.
+  "PLR2004",
+  # Structured logging: LOG.error(..., error=str(exc)) is the project convention.
+  "TRY400",
+  # `assert` is used for type narrowing after None checks (never run with -O).
+  "S101",
 ]
 
 [tool.ruff.lint.per-file-ignores]
@@ -62,6 +72,7 @@ max-complexity = 12
 minversion = "8.0"
 addopts = "-q --strict-markers --strict-config"
 testpaths = ["tests"]
+asyncio_default_fixture_loop_scope = "function"
 filterwarnings = [
   "error",
   # Third-party deprecations outside our control (documented, not app errors):

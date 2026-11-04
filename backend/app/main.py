@@ -8,15 +8,17 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import health, projects, settings_api
+from app.api import assets, health, projects, settings_api
 from app.config import ALLOWED_ORIGINS, API_PREFIX, Settings, get_settings
 from app.db import create_db_engine, create_session_factory, init_db
 from app.logging import configure_logging, get_logger
+from app.services.media.jobs import JobRegistry
+from app.services.media.service import MediaService, Prober
 
 LOG = get_logger(__name__)
 
 
-def create_app(settings: Settings | None = None) -> FastAPI:
+def create_app(settings: Settings | None = None, prober: Prober | None = None) -> FastAPI:
     """Build the ASGI app bound to ``settings`` (explicit settings help tests)."""
     resolved = settings or get_settings()
     resolved.ensure_dirs()
@@ -50,6 +52,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         lifespan=lifespan,
     )
     app.state.settings = resolved
+    app.state.media_service = MediaService(resolved, prober)
+    app.state.jobs = JobRegistry()
     app.add_middleware(
         CORSMiddleware,
         allow_origins=list(ALLOWED_ORIGINS),
@@ -57,7 +61,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         allow_methods=["GET", "POST", "PATCH", "DELETE"],
         allow_headers=["content-type"],
     )
-    for module in (health, settings_api, projects):
+    for module in (health, settings_api, projects, assets):
         app.include_router(module.router, prefix=API_PREFIX)
     return app
 
