@@ -187,8 +187,6 @@ def export_command(
         "-hide_banner",
         "-loglevel",
         "error",
-        "-stats_period",
-        "0.5",
         "-y",
         "-i",
         str(source),

@@ -13,8 +13,8 @@ from pathlib import Path
 from typing import Any
 
 from app.services.stylematch.compat import check_compatibility
-from app.services.stylematch.dna import extract_style_dna
-from app.services.stylematch.edl import build_edl, snap_to_beats, validate_edl
+from app.services.stylematch.dna import extend_beat_grid, extract_style_dna
+from app.services.stylematch.edl import build_edl, pacing_curve, snap_to_beats, validate_edl
 from app.services.stylematch.metrics import (
     beat_alignment,
     color_delta_e,
@@ -142,11 +142,15 @@ def score_against_reference(
     """Evaluate the G12 acceptance metrics for a produced edit against its DNA."""
     generated_lengths = [segment["duration"] for segment in edl.get("segments", [])]
     cuts = [segment["timeline_start"] for segment in edl.get("segments", [])]
-    pacing_generated = [segment["duration"] for segment in edl.get("segments", [])]
+    beats = extend_beat_grid(
+        list(dna.get("beat_times") or []), float(edl.get("total_duration", 0.0))
+    )
+    # Compare energy curves, not raw segment durations: same bucketing as the DNA.
+    pacing_generated = pacing_curve(edl, buckets=len(dna.get("pacing_curve") or []) or 12)
     results = {
         "cut_length_ks": cut_length_ks(generated_lengths, list(dna.get("cut_lengths") or [])),
         "shot_type_f1": shot_type_f1(shot_confusion or {}),
-        "beat_alignment": beat_alignment(cuts, list(dna.get("beat_times") or [])),
+        "beat_alignment": beat_alignment(cuts, beats),
         "pacing_similarity": pacing_similarity(
             pacing_generated, list(dna.get("pacing_curve") or [])
         ),

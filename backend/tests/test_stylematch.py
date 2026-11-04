@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import itertools
 import json
 from pathlib import Path
 
@@ -12,10 +13,17 @@ from app.services.stylematch.dna import (
     cut_lengths,
     cut_stats,
     dominant_transition,
+    extend_beat_grid,
     extract_style_dna,
     target_cut_length,
 )
-from app.services.stylematch.edl import build_edl, cut_times, snap_to_beats, validate_edl
+from app.services.stylematch.edl import (
+    build_edl,
+    cut_times,
+    pacing_curve,
+    snap_to_beats,
+    validate_edl,
+)
 from app.services.stylematch.metrics import (
     beat_alignment,
     color_delta_e,
@@ -31,6 +39,7 @@ from app.services.stylematch.pipeline import (
     summarize_source,
 )
 from app.services.stylematch.render import (
+    build_edl_command,
     build_filter_chain,
     build_preview_plan,
     build_render_plan,
@@ -153,6 +162,53 @@ def test_dna_edge_cases() -> None:
     assert target_cut_length(extract_style_dna(REFERENCE)) > 0
 
 
+def test_beat_grid_extends_past_the_reference() -> None:
+    beats = [0.0, 0.5, 1.0, 1.5]
+    extended = extend_beat_grid(beats, 4.0)
+    assert extended[:4] == beats
+    assert extended[-1] == pytest.approx(4.0)
+    assert all(abs(b - a - 0.5) < 1e-6 for a, b in itertools.pairwise(extended))
+    # nothing to do when the request already fits
+    assert extend_beat_grid(beats, 1.0) == beats
+    assert extend_beat_grid([], 10.0) == []
+    assert extend_beat_grid([2.0], 10.0) == [2.0]
+    assert len(extend_beat_grid(beats, 10_000.0, max_beats=6)) == 6
+
+
+def test_snapping_covers_edits_longer_than_the_reference() -> None:
+    dna = extract_style_dna(REFERENCE)
+    edl = build_edl(dna, summarize_source(SOURCE), max_duration=1.25)
+    long_edl = {**edl, "total_duration": 40.0, "segments": [*edl["segments"]] * 20}
+    for index, segment in enumerate(long_edl["segments"]):
+        long_edl["segments"][index] = {
+            **segment,
+            "timeline_start": round(index * 1.0, 3),
+        }
+    snapped = snap_to_beats(long_edl, list(dna["beat_times"]))
+    assert snapped["segments"][-1]["timeline_start"] > dna["beat_times"][-1]
+
+
+def test_edl_pacing_curve_is_comparable_to_dna() -> None:
+    dna = extract_style_dna(REFERENCE)
+    edl = build_edl(dna, summarize_source(SOURCE))
+    curve = pacing_curve(edl, buckets=len(dna["pacing_curve"]))
+    assert len(curve) == len(dna["pacing_curve"])
+    assert max(curve) == 1.0
+    assert all(value >= 0 for value in curve)
+    assert pacing_curve({"segments": [], "total_duration": 0.0}) == []
+
+
+def test_score_uses_energy_curves_not_raw_durations() -> None:
+    result = run_pipeline(REFERENCE, SOURCE)
+    score = score_against_reference(result.edl_v2, result.dna)
+    # beat snapping must land inside the product target (100 ms), not a whole second
+    alignment = score["metrics"]["beat_alignment"]
+    assert alignment["value"] is not None
+    assert alignment["value"] < 100.0
+    assert alignment["passed"] is True
+    assert score["metrics"]["pacing_similarity"]["note"] != "flat curve"
+
+
 def test_compatibility_blocks_and_warns() -> None:
     dna = extract_style_dna(REFERENCE)
     blocked = check_compatibility(dna, {"clips": [{"path": "a.mp4", "duration": 10.0}]})
@@ -269,9 +325,16 @@ def test_render_plans_and_filters(tmp_path: Path) -> None:
     assert "eq=" in chain
     assert "colorbalance" in chain
 
-    zoom = zoompan_filter((0.5, 0.5), fps=30, duration=2.0)
+    zoom = zoompan_filter((0.4, 0.3), fps=30, duration=2.0, width=1080, height=1920)
     assert "zoompan=z=" in zoom
-    assert "d=60" in zoom
+    # video input keeps 1:1 frames; only stills use `d` to hold a frame
+    assert "d=1:" in zoom
+    held = zoompan_filter((0.5, 0.5), fps=30, duration=2.0, still=True)
+    assert "d=60:" in held
+    # a portrait project must stay portrait: no hard-coded 1920x1080 canvas
+    assert "s=1080x1920" in zoom
+    assert "432.0-" in zoom  # 0.4 * 1080
+    assert "576.0-" in zoom  # 0.3 * 1920
 
     grade = color_grade_filter(
         {"contrast": 0.7, "saturation": 0.8, "r": 140, "b": 90},
@@ -298,6 +361,56 @@ def test_render_plans_and_filters(tmp_path: Path) -> None:
 
     listing = concat_list_file(edl["segments"], tmp_path / "concat")
     assert listing.read_text().startswith("file '")
+
+
+def test_edl_render_command_trims_and_concats(tmp_path: Path) -> None:
+    from app.config import Settings
+    from app.services.media.ffmpeg import resolve_binaries
+    from tests.fixtures import fake_ffmpeg_tree
+
+    settings = Settings(data_dir=tmp_path / "data", home_dir=tmp_path / "home", log_to_file=False)
+    fake_ffmpeg_tree(settings.binaries_dir)
+    binaries = resolve_binaries(settings, allow_path_fallback=False)
+
+    edl = {
+        "version": "1.1",
+        "fps": 30,
+        "width": 1080,
+        "height": 1920,
+        "total_duration": 3.0,
+        "color": {"contrast": 0.6, "saturation": 0.6},
+        "segments": [
+            {
+                "source": "/m/a.mp4",
+                "in_point": 0.8,
+                "out_point": 2.3,
+                "timeline_start": 0.0,
+                "duration": 1.5,
+            },
+            {
+                "source": "/m/b.mp4",
+                "in_point": 1.0,
+                "out_point": 2.5,
+                "timeline_start": 1.5,
+                "duration": 1.5,
+            },
+        ],
+    }
+    command = build_edl_command(binaries, edl, tmp_path / "final.mp4")
+    joined = " ".join(command)
+    assert command[0].endswith("ffmpeg")
+    assert command[1] == "-y"
+    assert joined.count("-ss") == 2
+    assert command.count("-i") == 2  # one input per segment, no stray input flags
+    assert "concat=n=2:v=1:a=0" in joined
+    assert "s=1080x1920" in joined
+    assert "-s" not in command
+    assert "-vf" not in command
+    assert command[-1] == str(tmp_path / "final.mp4")  # the output path closes the command
+    assert command.count(str(tmp_path / "final.mp4")) == 1
+
+    with pytest.raises(ValueError, match="empty EDL"):
+        build_edl_command(binaries, {"segments": [], "width": 1, "height": 1}, tmp_path / "x.mp4")
 
 
 def test_api_stylematch_flow(client) -> None:

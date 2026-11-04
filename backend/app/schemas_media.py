@@ -33,6 +33,10 @@ class AssetRead(BaseModel):
     fps: float
     width: int
     height: int
+    #: Derived from the cached ffprobe JSON so the UI can show codec/audio chips.
+    video_codec: str | None = None
+    audio_codec: str | None = None
+    has_audio: bool = False
     created_at: datetime
     updated_at: datetime
 

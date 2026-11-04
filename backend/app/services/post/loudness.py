@@ -13,6 +13,12 @@ TARGETS: dict[str, float] = {
     "broadcast": -23.0,
 }
 DEFAULT_TARGET = -14.0
+#: True-peak ceiling used by the platform targets.
+TP_TARGET = -1.5
+#: ``loudnorm`` only honours ``linear=true`` when the measured LRA is non-zero; flat
+#: material (tones, drones, a single mic) would silently fall back to dynamic mode and
+#: miss the target by several dB, so those get an exact static gain instead.
+FLAT_LRA = 0.1
 _PAIR_PARSER = re.compile(
     r"input_i[^\d-]+(-?\d+\.?\d*)[^\d-]+input_tp[^\d-]+(-?\d+\.?\d*)[^\d-]+input_lra[^\d-]+(-?\d+\.?\d*)",
     re.DOTALL,
@@ -34,6 +40,8 @@ class LoudnessPlan:
     measured_tp: float
     measured_lra: float
     target: float
+    mode: str = "linear"
+    gain_db: float | None = None
 
 
 def parse_loudnorm_block(stderr: str) -> dict[str, float] | None:
@@ -58,8 +66,23 @@ def plan_loudness(
     measured_i = float(measurement.get("i", target))
     measured_tp = float(measurement.get("tp", -1.5))
     measured_lra = float(measurement.get("lra", 11.0))
+    if measured_lra <= FLAT_LRA:
+        gain = target - measured_i
+        gain = min(gain, TP_TARGET - measured_tp)  # never push the true peak over -1.5 dBTP
+        chain = f"volume={gain:.2f}dB"
+        if offset:
+            chain = f"volume={offset:.2f}dB,{chain}"
+        return LoudnessPlan(
+            filter_chain=chain,
+            measured_i=measured_i,
+            measured_tp=measured_tp,
+            measured_lra=measured_lra,
+            target=target,
+            mode="gain",
+            gain_db=round(gain, 2),
+        )
     chain = (
-        f"loudnorm=I={target}:TP=-1.5:LRA=11:"
+        f"loudnorm=I={target}:TP={TP_TARGET}:LRA=11:"
         f"measured_I={measured_i}:measured_TP={measured_tp}:measured_LRA={measured_lra}:"
         f"linear=true:print_format=summary"
     )

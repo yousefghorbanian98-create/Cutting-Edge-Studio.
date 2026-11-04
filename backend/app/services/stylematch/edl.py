@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from app.services.stylematch.dna import target_cut_length
+from app.services.stylematch.dna import extend_beat_grid, target_cut_length
 from app.services.stylematch.types import EDL, EDLSegment, StyleDNA
 
 #: Preferred source ordering: peak-contraction shots first (sports narrative).
@@ -102,7 +102,8 @@ def snap_to_beats(edl: EDL, beats: list[float], *, tolerance: float = BEAT_TOLER
     if not beats:
         return {**edl, "notes": [*edl.get("notes", []), "no beats: EDL left unsnapped"]}
 
-    ordered = sorted(beats)
+    # Extend the reference tempo so cuts past the reference's end still land on the grid.
+    ordered = extend_beat_grid(beats, float(edl.get("total_duration", 0.0)) + 1.0)
     snapped: list[EDLSegment] = []
     timeline = 0.0
     adjustments = 0
@@ -133,6 +134,27 @@ def snap_to_beats(edl: EDL, beats: list[float], *, tolerance: float = BEAT_TOLER
     total = round(sum(segment["duration"] for segment in snapped), 3)
     notes = [*edl.get("notes", []), f"snapped {adjustments} cuts to the beat grid"]
     return {**edl, "version": "1.1", "segments": snapped, "total_duration": total, "notes": notes}
+
+
+def pacing_curve(edl: EDL, buckets: int = 12) -> list[float]:
+    """Energy per timeline bucket: one unit per cut, normalised to 0-1.
+
+    Mirrors :func:`app.services.stylematch.dna.pacing_curve` so the two curves are
+    comparable (the reference profile vs. the edit we actually built).
+    """
+    segments = edl.get("segments") or []
+    if not segments:
+        return []
+    total = max(float(edl.get("total_duration", 0.0)), 0.001)
+    width = total / buckets
+    energy = [0.0] * buckets
+    for segment in segments:
+        start = float(segment.get("timeline_start", 0.0))
+        bucket = min(buckets - 1, max(0, int(start / width)))
+        speed = float(segment.get("speed", 1.0) or 1.0)
+        energy[bucket] += 1.0 + max(0.0, speed - 1.0)
+    peak = max(energy) or 1.0
+    return [round(value / peak, 3) for value in energy]
 
 
 def cut_times(edl: EDL) -> list[float]:

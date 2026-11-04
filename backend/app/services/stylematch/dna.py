@@ -128,6 +128,29 @@ def bpm_from_beats(beat_times: list[float]) -> float:
     return round(60.0 / median_interval, 2)
 
 
+def extend_beat_grid(beats: list[float], until: float, *, max_beats: int = 20_000) -> list[float]:
+    """Repeat the reference tempo past its end so long edits still snap to a beat.
+
+    A 20 s reference at 120 BPM gives beats up to 19.5 s; an edit of 40 s would otherwise
+    have no grid for its second half, which is exactly when alignment silently degrades.
+    """
+    if not beats or until <= beats[-1]:
+        return list(beats)
+    ordered = sorted(beats)
+    intervals = [b - a for a, b in itertools.pairwise(ordered) if b > a]
+    if not intervals:
+        return ordered
+    step = statistics.median(intervals)
+    if step <= 0:
+        return ordered
+    extended = list(ordered)
+    cursor = ordered[-1]
+    while cursor < until and len(extended) < max_beats:
+        cursor += step
+        extended.append(round(cursor, 3))
+    return extended
+
+
 def pacing_curve(shots: list[dict[str, Any]], buckets: int = 12) -> list[float]:
     """Energy per timeline bucket: cuts plus motion, normalized to 0-1."""
     if not shots:

@@ -28,19 +28,35 @@ def _clamp(value: float, low: float, high: float) -> float:
 
 
 def zoompan_filter(
-    face_center: tuple[float, float] | None, *, fps: int, duration: float, zoom_to: float = ZOOM_MAX
+    face_center: tuple[float, float] | None,
+    *,
+    fps: int,
+    duration: float,
+    zoom_to: float = ZOOM_MAX,
+    width: int = 1080,
+    height: int = 1920,
+    still: bool = False,
 ) -> str:
-    """FFmpeg ``zoompan`` push-in centred on the face (falls back to the frame centre)."""
+    """FFmpeg ``zoompan`` push-in centred on the face (falls back to the frame centre).
+
+    The canvas size follows the project: a 9:16 TikTok edit is 1080x1920, so a hard-coded
+    landscape size here would silently letterbox every portrait render.
+    """
     frames = max(1, int(round(fps * max(0.1, duration))))
     target = _clamp(zoom_to, ZOOM_MIN, ZOOM_MAX)
     centre_x, centre_y = face_center or (0.5, 0.5)
     # zoompan works in pixels: keep the anchor inside the frame so `x`/`y` never go negative.
-    anchor_x = _clamp(centre_x, 0.0, 1.0) * 1920
-    anchor_y = _clamp(centre_y, 0.0, 1.0) * 1080
+    anchor_x = _clamp(centre_x, 0.0, 1.0) * width
+    anchor_y = _clamp(centre_y, 0.0, 1.0) * height
+    # The zoom ramps across the whole clip in both cases, but `d` differs: a still image
+    # needs `d=frames` to be held, while a video stream must stay 1:1 (`d=1`) or every
+    # source frame would be duplicated `frames` times and the render would explode.
+    ramp = f"min({target},{ZOOM_MIN}+({target}-{ZOOM_MIN})*on/{frames})"
+    hold = frames if still else 1
     return (
-        f"zoompan=z='min({target},{ZOOM_MIN}+0.0008*on)':"
+        f"zoompan=z='{ramp}':"
         f"x='{anchor_x:.1f}-(iw/zoom/2)':y='{anchor_y:.1f}-(ih/zoom/2)':"
-        f"d={frames}:s=1920x1080:fps={fps}"
+        f"d={hold}:s={width}x{height}:fps={fps}"
     )
 
 
@@ -79,7 +95,9 @@ def build_filter_chain(
     parts = [
         f"scale={width}:{height}:force_original_aspect_ratio=decrease",
         f"pad={width}:{height}:(ow-iw)/2:(oh-ih)/2",
-        zoompan_filter(face_center, fps=fps, duration=max(0.5, duration)),
+        zoompan_filter(
+            face_center, fps=fps, duration=max(0.5, duration), width=width, height=height
+        ),
         color_grade_filter(edl.get("color") or {}, source_color or {"r": 128, "g": 128, "b": 128}),
         f"fps={fps}",
     ]
@@ -146,6 +164,89 @@ def build_preview_plan(
         command.remove("-profile:v")
         command.remove("high")
     return RenderPlan(command=command, filter_chain=plan.filter_chain, output=output)
+
+
+def build_edl_command(
+    binaries: FFmpegBinaries,
+    edl: EDL,
+    output: Path,
+    *,
+    encoder: str = "h264_nvenc",
+    bitrate_kbps: int = 12000,
+    face_center: tuple[float, float] | None = None,
+    source_color: dict[str, float] | None = None,
+) -> list[str]:
+    """One command that renders the whole EDL (trim per segment, then concat).
+
+    Each segment is an independent input with ``-ss``/``-t`` so long source files are
+    never decoded twice, and ``concat`` stitches the normalised streams together.
+    """
+    segments = list(edl.get("segments") or [])
+    if not segments:
+        msg = "cannot render an empty EDL"
+        raise ValueError(msg)
+
+    width = int(edl.get("width", 1080))
+    height = int(edl.get("height", 1920))
+    fps = int(edl.get("fps", 30))
+    inputs: list[str] = []
+    graph: list[str] = []
+
+    for index, segment in enumerate(segments):
+        start = max(0.0, float(segment["in_point"]))
+        length = max(0.05, float(segment["duration"]))
+        inputs += ["-ss", f"{start:.3f}", "-t", f"{length:.3f}", "-i", str(segment["source"])]
+        speed = float(segment.get("speed", 1.0) or 1.0)
+        tempo = f"setpts=PTS/{speed}" if speed != 1.0 else "setpts=PTS-STARTPTS"
+        graph.append(
+            f"[{index}:v]trim=start=0:end={length:.3f},{tempo},"
+            f"scale={width}:{height}:force_original_aspect_ratio=decrease,"
+            f"pad={width}:{height}:(ow-iw)/2:(oh-ih)/2,setsar=1,fps={fps}[s{index}]"
+        )
+
+    stream_labels = "".join(f"[s{index}]" for index in range(len(segments)))
+    graph.append(f"{stream_labels}concat=n={len(segments)}:v=1:a=0[cat]")
+    graph.append(
+        f"[cat]{build_filter_chain(edl, face_center=face_center, source_color=source_color)}[vout]"
+    )
+
+    # Validate the encoder choice through the media layer (GPL encoders raise here), then
+    # build the output flags explicitly: the EDL graph owns resolution/frame rate.
+    export_command(
+        binaries,
+        Path(segments[0]["source"]),
+        output,
+        encoder=encoder,
+        width=width,
+        height=height,
+        fps=fps,
+        bitrate_kbps=bitrate_kbps,
+    )
+    video_args = ["-c:v", encoder, "-b:v", f"{bitrate_kbps}k"]
+    if encoder == "h264_nvenc":
+        video_args += ["-preset", "p5", "-tune", "hq", "-rc", "vbr"]
+    else:
+        video_args += ["-maxrate", f"{bitrate_kbps}k", "-bufsize", f"{bitrate_kbps * 2}k"]
+    return [
+        str(binaries.ffmpeg),
+        "-y",
+        "-hide_banner",
+        "-loglevel",
+        "error",
+        *inputs,
+        "-filter_complex",
+        ";".join(graph),
+        "-map",
+        "[vout]",
+        *video_args,
+        "-pix_fmt",
+        "yuv420p",
+        "-profile:v",
+        "high",
+        "-movflags",
+        "+faststart",
+        str(output),
+    ]
 
 
 def concat_list_file(segments: list[dict[str, Any]], directory: Path) -> Path:

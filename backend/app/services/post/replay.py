@@ -55,13 +55,21 @@ def comparison_filters(
     half_h = (height - gap) // 2
     half_w = (width - gap) // 2
     if layout == "side_by_side":
-        scale_a = f"scale={half_w}:{height}"
-        scale_b = f"scale={half_w}:{height}"
-        stack = "hstack=inputs=2:fill=black"
+        scale_a = (
+            f"scale={half_w}:{height}:force_original_aspect_ratio=decrease,pad={half_w}:{height}"
+        )
+        scale_b = (
+            f"scale={half_w}:{height}:force_original_aspect_ratio=decrease,pad={half_w}:{height}"
+        )
+        stack = "hstack=inputs=2"
     elif layout == "stacked":
-        scale_a = f"scale={width}:{half_h}"
-        scale_b = f"scale={width}:{half_h}"
-        stack = "vstack=inputs=2:fill=black"
+        scale_a = (
+            f"scale={width}:{half_h}:force_original_aspect_ratio=decrease,pad={width}:{half_h}"
+        )
+        scale_b = (
+            f"scale={width}:{half_h}:force_original_aspect_ratio=decrease,pad={width}:{half_h}"
+        )
+        stack = "vstack=inputs=2"
     else:
         scale_a = f"scale={width}:{height}"
         scale_b = f"scale={int(width * 0.4)}:{int(height * 0.4)}"

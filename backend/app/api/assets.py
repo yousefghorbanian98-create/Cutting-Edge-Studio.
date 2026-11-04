@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import threading
 from pathlib import Path
 
@@ -35,6 +36,26 @@ def _project_or_404(session: SessionDep, project_id: str) -> Project:
     return project
 
 
+def _to_read(asset: MediaAsset) -> AssetRead:
+    """Asset row + the codec/audio facts cached from the last ffprobe run."""
+    try:
+        cached = json.loads(asset.probe_json or "{}")
+    except json.JSONDecodeError as error:
+        LOG.warning("media.asset.probe_cache_corrupt", asset_id=asset.id, error=str(error))
+        cached = {}
+    streams = cached.get("streams") or []
+    video = next((item for item in streams if item.get("codec_type") == "video"), {})
+    audio = next((item for item in streams if item.get("codec_type") == "audio"), {})
+    view = AssetRead.model_validate(asset)
+    return view.model_copy(
+        update={
+            "video_codec": video.get("codec_name"),
+            "audio_codec": audio.get("codec_name"),
+            "has_audio": bool(audio),
+        }
+    )
+
+
 def _asset_or_404(session: SessionDep, asset_id: str) -> MediaAsset:
     asset = session.get(MediaAsset, asset_id)
     if asset is None:
@@ -54,7 +75,7 @@ def import_asset(
     request: Request,
     session: SessionDep,
     settings: SettingsDep,
-) -> MediaAsset:
+) -> AssetRead:
     """Probe a local file and register it as an asset (never copies the file)."""
     _project_or_404(session, project_id)
     path = Path(payload.path).expanduser()
@@ -77,7 +98,7 @@ def import_asset(
         session.query(MediaAsset).filter_by(project_id=project_id, path=str(path)).one_or_none()
     )
     if existing is not None:
-        return existing
+        return _to_read(existing)
 
     asset = MediaAsset(
         project_id=project_id,
@@ -94,21 +115,20 @@ def import_asset(
     session.flush()
     LOG.info("media.imported", project_id=project_id, asset_id=asset.id, role=asset.role)
     _ = settings
-    return asset
+    return _to_read(asset)
 
 
 def _safe_dump(payload: dict[str, object]) -> str:
-    import json
-
     return json.dumps(payload, ensure_ascii=False)[:20000]
 
 
 @router.get("/projects/{project_id}/assets", response_model=list[AssetRead], summary="List assets")
-def list_assets(project_id: str, session: SessionDep) -> list[MediaAsset]:
+def list_assets(project_id: str, session: SessionDep) -> list[AssetRead]:
     _project_or_404(session, project_id)
-    return list(
+    rows = (
         session.query(MediaAsset).filter_by(project_id=project_id).order_by(MediaAsset.created_at)
     )
+    return [_to_read(row) for row in rows]
 
 
 @router.delete(

@@ -177,40 +177,49 @@ Copy-Item $builtSidecar $sidecarTarget -Force
 $sidecarSize = [math]::Round((Get-Item $sidecarTarget).Length / 1MB, 1)
 Write-Host "[ok  ] sidecar staged ($sidecarSize MB) -> $sidecarTarget"
 
-Write-Host '[3/4] tauri shell'
-Push-Location (Join-Path $root 'src-tauri')
-try {
-    $cargoLog = 'cargo-build.log'
-    cargo build --release --message-format=short 2>&1 | Tee-Object -FilePath $cargoLog
-    if ($LASTEXITCODE -ne 0) { Show-CompileErrors -LogPath $cargoLog -Label 'cargo build' }
-    Assert-NativeSuccess 'cargo build'
-} finally { Pop-Location }
-
-if ($SkipInstaller) {
-    Write-Host '[4/4] skipped installer (-SkipInstaller)'
-    exit 0
-}
-
-Write-Host '[4/4] nsis installer'
+# tauri-build copies FixedRuntime into resources during cargo build, not just bundling.
+# Apply light-mode configuration BEFORE both builds and restore it even on failure.
 $confBackup = Get-Content $tauriConfPath -Raw
 try {
     if ($WithoutPinnedBinaries) {
         $conf = $confBackup | ConvertFrom-Json
         $conf.bundle.windows.webviewInstallMode = [pscustomobject]@{ type = 'skip' }
         $conf | ConvertTo-Json -Depth 12 | Set-Content $tauriConfPath -Encoding utf8
-        Write-Host '[note] WebView2 fixed runtime missing: using the machine runtime for this build.'
+        Write-Host '[note] Light build uses the machine WebView2 runtime throughout compilation and packaging.'
     }
 
+    Write-Host '[3/4] tauri shell'
     Push-Location (Join-Path $root 'src-tauri')
     try {
-        $tauriLog = 'tauri-build.log'
-        npx --yes @tauri-apps/cli@2 build --bundles nsis 2>&1 | Tee-Object -FilePath $tauriLog
-        if ($LASTEXITCODE -ne 0) { Show-CompileErrors -LogPath $tauriLog -Label 'tauri build' }
-        Assert-NativeSuccess 'tauri build'
+        $cargoLog = 'cargo-build.log'
+        cargo build --release --message-format=short 2>&1 | Tee-Object -FilePath $cargoLog
+        if ($LASTEXITCODE -ne 0) {
+            Show-CompileErrors -LogPath $cargoLog -Label 'cargo build'
+            # Custom build-script failures explain the cause after the headline error.
+            # Keep this context in check annotations when artifact downloads are unavailable.
+            $context = (Get-Content $cargoLog -Tail 45) -join '%0A'
+            Write-Output "::error title=cargo build context::$context"
+        }
+        Assert-NativeSuccess 'cargo build'
     } finally { Pop-Location }
+
+    if ($SkipInstaller) {
+        Write-Host '[4/4] skipped installer (-SkipInstaller)'
+    } else {
+        Write-Host '[4/4] nsis installer'
+        Push-Location (Join-Path $root 'src-tauri')
+        try {
+            $tauriLog = 'tauri-build.log'
+            npx --yes @tauri-apps/cli@2 build --bundles nsis 2>&1 | Tee-Object -FilePath $tauriLog
+            if ($LASTEXITCODE -ne 0) { Show-CompileErrors -LogPath $tauriLog -Label 'tauri build' }
+            Assert-NativeSuccess 'tauri build'
+        } finally { Pop-Location }
+    }
 } finally {
     Set-Content -Path $tauriConfPath -Value $confBackup -Encoding utf8
 }
+
+if ($SkipInstaller) { exit 0 }
 
 $built = Get-ChildItem -Path (Join-Path $root 'src-tauri/target/release/bundle/nsis') -Filter '*.exe' |
     Sort-Object LastWriteTime -Descending | Select-Object -First 1

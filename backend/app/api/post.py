@@ -155,6 +155,8 @@ def loudness(stderr: str, platform: str = "tiktok") -> dict[str, Any]:
     plan = plan_loudness(measurement, platform=platform if platform in TARGETS else "tiktok")
     return {
         "filter_chain": plan.filter_chain,
+        "mode": plan.mode,
+        "gain_db": plan.gain_db,
         "target": plan.target,
         "measured": {"i": plan.measured_i, "tp": plan.measured_tp, "lra": plan.measured_lra},
     }

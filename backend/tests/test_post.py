@@ -157,6 +157,14 @@ def test_loudness_parse_and_plan() -> None:
     assert "measured_I=-19.42" in plan.filter_chain
     assert "linear=true" in plan.filter_chain
 
+    flat = plan_loudness({"i": -22.05, "tp": -18.06, "lra": 0.0}, platform="tiktok")
+    assert flat.mode == "gain"
+    assert flat.filter_chain == "volume=8.05dB"
+    assert flat.gain_db == 8.05
+    # a static gain may not push the true peak past the ceiling
+    loud = plan_loudness({"i": -30.0, "tp": -2.0, "lra": 0.0}, platform="tiktok")
+    assert loud.gain_db == 0.5
+
     broadcast = plan_loudness(measurement, platform="broadcast", offset=-1.5)
     assert broadcast.target == -23.0
     assert broadcast.filter_chain.startswith("volume=-1.50dB,")
