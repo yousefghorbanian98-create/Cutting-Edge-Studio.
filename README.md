@@ -1,7 +1,14 @@
 # Cutting Edge v2
 
 Offline-first sports video editor (bodybuilding + volleyball) for Windows.
-Core feature: **Style Match** — analyse a reference edit's DNA and apply it to your own clips.
+Target core feature: **Style Match** — analyse a reference edit's DNA and apply it to your own clips.
+
+> **Release acceptance is BLOCKED (2026-11-05).** Real import/reopening/decode and experimental
+> audio-rhythm jobs have local evidence. Pretrained analysis, StyleDNA-to-render orchestration,
+> production desktop transport and the full offline Windows installer are not accepted.
+> Start with [the recovery roadmap](docs/RECOVERY-ROADMAP.md),
+> [audio job evidence](docs/RECOVERY-R2B2-REPORT.md) and
+> [native-tool qualification](docs/NATIVE-MEDIA-PREP-REPORT.md).
 
 - Protocol: **v2.5.1** (`docs/PROTOCOL-v2.5.1.md`)
 - Decisions & resolved contradictions: `docs/PROTOCOL-ISSUES.md`
@@ -11,14 +18,16 @@ Core feature: **Style Match** — analyse a reference edit's DNA and apply it to
 ## Architecture
 
 ```
-frontend/    React 18 + Vite 5 + TypeScript 5 + Tailwind 3 (desktop UI)
+frontend/    React 18 + Vite 7 + TypeScript 5 + Tailwind 3 (desktop UI)
 backend/     FastAPI sidecar — SQLite, structlog, OSS adapters (loopback only)
 src-tauri/   Tauri v2 shell — spawns the sidecar, hosts the webview
 scripts/     build-installer.ps1 + pins.json (SHA-256 pinned artifacts)
 docs/        protocol, decisions, ledgers, guides
 ```
 
-Runtime is fully offline: no telemetry, no auto-update, no CDN, no runtime downloads.
+The runtime target is offline: no telemetry, CDN or automatic downloads. Build-machine
+provisioning is separate. Installed-app offline acceptance is still open; development checks
+are not a certificate for the complete Windows product.
 
 ## Development (Linux/macOS sandbox or Windows)
 
@@ -48,12 +57,16 @@ cd src-tauri && cargo build --release
 ## Installer
 
 ```powershell
-pwsh -File scripts/build-installer.ps1 -UpdatePins   # once, trusted network
-pwsh -File scripts/build-installer.ps1               # produces delivery/*.exe + .sha256
+pwsh -File scripts/build-installer.ps1 -WithoutPinnedBinaries  # light CI/smoke build ONLY
 ```
-The script refuses to build while any artifact hash in `scripts/pins.json` is `null`.
+The full bundle remains blocked by model/WebView2 placeholder artifacts, native packaging and
+runtime acceptance. FFmpeg now has a dated publisher-checksum pin. A light build omits pinned
+binaries/models/fixed WebView2 and is not the promised full offline installer. Do not treat
+`-UpdatePins` as licence/provenance review or manufacture hashes for placeholder URLs.
 
 ## Status
 
-P0 delivered (20/260 steps). Phase-by-phase delivery: each phase ends with an evidence report
-and requires Owner approval before the next phase starts.
+The historical ledger records 260/260 authored steps (100%), not 100% release readiness.
+Recovery proceeds inspect → reuse OSS → integrate → test → collect evidence, without interim
+approval stops under the Owner's latest instruction. Work stays on the session branch/PR #1;
+only the Owner merges. Current acceptance and remaining blockers live in the linked reports.

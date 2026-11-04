@@ -1,6 +1,6 @@
-# Evidence Report — approved-tool pin and Windows native probe preparation
+# Evidence Report — pinned tools and actual Windows native media probe
 
-2026-11-05 · same branch / PR #1, Owner merges. **Preparation, not runtime acceptance.**
+2026-11-05 · same branch / PR #1, Owner merges. **Native CLI evidence, not installed-app acceptance.**
 Historical authored steps remain **260/260 (100%)**, NOT full release readiness.
 
 ## Why this step
@@ -40,7 +40,7 @@ Sources inspected:
 - `https://api.github.com/repos/BtbN/FFmpeg-Builds/releases/tags/autobuild-2026-10-31-12-59`: asset/digest provenance.
 - `https://github.com/soCzech/TransNetV2/blob/master/inference/README.md`: actual dependencies and LFS weights.
 
-## Authored probe, not yet an observed result
+## Executed Windows native probe
 
 The existing Windows CI job now checks out the **triggering commit**, not a potentially moved
 branch tip, and runs `scripts/ci/windows-native-media.ps1` before installer compilation.
@@ -55,12 +55,47 @@ The probe must:
 3. Require `libopenh264`; do not substitute libx264 or invent an available fallback.
 4. Encode an owned one-second 160×96 black H.264 fixture using real OpenH264, verify actual
    ffprobe codec/dimensions/duration, then error-check a real decode.
-5. If `scdet` is present, use ffprobe's JSON output on an owned black→white filter-source clip
-   and verify exactly one native detector candidate at one second. No hand-written detector/parser.
+5. Require the ready `scdet` filter, use ffprobe's JSON output on an owned black→white
+   filter-source clip and verify exactly one native detector candidate at one second.
+   Absence fails, rather than counting an unperformed test as success. No hand-written detector/parser.
 6. Upload only JSON evidence (configuration/licence/encoders/probe facts), not media or binaries.
 
-**Windows native execution is pending.** A pin and script are not evidence that these checks passed.
+**Observed result: PASS on an actual Windows runner.** Push run **41926420920** on
+**`ffd3169`** reports the native probe step SUCCESS and uploaded the JSON artifact. This strict
+revision requires all checks above, including the one-cut scdet fixture. The previous run
+41925991657 on `c157c20` had also passed native OpenH264 encoding/probing/decoding; the later
+revision deliberately strengthens the scene-filter condition from optional to required.
+
+- [Strict native step status](evidence/native-media/windows-native-step-status.json)
+- [Strict JSON artifact metadata](evidence/native-media/windows-native-artifact.json)
+- [Run 41926420920](https://github.com/yousefghorbanian98-create/Cutting-Edge-Studio./actions/runs/41926420920)
+- [Earlier native step status](evidence/native-media/first-native-step-status.json),
+  [earlier artifact metadata](evidence/native-media/first-native-artifact.json)
+
+The raw probe JSON is uploaded on GitHub; its archive contents were not downloaded or
+independently inspected in this restricted sandbox. The evidence here is the actual successful
+assertion-bearing Windows step and artifact metadata, not a fabricated copy of its output.
+The encompassing Windows **installer job was still building at this observation**; native-step
+SUCCESS does not mean the full job/installer passed.
+
+Local regression after the pin guard: **257 optional-profile backend tests passed, 93.80% coverage**;
+Ruff lint/format passed. [Raw regression](evidence/native-media/backend-pin-regression.txt),
+[lint](evidence/native-media/backend-lint.txt), [git log](evidence/native-media/git-log.txt),
+[diffstat 35281c1..ffd3169](evidence/native-media/git-diff-stat.txt).
+No frontend source changes were made in this native-tool step; the fresh R2b2 report contains
+its 161-test/build output and actual UI screenshots, not a new scene-analysis UI.
+
+This clears a **tool-level feasibility check**, not project scene jobs or pretrained inference.
 The separate full installer still has unfilled model/WebView2 pins, resource layout/routing work,
 optional/native licence review and clean-install/offline/GUI acceptance gates. This probe cannot
 clear those gates, certify every transitive native component, establish NVENC performance or
 replace the application's unimplemented renderer/model orchestration.
+
+
+## Next concrete gate
+
+Reuse FFmpeg's existing `scdet` and ffprobe JSON for a bounded **shot-candidate-only** adapter,
+with original provenance, cancellation/deadline/error handling and explicit unavailable states.
+The successful synthetic native-filter check is not music/sports/video quality acceptance and
+must not be labelled TransNetV2 or StyleDNA. Then integrate measured artifacts into the existing
+project worker/UI only after direct real-media tests; keep missing pretrained models blocked.

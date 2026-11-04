@@ -172,8 +172,8 @@ independently retrieved/reviewed**; they are not asserted to be false positives.
   The artifact exists; executable/SHA archive contents were not downloaded or independently checked.
 - That build uses **WithoutPinnedBinaries**, not the complete ~3.5 GB product/runtime bundle.
   Build success is not clean install, launch, worker, model, encoder, offline or uninstall acceptance.
-- **New R2b2 revision CI is pending at report authoring**; the above runs are explicitly prior
-  revision evidence, not substitutes for a fresh run. Native/optional licence and Windows acceptance
+- **Post-correction R2b2 PR CI 41925158413 on 35281c1 passed** backend, frontend and security.
+  The above 3a1446a runs remain explicitly prior-revision evidence. Native/optional licence and Windows acceptance
   remain open regardless of CI status.
 
 The primary development preview on port 1420 was refreshed against the original user data
@@ -196,7 +196,10 @@ scanner's secret value. No directory, commit, rule or general hex/checksum exclu
 CI also runs the real pinned CLI on disposable history: the public digest in this report is
 excluded, while another credential-shaped value in the same report AND the same digest in
 another file must still produce two failures. Full real-repository history is still scanned;
-redaction and failure exit status remain intact. Fresh post-correction CI is pending here.
+redaction and failure exit status remain intact. **Post-correction PR 41925158413 on 35281c1
+passed**, including the real-CLI boundary test and full-history scan. Later native-tool work is
+tracked separately in [its report](NATIVE-MEDIA-PREP-REPORT.md), not counted as Windows audio-worker
+or installed-app acceptance.
 
 ## 7. Reproduction / next gates
 
