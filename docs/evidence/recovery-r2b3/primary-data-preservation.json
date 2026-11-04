@@ -1,0 +1,23 @@
+{
+  "same_rows": {
+    "projects": true,
+    "media_assets": true,
+    "bookmarks": true,
+    "artifacts": true
+  },
+  "test_fixtures_imported_to_primary": false,
+  "operations": {
+    "inspection": {
+      "available": true,
+      "model_analysis_available": false
+    },
+    "rhythm": {
+      "available": true,
+      "model_analysis_available": false
+    },
+    "scenes": {
+      "available": true,
+      "model_analysis_available": false
+    }
+  }
+}

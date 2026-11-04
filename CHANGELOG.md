@@ -3,6 +3,14 @@
 All notable changes to Cutting Edge v2. Format: [Keep a Changelog](https://keepachangelog.com/),
 versioning: [SemVer](https://semver.org/).
 
+## Recovery R2b3 — 2026-11-05
+
+- Reused native FFmpeg scdet/ffprobe JSON for default-disabled cut-candidate measurements, not pretrained/semantic shots or StyleDNA.
+- Extended the existing project worker, durable artifacts, route factory and English/Persian measurement panel; original identity/hash checks, native errors and hardlink staging are explicit.
+- Actual owned cuts at 1/3 seconds, audio-before-video stream selection, static/no-video, cancel/failure/stale/restart/interrupted/retry verified; 25/25 browser checks, 287 optional/native backend tests (93.75%), 167 frontend and build PASS.
+- Abrupt-exit hardlink-cache GC, independent native-child crash supervision/Windows adapter execution, real sports quality, models, production routing and full installed/offline release remain OPEN. See `docs/RECOVERY-R2B3-REPORT.md`.
+- Prior e62f847 push 41926876782 now has strict Windows native + NSIS **light** build success; not full installer acceptance.
+
 ## Recovery R2b1 — 2026-11-04
 
 - Added an experimental WAV rhythm adapter calling existing ISC-licensed librosa, with real click-track/silence measurements; no new beat algorithm, API/job/UI or full R2 completion claimed.

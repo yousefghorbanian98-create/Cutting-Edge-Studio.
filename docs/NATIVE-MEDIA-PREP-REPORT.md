@@ -75,8 +75,12 @@ revision deliberately strengthens the scene-filter condition from optional to re
 The raw probe JSON is uploaded on GitHub; its archive contents were not downloaded or
 independently inspected in this restricted sandbox. The evidence here is the actual successful
 assertion-bearing Windows step and artifact metadata, not a fabricated copy of its output.
-The encompassing Windows **installer job was still building at this observation**; native-step
-SUCCESS does not mean the full job/installer passed.
+The encompassing Windows installer was still building at that observation and run 41926420920
+was later cancelled. **Follow-up:** push **41926876782 on e62f847** subsequently completed with
+SUCCESS, including strict native probe and the NSIS **light** installer job 126913815242.
+[Actual run/steps](evidence/recovery-r2b3/inherited-windows-light-run.json) and
+[artifact metadata](evidence/recovery-r2b3/inherited-windows-artifacts.json) are recorded. This is
+not full-bundle, clean-install or installed/offline acceptance; raw archives were not inspected here.
 
 Local regression after the pin guard: **257 optional-profile backend tests passed, 93.80% coverage**;
 Ruff lint/format passed. [Raw regression](evidence/native-media/backend-pin-regression.txt),
@@ -92,9 +96,14 @@ clear those gates, certify every transitive native component, establish NVENC pe
 replace the application's unimplemented renderer/model orchestration.
 
 
-## Next concrete gate
+## Subsequent adapter / next gate
 
-Reuse FFmpeg's existing `scdet` and ffprobe JSON for a bounded **shot-candidate-only** adapter,
+The following planned adapter was subsequently implemented as experimental/default-disabled
+**d16b1b5**: [R2b3 evidence](RECOVERY-R2B3-REPORT.md). It passed real owned-media/native jobs/UI
+locally, not on Windows; abrupt-exit hardlink-cache GC and native crash supervision remain open.
+Next inspect/reuse gate is native crash/cache hardening and approved artifact/resource routing.
+
+Original adapter scope (now locally exercised): reuse FFmpeg's existing `scdet` and ffprobe JSON for a bounded **shot-candidate-only** adapter,
 with original provenance, cancellation/deadline/error handling and explicit unavailable states.
 The successful synthetic native-filter check is not music/sports/video quality acceptance and
 must not be labelled TransNetV2 or StyleDNA. Then integrate measured artifacts into the existing

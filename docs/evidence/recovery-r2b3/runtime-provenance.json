@@ -1,0 +1,30 @@
+{
+  "scope": "diagnostic Linux native tools, NOT approved shipping artifact or full-product offline acceptance",
+  "python": "3.11.2 (main, Apr  8 2026, 01:58:00) [GCC 12.2.0]",
+  "platform": "Linux-6.1.158+-x86_64-with-glibc2.36",
+  "native": {
+    "ffmpeg": {
+      "path": "/tmp/ce-r2c-home/binaries/ffmpeg/bin/ffmpeg",
+      "sha256": "161c1ec97d2986240567f64041282bd7cb24a114aba617e183b7bc64dbc32305",
+      "version_and_configuration": "ffmpeg version 7.1.1 Copyright (c) 2000-2025 the FFmpeg developers\nbuilt with gcc 12 (Debian 12.2.0-14+deb12u1)\nconfiguration: --prefix=/tmp/ce-r2c-home/binaries/ffmpeg --disable-everything --disable-autodetect --disable-network --disable-doc --disable-debug --disable-x86asm --enable-shared --disable-static --enable-small --enable-ffmpeg --enable-ffprobe --enable-decoder='h264,aac,hevc,pcm_s16le,wrapped_avframe,mpeg4' --enable-demuxer='mov,wav' --enable-parser='h264,aac,mpeg4video' --enable-protocol='file,pipe' --enable-muxer='null,wav,mp4' --enable-encoder='wrapped_avframe,pcm_s16le,aac,mpeg4' --enable-indev=lavfi --enable-filter='buffer,abuffer,buffersink,abuffersink,null,anull,aresample,format,aformat,movie,scale,scdet,color,concat' --extra-ldflags='-Wl,-rpath,/tmp/ce-r2c-home/binaries/ffmpeg/lib'\nlibavutil      59. 39.100 / 59. 39.100\nlibavcodec     61. 19.101 / 61. 19.101\nlibavformat    61.  7.100 / 61.  7.100\nlibavdevice    61.  3.100 / 61.  3.100\nlibavfilter    10.  4.100 / 10.  4.100\nlibswscale      8.  3.100 /  8.  3.100\nlibswresample   5.  3.100 /  5.  3.100\n"
+    },
+    "ffprobe": {
+      "path": "/tmp/ce-r2c-home/binaries/ffmpeg/bin/ffprobe",
+      "sha256": "83c0a886cca9756bcde51dc9a847513534f53af776d295924a2b8d62779bedd2",
+      "version_and_configuration": "ffprobe version 7.1.1 Copyright (c) 2007-2025 the FFmpeg developers\nbuilt with gcc 12 (Debian 12.2.0-14+deb12u1)\nconfiguration: --prefix=/tmp/ce-r2c-home/binaries/ffmpeg --disable-everything --disable-autodetect --disable-network --disable-doc --disable-debug --disable-x86asm --enable-shared --disable-static --enable-small --enable-ffmpeg --enable-ffprobe --enable-decoder='h264,aac,hevc,pcm_s16le,wrapped_avframe,mpeg4' --enable-demuxer='mov,wav' --enable-parser='h264,aac,mpeg4video' --enable-protocol='file,pipe' --enable-muxer='null,wav,mp4' --enable-encoder='wrapped_avframe,pcm_s16le,aac,mpeg4' --enable-indev=lavfi --enable-filter='buffer,abuffer,buffersink,abuffersink,null,anull,aresample,format,aformat,movie,scale,scdet,color,concat' --extra-ldflags='-Wl,-rpath,/tmp/ce-r2c-home/binaries/ffmpeg/lib'\nlibavutil      59. 39.100 / 59. 39.100\nlibavcodec     61. 19.101 / 61. 19.101\nlibavformat    61.  7.100 / 61.  7.100\nlibavdevice    61.  3.100 / 61.  3.100\nlibavfilter    10.  4.100 / 10.  4.100\nlibswscale      8.  3.100 /  8.  3.100\nlibswresample   5.  3.100 /  5.  3.100\n"
+    },
+    "licence": "ffmpeg is free software; you can redistribute it and/or\nmodify it under the terms of the GNU Lesser General Public\nLicense as published by the Free Software Foundation; either\nversion 2.1 of the License, or (at your option) any later version.\n\nffmpeg is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU\nLesser General Public License for more details.\n\nYou should have received a copy of the GNU Lesser General Public\nLicense along with ffmpeg; if not, write to the Free Software\nFoundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA\n"
+  },
+  "guard": {
+    "path": "/tmp/ce-r2b2-offline/sitecustomize.py",
+    "sha256": "46e002fda3592ec563738305558419de247d1b1226b54517bf7186fc80edb9ff",
+    "scope": "test-only Python outgoing sockets denied; browser traffic separately recorded; native build network disabled"
+  },
+  "fixtures": {
+    "owned-audio-only.wav": "5ba66f0b9a8dd400b3037d65e5febd0620a46b9f03b9f913e00e02fca7830685",
+    "owned-static.mp4": "717bb4417d56db26bcdcb38341a6f1c0fa9e2be63c872be3ef1b9c6e81379b2b",
+    "owned-cuts-audio-first.mp4": "3ca80a124dde2a080ef70aba3b95ae62bb800eb5843c2becdc8446dbade1765b"
+  },
+  "flags_default": false,
+  "preview_flags_explicit": true
+}

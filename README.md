@@ -4,11 +4,12 @@ Offline-first sports video editor (bodybuilding + volleyball) for Windows.
 Target core feature: **Style Match** — analyse a reference edit's DNA and apply it to your own clips.
 
 > **Release acceptance is BLOCKED (2026-11-05).** Real import/reopening/decode and experimental
-> audio-rhythm jobs have local evidence. Pretrained analysis, StyleDNA-to-render orchestration,
+> audio-rhythm and native cut-candidate jobs have local evidence. Pretrained analysis, StyleDNA-to-render orchestration,
 > production desktop transport and the full offline Windows installer are not accepted.
 > Start with [the recovery roadmap](docs/RECOVERY-ROADMAP.md),
 > [audio job evidence](docs/RECOVERY-R2B2-REPORT.md) and
-> [native-tool qualification](docs/NATIVE-MEDIA-PREP-REPORT.md).
+> [native-tool qualification](docs/NATIVE-MEDIA-PREP-REPORT.md) and
+> [cut-candidate evidence/limits](docs/RECOVERY-R2B3-REPORT.md).
 
 - Protocol: **v2.5.1** (`docs/PROTOCOL-v2.5.1.md`)
 - Decisions & resolved contradictions: `docs/PROTOCOL-ISSUES.md`

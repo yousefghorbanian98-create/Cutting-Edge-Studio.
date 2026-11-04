@@ -19,10 +19,17 @@ R2a real-media inspection passed locally (26 browser checks including a delibera
 199 backend tests / 94.59%, 154 frontend tests; [report](RECOVERY-R2A-REPORT.md), code `675478c`).
 R2b1 then validated a standalone librosa rhythm adapter (3/3 synthetic fixtures; 227 tests with
 optional analysis / 94.86%, base 224 + 3 explicit skips); [report](RECOVERY-R2B1-REPORT.md),
-code `d1decc2`. It is not wired to project jobs/UI or approved for Windows distribution.
+code `d1decc2`. At that revision it was not wired to project jobs/UI; R2b2 subsequently added that glue, still without Windows distribution acceptance.
 R2a remains decoding/probing/hashing only, not pretrained model analysis. Full R2, R3 rendering and
 Windows gates remain open. Competitor benchmark C1 is
 specified; actual CapCut/Filmora behavior is still unobserved.
+
+R2b3 default-disabled native scdet candidate jobs/UI now have local owned-stimulus evidence: code
+`d16b1b5`, 287 optional/native tests (93.75%), 281 base + 6 skips, 167 frontend and 25/25 browser
+checks. See [RECOVERY-R2B3-REPORT.md](RECOVERY-R2B3-REPORT.md). Actual 1/3-second cuts are not
+semantic shot/model/StyleDNA acceptance. SIGKILL left a hardlink cache orphan; crash GC, Windows
+adapter execution, native packaging and full release remain OPEN. Prior e62f847 strict-native +
+NSIS light push 41926876782 succeeded; that is not full installer acceptance.
 
 ## P0 — Foundation & Setup (week 1, 20 steps)
 
