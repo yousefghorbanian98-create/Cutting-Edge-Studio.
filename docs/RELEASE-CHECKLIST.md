@@ -6,9 +6,9 @@
 ## A. Automated checks (local results and earlier CI evidence)
 
 - [x] Backend: `ruff check .` + `ruff format --check .`
-- [x] Backend: `pytest --cov=app` → 124 passed locally, coverage 94.01 %
+- [x] Backend: `pytest --cov=app` → 133 passed locally, coverage 93.95 %
 - [x] Backend: `pip-audit -r requirements.txt --strict` → no known vulnerabilities
-- [x] Frontend: `npm run lint`, `npm test` (108), `npm run build`
+- [x] Frontend: `npm run lint`, `npm test` (118), `npm run build`
 - [x] Frontend: `npm audit --audit-level=high` → 0 high/critical
 - [x] Security: gitleaks + trivy (CRITICAL)
 - [x] Guardrails: `tests/test_hygiene.py` (offline, licences, E4)
@@ -16,7 +16,9 @@
 
 ## A2. Integration acceptance (not cleared by unit tests)
 
-- [ ] Media import creates backend assets with usable local paths
+- [x] Browser media import creates backend assets with usable local paths (R1 local evidence)
+- [x] Source playback through registered asset IDs and HTTP ranges (not edit rendering)
+- [ ] Project/media/timeline workspace reopens after restart
 - [ ] Wizard starts real analysis and shows backend progress/results
 - [ ] Preview/export controls invoke the approved renderer and play the result
 - [ ] Packaged Tauri has working sidecar API routing without Vite

@@ -2,6 +2,11 @@
 
 Date: **2026-11-04** · Branch: `arena/dbb53bc2-cutting-edge-studio` · PR: **#1**
 
+> **Subsequent recovery:** [RECOVERY-ROADMAP.md](RECOVERY-ROADMAP.md) and
+> [RECOVERY-R1-REPORT.md](RECOVERY-R1-REPORT.md) record the next iteration. Real browser import
+> and source playback now work locally; analysis/export remain blocked. The observations below
+> are the historical baseline, not a claim that the repaired import is still metadata-only.
+
 ## نتیجهٔ اجرایی / Verdict
 
 **آمادهٔ انتشار نیست — RELEASE BLOCKED.** تست‌های واحد و کنترل‌های ظاهری سبز هستند، اما مسیر واقعی «ورود فایل → تحلیل → پیش‌نمایش → خروجی» از رابط کاربری هنوز به backend متصل نیست. نصب‌کنندهٔ ویندوز و خروجی H.264 با انکودر مجاز در این محیط تأیید نشده‌اند. عدد تاریخی **260/260 (100%)** شمارش مراحل پیاده‌سازی قبلی است، نه درصد پذیرش محصول.

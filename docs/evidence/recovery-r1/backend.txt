@@ -1,0 +1,42 @@
+All checks passed!
+72 files already formatted
+........................................................................ [ 54%]
+.............................................................            [100%]
+
+---------- coverage: platform linux, python 3.11.2-final-0 -----------
+Name                                   Stmts   Miss Branch BrPart  Cover   Missing
+----------------------------------------------------------------------------------
+app/__main__.py                           21     21      4      0     0%   3-44
+app/api/assets.py                        118     12     12      1    90%   44-46, 88, 166-174
+app/api/post.py                          110      2      6      0    98%   195-196
+app/api/projects.py                       37      0      6      1    98%   50->49
+app/api/stylematch.py                     92      3     12      3    94%   137, 152, 168
+app/api/system.py                         27      1      0      0    96%   30
+app/api/uploads.py                        53      6      8      0    90%   91-93, 101-103
+app/config.py                             71      4     12      4    90%   39, 41, 51, 53
+app/db.py                                 31      8      0      0    74%   51-59
+app/services/inference/adapters.py        83      8     14      0    92%   145-148, 165-170
+app/services/inference/registry.py        73      4     16      2    93%   68, 110, 112-115
+app/services/media/ffmpeg.py              62      1     18      1    98%   55
+app/services/media/probe.py               74      9     14      1    89%   50-52, 61-63, 65->64, 68-70
+app/services/media/progress.py            41      4     12      1    91%   26-28, 35
+app/services/media/runner.py              59      0     18      4    95%   61->65, 75->68, 79->81, 81->84
+app/services/media/service.py             53     12      2      0    78%   40-42, 68-73, 100-102
+app/services/post/captions.py             84      2     24      3    95%   37->39, 119, 136
+app/services/post/loudness.py             45      1     10      1    96%   74
+app/services/post/templates.py            54      1     12      1    97%   84
+app/services/sports/pose_geometry.py     135      1     32      1    99%   184
+app/services/sports/volleyball.py        113      6     34      4    93%   72, 81, 138-140, 187
+app/services/stylematch/compat.py         38      2     14      2    92%   49, 79
+app/services/stylematch/dna.py           117      5     40      6    93%   30, 45->42, 105, 124, 127, 145
+app/services/stylematch/edl.py            91      6     36      9    88%   74->79, 79->81, 114, 123, 163->165, 174, 176, 178, 181
+app/services/stylematch/metrics.py        72      1     14      1    98%   86
+app/services/stylematch/pipeline.py       51      1      6      1    96%   123
+app/services/stylematch/render.py         91      1     12      3    96%   136->139, 163->166, 229
+----------------------------------------------------------------------------------
+TOTAL                                   2460    122    448     50    94%
+
+25 files skipped due to complete coverage.
+
+Required test coverage of 80.0% reached. Total coverage: 93.95%
+133 passed in 4.74s

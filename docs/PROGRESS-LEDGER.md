@@ -12,6 +12,11 @@ Legend: **GREEN** = verified with evidence in this environment ·
 
 Progress: **260 / 260 authored steps = 100 %** · **Release acceptance: BLOCKED**.
 
+Recovery loop resumed by owner on 2026-11-04. See [RECOVERY-ROADMAP.md](RECOVERY-ROADMAP.md).
+R1 real import/source playback passed locally (18 browser checks); R1b session reopening,
+R2 real analysis, R3 rendering and Windows gates remain open. Competitor benchmark C1 is
+specified; actual CapCut/Filmora behavior is still unobserved.
+
 ## P0 — Foundation & Setup (week 1, 20 steps)
 
 | Step | Item | Status | Evidence |

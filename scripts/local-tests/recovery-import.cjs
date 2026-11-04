@@ -14,7 +14,7 @@ const digest = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
     const checks=[], uploads=[], errors=[], requests=[], responseTasks=[];
     const base = process.env.CE_E2E_UI || 'http://127.0.0.1:1420';
     const apiUrl = route => new URL(route, base).href;
-    const check=(name,ok,detail='')=>{ checks.push({name,passed:!!ok,detail}); console.log(ok?'PASS':'FAIL', name, detail); };
+    const check=(name,ok,detail='')=>{ checks.push({name,passed:!!ok,detail}); console.log(ok?'PASS':'FAIL', name, ...(detail ? [detail] : [])); };
     page.on('pageerror',e=>errors.push(e.message));
     page.on('request',r=>{if(r.url().includes('/api/')) requests.push({method:r.method(),url:r.url()});});
     page.on('response',r=>{
