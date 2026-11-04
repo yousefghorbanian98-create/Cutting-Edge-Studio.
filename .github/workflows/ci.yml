@@ -113,7 +113,22 @@ jobs:
           key: cargo-${{ hashFiles('C:\build\src-tauri\Cargo.toml') }}
       - name: Build installer (light build, no pinned FFmpeg/models)
         shell: pwsh
-        run: pwsh -File C:\build\scripts\build-installer.ps1 -WithoutPinnedBinaries
+        run: |
+          $ErrorActionPreference = 'Continue'
+          & pwsh -NoProfile -File C:\build\scripts\build-installer.ps1 -WithoutPinnedBinaries *>&1 |
+            Tee-Object -FilePath C:\build\build.log
+          if ($LASTEXITCODE -ne 0) {
+            Get-Content C:\build\build.log -Tail 80 | ForEach-Object { Write-Host $_ }
+            Write-Output "::error::installer build failed with exit code $LASTEXITCODE"
+            exit 1
+          }
+          exit 0
+      - name: Upload build log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: installer-build-log
+          path: C:\build\build.log
       - uses: actions/upload-artifact@v4
         with:
           name: CuttingEdgeV2-Setup
