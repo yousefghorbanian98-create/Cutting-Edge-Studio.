@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import shutil
 from pathlib import Path
 from typing import Annotated
@@ -12,7 +13,7 @@ from fastapi import APIRouter, Form, HTTPException, Request, UploadFile, status
 from app.api.assets import import_asset
 from app.deps import SessionDep, SettingsDep
 from app.logging import get_logger
-from app.models import Project
+from app.models import MediaAsset, Project
 from app.schemas_media import AssetCreate, AssetRead, Role
 
 router = APIRouter(tags=["media"])
@@ -80,6 +81,17 @@ def upload_asset(
             shutil.copyfileobj(file.file, output, length=COPY_BUFFER_BYTES)
         asset = import_asset(
             project_id, AssetCreate(path=str(target), role=role), request, session, settings
+        )
+        row = session.get(MediaAsset, asset.id)
+        assert row is not None
+        cached = json.loads(row.probe_json)
+        cached["ce_import"] = {
+            "name": Path((file.filename or target.name).replace("\\", "/")).name,
+            "size_bytes": file.size,
+        }
+        row.probe_json = json.dumps(cached, ensure_ascii=False)
+        asset = asset.model_copy(
+            update={"name": cached["ce_import"]["name"], "size_bytes": file.size}
         )
         # Commit before declaring success, so failed DB writes also remove the copied file.
         session.commit()

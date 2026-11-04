@@ -26,6 +26,9 @@ class AssetRead(BaseModel):
 
     id: str
     project_id: str
+    name: str = ""
+    size_bytes: int = 0
+    available: bool = True
     path: str
     role: str
     kind: str

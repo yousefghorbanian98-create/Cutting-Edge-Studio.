@@ -5,6 +5,7 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { Magnet, Minus, Pause, Play, Plus, Scissors, Trash2, Undo2, Redo2, Bookmark } from 'lucide-react';
 import { Badge, Button, Tooltip } from '../../components/ui';
 import { translate } from '../../lib/i18n';
+import { useWorkspaceStore } from '../workspace/workspaceStore';
 import { useAppStore } from '../../store/useAppStore';
 import { EFFECT_IDS, fromEditorData, toEditorData } from './timelineAdapter';
 import { clamp, rulerTicks, snapTime, timecode } from './timelineMath';
@@ -21,6 +22,7 @@ const EFFECTS: Record<string, TimelineEffect> = {
 
 /** Timeline: ruler + playhead + bars, powered by @xzdarcy/react-timeline-editor. */
 export function TimelinePanel() {
+  const workspaceBusy = useWorkspaceStore(state => state.navigating || state.status === 'loading');
   const language = useAppStore((state) => state.language);
   const timelineRef = useRef<TimelineState | null>(null);
 
@@ -76,16 +78,16 @@ export function TimelinePanel() {
   useHotkeys('space', (event) => {
     event.preventDefault();
     togglePlaying();
-  }, [togglePlaying]);
-  useHotkeys('m', () => addBookmark());
-  useHotkeys('s', () => splitAtPlayhead());
-  useHotkeys('delete, backspace', () => removeSelected());
-  useHotkeys('mod+z', () => undo());
-  useHotkeys('mod+shift+z', () => redo());
-  useHotkeys('equal, plus', () => zoomIn());
-  useHotkeys('minus', () => zoomOut());
-  useHotkeys('left', () => setPlayhead(playhead - 1 / 30));
-  useHotkeys('right', () => setPlayhead(playhead + 1 / 30));
+  }, { enabled: !workspaceBusy }, [togglePlaying]);
+  useHotkeys('m', () => addBookmark(), { enabled: !workspaceBusy });
+  useHotkeys('s', () => splitAtPlayhead(), { enabled: !workspaceBusy });
+  useHotkeys('delete, backspace', () => removeSelected(), { enabled: !workspaceBusy });
+  useHotkeys('mod+z', () => undo(), { enabled: !workspaceBusy });
+  useHotkeys('mod+shift+z', () => redo(), { enabled: !workspaceBusy });
+  useHotkeys('equal, plus', () => zoomIn(), { enabled: !workspaceBusy });
+  useHotkeys('minus', () => zoomOut(), { enabled: !workspaceBusy });
+  useHotkeys('left', () => setPlayhead(playhead - 1 / 30), { enabled: !workspaceBusy });
+  useHotkeys('right', () => setPlayhead(playhead + 1 / 30), { enabled: !workspaceBusy });
 
   const seek = (event: React.MouseEvent<HTMLDivElement>) => {
     const rect = event.currentTarget.getBoundingClientRect();

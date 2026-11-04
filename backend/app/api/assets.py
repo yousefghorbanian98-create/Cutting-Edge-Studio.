@@ -8,11 +8,13 @@ from pathlib import Path
 
 from fastapi import APIRouter, HTTPException, Request, Response, status
 from fastapi.responses import FileResponse
+from pydantic import ValidationError
 
 from app.deps import SessionDep, SettingsDep
 from app.logging import get_logger
 from app.models import MediaAsset, Project
 from app.schemas_media import AssetCreate, AssetRead, EncoderProbe, JobRead
+from app.schemas_workspace import WorkspaceSnapshot
 from app.services.media.jobs import JobRegistry
 from app.services.media.service import MediaService, needs_proxy
 
@@ -47,9 +49,20 @@ def _to_read(asset: MediaAsset) -> AssetRead:
     streams = cached.get("streams") or []
     video = next((item for item in streams if item.get("codec_type") == "video"), {})
     audio = next((item for item in streams if item.get("codec_type") == "audio"), {})
+    imported = cached.get("ce_import") or {}
+    path = Path(asset.path)
+    try:
+        size = path.stat().st_size
+        available = path.is_file()
+    except OSError as error:
+        LOG.warning("media.asset.unavailable", asset_id=asset.id, error=str(error))
+        size, available = 0, False
     view = AssetRead.model_validate(asset)
     return view.model_copy(
         update={
+            "name": imported.get("name") or path.name,
+            "size_bytes": imported.get("size_bytes", size),
+            "available": available,
             "video_codec": video.get("codec_name"),
             "audio_codec": audio.get("codec_name"),
             "has_audio": bool(audio),
@@ -139,7 +152,22 @@ def list_assets(project_id: str, session: SessionDep) -> list[AssetRead]:
     summary="Remove asset",
 )
 def delete_asset(asset_id: str, session: SessionDep) -> Response:
-    session.delete(_asset_or_404(session, asset_id))
+    asset = _asset_or_404(session, asset_id)
+    project = _project_or_404(session, asset.project_id)
+    if project.state_json.strip() != "{}":
+        try:
+            snapshot = WorkspaceSnapshot.model_validate_json(project.state_json)
+        except ValidationError as error:
+            LOG.error("media.delete.invalid_workspace", asset_id=asset_id, error=str(error))
+            raise HTTPException(
+                status_code=409, detail="Saved workspace is unsupported; media was not deleted"
+            ) from error
+        if any(clip.mediaId == asset.path for clip in snapshot.timeline.clips):
+            raise HTTPException(
+                status_code=409,
+                detail="Media is used in the saved timeline; save timeline edits first",
+            )
+    session.delete(asset)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 

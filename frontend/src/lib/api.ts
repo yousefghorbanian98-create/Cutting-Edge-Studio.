@@ -1,3 +1,5 @@
+import type { WorkspaceResponse, WorkspaceSnapshot } from '../features/workspace/schema';
+
 /** Typed client for the local FastAPI sidecar. Relative URLs only: no host. */
 
 export interface HealthResponse {
@@ -41,10 +43,16 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return (await response.json()) as T;
 }
 
-export interface ProjectResponse { id: string; name: string }
+export interface ProjectResponse {
+  id: string;
+  name: string;
+}
 export interface AssetResponse {
   id: string;
   project_id: string;
+  name?: string;
+  size_bytes?: number;
+  available?: boolean;
   path: string;
   role: string;
   kind: 'video' | 'audio';
@@ -63,15 +71,26 @@ export function assetContentUrl(id: string): string {
 
 export const api = {
   health: () => request<HealthResponse>('/health'),
-  createProject: () => request<ProjectResponse>('/projects', {
-    method: 'POST', body: JSON.stringify({ name: 'Local editing session', mode: 'style-match' }),
-  }),
+  listProjects: () => request<ProjectResponse[]>('/projects'),
+  listAssets: (id: string) => request<AssetResponse[]>(`/projects/${encodeURIComponent(id)}/assets`),
+  getWorkspace: (id: string) => request<WorkspaceResponse>(`/projects/${encodeURIComponent(id)}/workspace`),
+  saveWorkspace: (id: string, base_revision: string, name: string, snapshot: WorkspaceSnapshot) =>
+    request<WorkspaceResponse>(`/projects/${encodeURIComponent(id)}/workspace`, {
+      method: 'PUT',
+      body: JSON.stringify({ base_revision, name, snapshot }),
+    }),
+  createProject: () =>
+    request<ProjectResponse>('/projects', {
+      method: 'POST',
+      body: JSON.stringify({ name: 'Local editing session', mode: 'style-match' }),
+    }),
   uploadAsset: (projectId: string, file: File, role: 'source' | 'reference') => {
     const body = new FormData();
     body.append('file', file);
     body.append('role', role);
     return request<AssetResponse>(`/projects/${encodeURIComponent(projectId)}/uploads`, {
-      method: 'POST', body,
+      method: 'POST',
+      body,
     });
   },
   deleteAsset: (id: string) => request<void>(`/assets/${encodeURIComponent(id)}`, { method: 'DELETE' }),

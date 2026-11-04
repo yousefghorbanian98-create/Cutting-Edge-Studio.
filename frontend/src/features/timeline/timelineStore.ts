@@ -68,10 +68,8 @@ const DEFAULT_TRACKS: Track[] = [
 ];
 
 const HISTORY_LIMIT = 50;
-let sequence = 0;
 const nextId = (prefix: string): string => {
-  sequence += 1;
-  return `${prefix}-${sequence}`;
+  return `${prefix}-${crypto.randomUUID()}`;
 };
 
 const initialState = {
@@ -185,7 +183,7 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
           const index = draft.findIndex((item) => item.id === clip.id);
           const split = splitClipAt({ ...clip }, playhead);
           if (index >= 0 && split) {
-            draft.splice(index, 1, split[0], split[1]);
+            draft.splice(index, 1, split[0], { ...split[1], id: nextId('clip') });
             count += 1;
           }
         }

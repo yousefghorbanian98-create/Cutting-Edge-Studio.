@@ -8,7 +8,8 @@ export interface MediaClip {
   size: number;
   path: string;
   kind: 'video' | 'audio';
-  role: 'source' | 'reference';
+  role: 'source' | 'reference' | 'music' | 'broll' | 'voiceover';
+  available?: boolean;
   assetId?: string;
   duration?: number;
   width?: number;
@@ -24,10 +25,11 @@ export interface ImportOutcome {
 interface MediaState {
   clips: MediaClip[];
   projectId: string | null;
+  projectName: string;
   importing: boolean;
   selectedId: string | null;
   selectClip: (id: string) => void;
-  importFiles: (files: readonly File[], role?: MediaClip['role']) => Promise<ImportOutcome>;
+  importFiles: (files: readonly File[], role?: 'source' | 'reference') => Promise<ImportOutcome>;
   deleteImported: (id: string) => Promise<void>;
   /** Import files, de-duplicating by path. Returns what happened (no silent drops). */
   addFiles: (files: readonly CandidateFile[], role?: MediaClip['role']) => ImportOutcome;
@@ -46,6 +48,7 @@ function nextId(): string {
 export const useMediaStore = create<MediaState>((set, get) => ({
   clips: [],
   projectId: null,
+  projectName: 'Local editing session',
   importing: false,
   selectedId: null,
   selectClip: (id) => set({ selectedId: id }),
@@ -68,13 +71,14 @@ export const useMediaStore = create<MediaState>((set, get) => ({
         try {
           let projectId = get().projectId;
           if (!projectId) {
-            projectId = (await api.createProject()).id;
-            set({ projectId });
+            const project = await api.createProject();
+            projectId = project.id;
+            set({ projectId, projectName: project.name });
           }
           const asset = await api.uploadAsset(projectId, file, role);
           const clip: MediaClip = {
             id: asset.id, assetId: asset.id, path: asset.path,
-            name: file.name, size: file.size, kind: asset.kind, role,
+            name: asset.name ?? file.name, size: asset.size_bytes ?? file.size, kind: asset.kind, role, available: asset.available ?? true,
             duration: asset.duration, width: asset.width, height: asset.height, fps: asset.fps,
           };
           set(state => ({ clips: [...state.clips, clip], selectedId: clip.id }));
@@ -134,7 +138,7 @@ export const useMediaStore = create<MediaState>((set, get) => ({
       clips.splice(to, 0, moved);
       return { clips };
     }),
-  clear: () => set({ clips: [], projectId: null, importing: false, selectedId: null }),
+  clear: () => set({ clips: [], projectId: null, projectName: 'Local editing session', importing: false, selectedId: null }),
 }));
 
 /** Reference clips only (Style Match reads exactly one). */

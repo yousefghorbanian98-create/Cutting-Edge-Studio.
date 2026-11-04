@@ -46,6 +46,7 @@ function SortableClip({
         <button type="button" onClick={() => onSelect(clip.id)} className="block max-w-full truncate text-[11px] text-[var(--text-primary)]">{clip.name}</button>
         <p className="text-[10px] text-[var(--text-secondary)]">
           {formatBytes(clip.size)}{clip.duration !== undefined ? ` · ${clip.duration.toFixed(2)}s · ${clip.width}×${clip.height}` : ''}
+          {clip.available === false ? ` · ${translate(language, 'media.unavailable')}` : ''}
           {clip.role === 'reference' ? ` · ${translate(language, 'media.reference')}` : ''}
         </p>
       </div>
@@ -90,7 +91,7 @@ export function MediaPanel() {
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }));
 
-  const importFiles = async (files: FileList | File[], role: MediaClip['role'] = 'source') => {
+  const importFiles = async (files: FileList | File[], role: 'source' | 'reference' = 'source') => {
     try {
       const outcome = await importToBackend(Array.from(files), role);
       setErrors(outcome.rejected.map(item => {

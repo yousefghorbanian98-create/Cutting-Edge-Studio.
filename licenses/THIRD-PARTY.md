@@ -31,6 +31,7 @@ CC-BY-SA (as code) · SSPL · BUSL · proprietary · non-commercial weights.
 | TypeScript | 5.7.2 | Apache-2.0 | Type system |
 | Tailwind CSS | 3.4.17 | MIT | Styling |
 | zustand | 4.5.5 | MIT | UI state |
+| zod | 4.6.7 | MIT | Versioned workspace validation (R1b); notice in `ZOD-MIT.md` |
 | clsx | 2.1.1 | MIT | Class composition |
 | tailwind-merge | 2.6.0 | MIT | Class conflict resolution |
 | lucide-react | 0.469.0 | ISC | Icons |

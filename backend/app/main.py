@@ -8,7 +8,17 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import assets, health, post, projects, settings_api, stylematch, system, uploads
+from app.api import (
+    assets,
+    health,
+    post,
+    projects,
+    settings_api,
+    stylematch,
+    system,
+    uploads,
+    workspace,
+)
 from app.config import ALLOWED_ORIGINS, API_PREFIX, Settings, get_settings
 from app.db import create_db_engine, create_session_factory, init_db
 from app.logging import configure_logging, get_logger
@@ -58,10 +68,20 @@ def create_app(settings: Settings | None = None, prober: Prober | None = None) -
         CORSMiddleware,
         allow_origins=list(ALLOWED_ORIGINS),
         allow_credentials=False,
-        allow_methods=["GET", "POST", "PATCH", "DELETE"],
+        allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE"],
         allow_headers=["content-type"],
     )
-    for module in (health, settings_api, projects, assets, uploads, stylematch, post, system):
+    for module in (
+        health,
+        settings_api,
+        projects,
+        assets,
+        uploads,
+        stylematch,
+        post,
+        system,
+        workspace,
+    ):
         app.include_router(module.router, prefix=API_PREFIX)
     return app
 
