@@ -14,18 +14,20 @@ CC-BY-SA (as code) · SSPL · BUSL · proprietary · non-commercial weights.
 
 | Component | Version | License | Usage |
 |---|---|---|---|
-| fastapi | 0.115.6 | MIT | HTTP layer of the sidecar |
-| uvicorn | 0.34.0 | BSD-3-Clause | ASGI server (loopback only) |
-| pydantic / pydantic-settings | 2.10.4 / 2.7.0 | MIT | Schemas + settings |
-| SQLAlchemy | 2.0.36 | MIT | Local SQLite ORM |
-| structlog | 24.4.0 | MIT / Apache-2.0 (dual) | Structured local logging |
+| fastapi | 0.162.0 | MIT | HTTP layer of the sidecar |
+| uvicorn | 0.54.0 | BSD-3-Clause | ASGI server (loopback only) |
+| pydantic / pydantic-settings | 2.14.2 / 2.16.2 | MIT | Schemas + settings |
+| SQLAlchemy | 2.1.8 | MIT | Local SQLite ORM |
+| structlog | 26.1.0 | MIT / Apache-2.0 (dual) | Structured local logging |
 | httpx | 0.28.1 | BSD-3-Clause | Test client transport |
-| psutil | 6.1.1 | BSD-3-Clause | Local process/resource probes |
+| psutil | 7.2.2 | BSD-3-Clause | Local process/resource probes |
 | numpy | 2.1.3 | BSD-3-Clause | Numerics |
 | scipy | 1.14.1 | BSD-3-Clause | Signal processing (peaks, KS-test, filtering) |
 | sqlite (bundled with CPython) | 3.x | Public domain | Project database |
 | React / React DOM | 18.3.1 | MIT | UI runtime |
-| Vite | 5.4.21 | MIT | Dev server + bundler |
+| starlette | 1.10.0 | BSD-3-Clause | ASGI toolkit (FastAPI core) |
+| python-multipart | 0.0.33 | Apache-2.0 | Multipart parsing for asset upload |
+| Vite | 7.3.7 | MIT | Dev server + bundler |
 | TypeScript | 5.7.2 | Apache-2.0 | Type system |
 | Tailwind CSS | 3.4.17 | MIT | Styling |
 | zustand | 4.5.5 | MIT | UI state |
@@ -85,3 +87,42 @@ CC-BY-SA (as code) · SSPL · BUSL · proprietary · non-commercial weights.
 | libx264 | GPL |
 | CUDA / cuDNN DLLs | Proprietary redistribution + 1.5GB budget |
 | Bundled reference videos / music | Third-party copyright |
+
+## P3-P9 additions (code we wrote, libraries we call)
+
+| Component | Version | License | Usage |
+|---|---|---|---|
+| FFmpeg (BtbN, LGPL shared build) | pinned in `scripts/pins.json` | LGPL-2.1-or-later (dynamic link only) | probe / decode / encode / mux |
+| openh264 (Cisco) | shipped by FFmpeg `libopenh264` | BSD-2-Clause | H.264 software fallback |
+| MediaPipe (Python) | bundled in wheel | Apache-2.0 | 33-point pose landmarks on CPU |
+| Ultralytics-free detector: YOLOX-s | weights ~35 MB | Apache-2.0 code / MIT weights | person/object boxes (no auto-download) |
+| CLIP ViT-B/32 ONNX | 150 MB | MIT | zero-shot shot types, b-roll ranking |
+| faster-whisper (base) | 145 MB | MIT | captions |
+| TransNetV2 ONNX | 12 MB | MIT | shot boundary detection |
+| Real-ESRGAN (optional) | 64 MB | BSD-3-Clause | upscaling, off by default |
+| librosa + scipy.signal | 0.10.x / 1.14.1 | ISC / BSD-3-Clause | beat grid and peak picking |
+| PyInstaller | 6.22.3 | GPLv2-or-later **with bootloader exception** | sidecar packaging (explicitly whitelisted) |
+| WebView2 Fixed-Version Runtime | Microsoft | proprietary redistribution, allowed | the UI engine, bundled offline |
+| @xzdarcy/react-timeline-editor | 1.0.0 | MIT (fork of `react-timeline-editor`) | timeline surface |
+| Konva / react-konva | 9.x | MIT | canvas overlays (RTL text via `direction: 'rtl'`) |
+| framer-motion | 12.x | MIT | UI transitions |
+| lucide-react | 0.4xx | ISC | icon set |
+
+### Dev-only tooling (never shipped in the installer)
+
+| Component | Version | License |
+|---|---|---|
+| pytest / pytest-cov / pytest-asyncio | 8.3.4 / 6.0.0 / 0.25.0 | MIT / Apache-2.0 |
+| ruff | 0.8.4 | MIT |
+| mypy | 1.14.0 | MIT |
+| pip-audit | 2.7.3 | Apache-2.0 |
+| vitest | 3.2.7 | MIT |
+| eslint + typescript-eslint | 9.x / 8.x | MIT |
+| @vitejs/plugin-react | 5.2.0 | MIT |
+
+### Deliberate exclusions (re-verified in P8)
+
+`libx264`/`libx265` (GPL, never linked) · `ultralytics`/YOLOv8 (AGPL) · YOLO-NAS weights
+(non-commercial) · `madmom` (dead upstream + CC-BY-NC-SA models) · Ollama / InternVL /
+VideoLLaMA3 (no redistribution rights, offline policy) · RobustVideoMatting, HotClip, Concat
+(GPL) · any telemetry SDK.

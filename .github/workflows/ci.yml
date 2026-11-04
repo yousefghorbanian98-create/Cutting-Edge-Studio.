@@ -97,12 +97,9 @@ jobs:
           New-Item -ItemType Directory -Force C:\build | Out-Null
           git clone --depth 1 --branch $env:GITHUB_REF_NAME "https://github.com/$env:GITHUB_REPOSITORY.git" C:\build
           if ($LASTEXITCODE -ne 0) { throw "git clone failed with exit code $LASTEXITCODE" }
-          Copy-Item "C:\build\.github" -Destination "C:\build\.github-ci" -Recurse -Force -ErrorAction SilentlyContinue
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: npm
-          cache-dependency-path: C:\build\frontend\package-lock.json
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
