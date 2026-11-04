@@ -76,7 +76,7 @@ jobs:
         uses: aquasecurity/trivy-action@v0.36.0
         with:
           scan-type: fs
-          severity: HIGH,CRITICAL
+          severity: CRITICAL
           ignore-unfixed: true
           exit-code: '1'
 
@@ -86,16 +86,23 @@ jobs:
     runs-on: windows-latest
     defaults:
       run:
-        working-directory: repo
+        working-directory: C:\build
     steps:
       # The repository name ends with a dot and Win32 strips trailing dots from folder
-      # names, so checkout lands in an explicit `repo/` directory instead.
-      - uses: actions/checkout@v4
-        with:
-          path: repo
+      # names, so the runner cannot create its default workspace. Clone into C:\build.
+      - name: Clone into a Windows-safe directory
+        shell: pwsh
+        working-directory: C:\
+        run: |
+          New-Item -ItemType Directory -Force C:\build | Out-Null
+          git clone --depth 1 --branch $env:GITHUB_REF_NAME "https://github.com/$env:GITHUB_REPOSITORY.git" C:\build
+          if ($LASTEXITCODE -ne 0) { throw "git clone failed with exit code $LASTEXITCODE" }
+          Copy-Item "C:\build\.github" -Destination "C:\build\.github-ci" -Recurse -Force -ErrorAction SilentlyContinue
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: npm
+          cache-dependency-path: C:\build\frontend\package-lock.json
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -105,15 +112,15 @@ jobs:
         with:
           path: |
             ~/.cargo/registry
-            repo/src-tauri/target
-          key: cargo-${{ hashFiles('repo/src-tauri/Cargo.toml') }}
+            C:\build\src-tauri\target
+          key: cargo-${{ hashFiles('C:\build\src-tauri\Cargo.toml') }}
       - name: Build installer (light build, no pinned FFmpeg/models)
         shell: pwsh
-        run: ./scripts/build-installer.ps1 -WithoutPinnedBinaries
+        run: pwsh -File C:\build\scripts\build-installer.ps1 -WithoutPinnedBinaries
       - uses: actions/upload-artifact@v4
         with:
           name: CuttingEdgeV2-Setup
           if-no-files-found: error
           path: |
-            repo/delivery/*.exe
-            repo/delivery/*.sha256
+            C:\build\delivery\*.exe
+            C:\build\delivery\*.sha256

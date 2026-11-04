@@ -64,7 +64,7 @@ def import_asset(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(error)) from error
     except ValueError as error:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(error)
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail=str(error)
         ) from error
     except Exception as error:
         LOG.error("media.probe.unavailable", path=str(path), error=str(error))

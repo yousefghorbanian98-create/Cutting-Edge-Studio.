@@ -116,7 +116,7 @@ def comparison(payload: ComparisonPayload) -> dict[str, Any]:
         )
     except ValueError as error:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(error)
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail=str(error)
         ) from error
     return {"layout": payload.layout, "filter_graph": graph}
 
@@ -132,7 +132,7 @@ def captions(payload: CaptionPayload) -> dict[str, Any]:
     if payload.format == "srt":
         return {"format": "srt", "content": segments_to_srt(payload.segments)}
     raise HTTPException(
-        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="format must be srt or ass"
+        status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail="format must be srt or ass"
     )
 
 
@@ -150,7 +150,7 @@ def loudness(stderr: str, platform: str = "tiktok") -> dict[str, Any]:
     measurement = parse_loudnorm_block(stderr)
     if measurement is None:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="no loudnorm block found"
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail="no loudnorm block found"
         )
     plan = plan_loudness(measurement, platform=platform if platform in TARGETS else "tiktok")
     return {
