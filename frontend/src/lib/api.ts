@@ -71,12 +71,20 @@ export function assetContentUrl(id: string): string {
 }
 
 const measurementPath = (operation:InspectionOperation) => ({decode:'inspection',rhythm:'rhythm',scenes:'scenes',analysis:'analysis'}[operation]);
+export type RenderQuality = 'preview' | 'final';
+export interface RenderResponse { id:string; project_id:string; state:'queued'|'running'|'done'|'failed'|'cancelled'|'interrupted'; percent:number; message:string; error:string|null; quality:RenderQuality; report:{version:1; method:'ffmpeg-edl-render'; scope:'render-only'; output_path:string; duration:number; width:number; height:number; fps:number; encoder:string; size_bytes:number}|null }
+export interface RenderCapabilities { render:{available:boolean; reason:string|null}; encoder:string|null; cache_recovery:unknown }
 export const api = {
   inspectionCapabilities: (id:string, signal?:AbortSignal, operation:InspectionOperation="decode") => request<InspectionCapabilities>(`/projects/${encodeURIComponent(id)}/${measurementPath(operation)}/capabilities`,{signal}),
   latestInspection: (id:string, signal?:AbortSignal, operation:InspectionOperation="decode") => request<InspectionResponse>(`/projects/${encodeURIComponent(id)}/${measurementPath(operation)}/latest`,{signal}),
   getInspection: (id:string, job:string, signal?:AbortSignal, operation:InspectionOperation="decode") => request<InspectionResponse>(`/projects/${encodeURIComponent(id)}/${measurementPath(operation)}/jobs/${encodeURIComponent(job)}`,{signal}),
   startInspection: (id:string, reference_asset_id:string, source_asset_ids:string[], operation:InspectionOperation="decode") => request<InspectionResponse>(`/projects/${encodeURIComponent(id)}/${measurementPath(operation)}/jobs`,{method:'POST',body:JSON.stringify({reference_asset_id,source_asset_ids})}),
   cancelInspection: (id:string,job:string, operation:InspectionOperation="decode") => request<InspectionResponse>(`/projects/${encodeURIComponent(id)}/${measurementPath(operation)}/jobs/${encodeURIComponent(job)}/cancel`,{method:'POST'}),
+  renderCapabilities: (id:string, signal?:AbortSignal) => request<RenderCapabilities>(`/projects/${encodeURIComponent(id)}/render/capabilities`,{signal}),
+  latestRender: (id:string, signal?:AbortSignal) => request<RenderResponse>(`/projects/${encodeURIComponent(id)}/render/latest`,{signal}),
+  getRender: (id:string, job:string, signal?:AbortSignal) => request<RenderResponse>(`/projects/${encodeURIComponent(id)}/render/jobs/${encodeURIComponent(job)}`,{signal}),
+  startRender: (id:string, edl:unknown, quality:RenderQuality="preview") => request<RenderResponse>(`/projects/${encodeURIComponent(id)}/render/jobs`,{method:'POST',body:JSON.stringify({edl, quality})}),
+  cancelRender: (id:string, job:string) => request<RenderResponse>(`/projects/${encodeURIComponent(id)}/render/jobs/${encodeURIComponent(job)}/cancel`,{method:'POST'}),
   health: () => request<HealthResponse>('/health'),
   listProjects: () => request<ProjectResponse[]>('/projects'),
   listAssets: (id: string) => request<AssetResponse[]>(`/projects/${encodeURIComponent(id)}/assets`),

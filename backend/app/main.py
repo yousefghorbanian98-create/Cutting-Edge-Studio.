@@ -14,6 +14,7 @@ from app.api import (
     inspection,
     post,
     projects,
+    render,
     settings_api,
     stylematch,
     system,
@@ -61,6 +62,9 @@ def create_app(settings: Settings | None = None, prober: Prober | None = None) -
             scene_inspector=FFmpegSceneInspector(resolved),
             analysis_inspector=AnalysisOrchestrator(resolved, app.state.registry),
         )
+        from app.services.render.orchestrator import RenderService
+
+        app.state.render = RenderService(app.state.session_factory, app.state.jobs, resolved)
         LOG.info(
             "backend.startup",
             version=resolved.version,
@@ -73,6 +77,10 @@ def create_app(settings: Settings | None = None, prober: Prober | None = None) -
         finally:
             clear_receipt(resolved)
             app.state.inspection.shutdown()
+            try:
+                app.state.render.shutdown()
+            except Exception:
+                pass
             engine.dispose()
             LOG.info("backend.shutdown")
 
@@ -101,6 +109,7 @@ def create_app(settings: Settings | None = None, prober: Prober | None = None) -
         uploads,
         stylematch,
         post,
+        render,
         system,
         workspace,
         inspection,

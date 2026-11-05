@@ -7,6 +7,7 @@ import { useAppStore } from '../../store/useAppStore';
 import { useWorkspaceStore } from '../workspace/workspaceStore';
 import type { InspectionOperation } from './inspectionSchema';
 import { InspectionPanel } from './InspectionPanel';
+import { RenderPanel } from '../render/RenderPanel';
 import { useMediaStore } from '../media/mediaStore';
 import { useWizardStore, WIZARD_STEPS, canAdvance } from './wizardStore';
 
@@ -102,6 +103,7 @@ export function StyleMatchWizard() {
       </motion.div>
       </AnimatePresence>
 
+      {stepIndex === 4 ? <RenderPanel projectId={projectId} edl={null} blocked={importing || navigating} /> : null}
       {isLast ? <p role="status" className="text-xs text-[var(--warning)]">{translate(language, 'wizard.unavailable')}</p> : null}
       <div className="flex items-center justify-between gap-2">
         <Button variant="ghost" size="sm" onClick={back} disabled={stepIndex === 0}>
