@@ -19,20 +19,41 @@ concurrency:
 jobs:
   desktop-evidence:
     name: Read existing desktop gate evidence (no build)
-    if: github.event_name == 'workflow_dispatch' && inputs.evidence_run != ''
+    if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.evidence_run != '')
     runs-on: ubuntu-latest
     permissions:
       actions: read
       contents: read
     steps:
+      - name: Select previous failed push (read only)
+        id: prior
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          REQUESTED_RUN: ${{ inputs.evidence_run }}
+        run: |
+          set -euo pipefail
+          if [ -n "$REQUESTED_RUN" ]; then
+            run="$REQUESTED_RUN"
+          else
+            run="$(gh run list --workflow ci.yml --event push --status failure --limit 1 --json databaseId --jq '.[0].databaseId // empty')"
+          fi
+          if [[ -n "$run" && ! "$run" =~ ^[0-9]+$ ]]; then
+            echo '::error::Invalid prior evidence run ID'
+            exit 1
+          fi
+          echo "run=$run" >> "$GITHUB_OUTPUT"
       - name: Download existing structured smoke evidence
+        if: steps.prior.outputs.run != ''
         uses: actions/download-artifact@v4
         with:
-          run-id: ${{ inputs.evidence_run }}
+          run-id: ${{ steps.prior.outputs.run }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           pattern: '*desktop*smoke'
           path: ${{ runner.temp }}/desktop-evidence
       - name: Expose bounded test-only JSON in check annotations
+        if: steps.prior.outputs.run != ''
         shell: python
         env:
           EVIDENCE_DIR: ${{ runner.temp }}/desktop-evidence
@@ -51,7 +72,7 @@ jobs:
               print('::notice title=Existing desktop evidence::' + message.replace('%', '%25'))
               found += 1
           if found == 0:
-              raise SystemExit('No known structured desktop smoke evidence found')
+              print('::notice::No desktop smoke JSON in the selected failed run; no product acceptance inferred')
 
   backend:
     if: inputs.evidence_run == ''
