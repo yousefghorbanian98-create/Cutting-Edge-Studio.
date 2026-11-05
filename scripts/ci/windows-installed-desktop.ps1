@@ -17,8 +17,8 @@ function Check([string]$Name, [bool]$Passed) {
 }
 function Same-LocalPath([string]$Left, [string]$Right) {
     # TEMP may use RUNNER~1 while GetModuleFileName/resource_dir uses the long
-    # name. Compare canonical Windows path identity, NOT unequal string spellings.
-    $same = & python -c 'import sys; from pathlib import Path; print(Path(sys.argv[1]).resolve() == Path(sys.argv[2]).resolve())' $Left $Right
+    # name. Compare Windows file identity, NOT unequal string spellings or extended-path prefixes.
+    $same = & python -c 'import os, sys; print(os.path.samefile(sys.argv[1], sys.argv[2]))' $Left $Right
     if ($LASTEXITCODE -ne 0) { throw 'Canonical path comparison failed.' }
     Write-Host "path identity: $Left <=> $Right : $same"
     return "$same".Trim() -eq 'True'
@@ -30,6 +30,8 @@ $native = $null
 $installer = Get-ChildItem delivery -Filter 'CuttingEdgeV2-Setup-*.exe' | Select-Object -First 1
 $oldData = $env:CUTTING_EDGE_DATA_DIR
 $oldHome = $env:CUTTING_EDGE_HOME
+$oldWebViewArgs = $env:WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS
+$oldNodePath = $env:NODE_PATH
 try {
     Check 'fixed desktop port initially unused' (-not (Get-NetTCPConnection -LocalPort 8756 -State Listen -ErrorAction SilentlyContinue))
     Check 'installer artifact exists' ($null -ne $installer)
@@ -43,6 +45,10 @@ try {
     $env:CUTTING_EDGE_DATA_DIR = $data
     # Deliberately wrong inherited home: native resolver must replace this with resource_dir.
     $env:CUTTING_EDGE_HOME = Join-Path $env:TEMP 'wrong inherited resource directory'
+    Check 'test-only CDP port initially unused' (-not (Get-NetTCPConnection -LocalPort 9222 -State Listen -ErrorAction SilentlyContinue))
+    # Test process only: installed binaries/config do not ship this debugging flag.
+    $env:WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS = '--remote-debugging-port=9222'
+    $env:NODE_PATH = Join-Path $env:RUNNER_TEMP 'ce-webview-tools/node_modules'
     $native = Start-Process $shell -WorkingDirectory $env:TEMP -PassThru
     $deadline = (Get-Date).AddSeconds(75)
     $health = $null
@@ -54,12 +60,16 @@ try {
     Check 'native shell launched healthy sidecar without Vite' ($health.status -eq 'ok')
     $pathEvidence = @{ expected_models = (Join-Path $install 'models'); observed_models = $health.models_dir; expected_database = (Join-Path $data 'cutting-edge.db'); observed_database = $health.database }
     Write-Output "::notice title=Installed native paths::$($pathEvidence | ConvertTo-Json -Compress)"
-    Check 'native resource_dir overrides inherited home' (Same-LocalPath $health.models_dir (Join-Path $install 'models'))
+    # models/ may be absent in a light bundle: compare its existing install
+    # parent by Windows file identity, including extended \\?\ and 8.3 aliases.
+    Check 'native resource_dir overrides inherited home' (((Split-Path $health.models_dir -Leaf) -eq 'models') -and (Same-LocalPath (Split-Path $health.models_dir -Parent) $install))
     Check 'profile is separate from installation' (Same-LocalPath $health.database (Join-Path $data 'cutting-edge.db'))
     $page = Invoke-WebRequest 'http://127.0.0.1:8756/' -NoProxy
     Check 'installed same-origin built React is served' ($page.StatusCode -eq 200 -and $page.Content.Contains('type="module"'))
     $native.Refresh()
     Check 'native window is present' ($native.MainWindowHandle -ne 0)
+    & node scripts/ci/windows-webview-smoke.cjs $OutputDir
+    Check 'actual installed WebView DOM and screenshot verified' ($LASTEXITCODE -eq 0)
     # Record backend descendants of this shell only; no unrelated process inspection in evidence.
     $all = @(Get-CimInstance Win32_Process)
     $parents = @($native.Id)
@@ -92,9 +102,11 @@ try {
     }
     $env:CUTTING_EDGE_DATA_DIR = $oldData
     $env:CUTTING_EDGE_HOME = $oldHome
+    $env:WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS = $oldWebViewArgs
+    $env:NODE_PATH = $oldNodePath
     $log = Join-Path $data 'logs/backend.jsonl'
     if (Test-Path $log) { Copy-Item $log (Join-Path $OutputDir 'backend.jsonl') -Force }
-    @{ checks = $records.ToArray(); paths = $pathEvidence; limitations = @('Light installer only; pretrained artifacts and fixed WebView runtime are absent.', 'HTTP + native window presence is not a WebView pixel/render assertion.', 'Orderly close only; abrupt shell-death OS containment remains OPEN.'); install = $install } |
+    @{ checks = $records.ToArray(); paths = $pathEvidence; limitations = @('Light installer only; pretrained artifacts and fixed WebView runtime are absent.', 'Native WebView DOM/CDP screenshot gate is separate from full media/render quality acceptance.', 'Orderly close only; abrupt shell-death OS containment remains OPEN.'); install = $install } |
         ConvertTo-Json -Depth 8 | Set-Content (Join-Path $OutputDir 'installed.json') -Encoding utf8
     $uninstaller = Join-Path $install 'uninstall.exe'
     if (Test-Path $uninstaller) {

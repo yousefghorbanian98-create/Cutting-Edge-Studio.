@@ -54,7 +54,7 @@ CC-BY-SA (as code) · SSPL · BUSL · proprietary · non-commercial weights.
 | react-hotkeys-hook | 4.6.1 | MIT | Keyboard shortcuts |
 | immer | 10.1.1 | MIT | Immutable timeline edits |
 | Tauri | 2.x | MIT / Apache-2.0 | Desktop shell |
-| tauri-plugin-shell | 2.x | MIT / Apache-2.0 | Sidecar spawning |
+| tauri-plugin-shell | 2.6.0 | MIT / Apache-2.0 | Sidecar spawning |
 
 ## Planned third-party runtime (declared, not yet wired)
 

@@ -232,7 +232,7 @@ try {
             Write-Output "::error title=cargo build context::$context"
         }
         Assert-NativeSuccess 'cargo build'
-        cargo test --release --lib --message-format=short
+        cargo test --manifest-path ../scripts/ci/readiness-contract/Cargo.toml --message-format=short
         Assert-NativeSuccess 'cargo readiness contract tests'
     } finally { Pop-Location }
 
