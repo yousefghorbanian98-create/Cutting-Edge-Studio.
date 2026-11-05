@@ -20,7 +20,7 @@ from app.logging import get_logger
 LOG = get_logger(__name__)
 CSP = (
     "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; "
-    "img-src 'self' data: blob:; font-src 'self'; media-src 'self' blob:; "
+    "img-src 'self' data: blob:; font-src 'self' data:; media-src 'self' blob:; "
     "connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'"
 )
 

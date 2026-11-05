@@ -75,7 +75,7 @@ try {
     $env:CUTTING_EDGE_HOME = $oldHome
     $log = Join-Path $data 'logs/backend.jsonl'
     if (Test-Path $log) { Copy-Item $log (Join-Path $OutputDir 'backend.jsonl') -Force }
-    @{ checks = @($records); limitations = @('Light installer only; pretrained artifacts and fixed WebView runtime are absent.', 'HTTP + native window presence is not a WebView pixel/render assertion.', 'Orderly close only; abrupt shell-death OS containment remains OPEN.'); install = $install } |
+    @{ checks = $records.ToArray(); limitations = @('Light installer only; pretrained artifacts and fixed WebView runtime are absent.', 'HTTP + native window presence is not a WebView pixel/render assertion.', 'Orderly close only; abrupt shell-death OS containment remains OPEN.'); install = $install } |
         ConvertTo-Json -Depth 8 | Set-Content (Join-Path $OutputDir 'installed.json') -Encoding utf8
     $uninstaller = Join-Path $install 'uninstall.exe'
     if (Test-Path $uninstaller) {

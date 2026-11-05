@@ -46,6 +46,7 @@ def test_same_origin_mount_and_headers(desktop):
         assert client.get("/private.txt").status_code == 404
         assert client.get("/%2e%2e/private.txt").status_code == 404
         assert "connect-src 'self'" in response.headers["content-security-policy"]
+        assert "font-src 'self' data:" in response.headers["content-security-policy"]
         assert "frame-ancestors 'none'" in response.headers["content-security-policy"]
         assert response.headers["x-content-type-options"] == "nosniff"
         receipt = json.loads(desktop.desktop_ready_file.read_text())
