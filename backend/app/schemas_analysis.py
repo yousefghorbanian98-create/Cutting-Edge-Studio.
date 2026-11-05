@@ -8,7 +8,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class AnalysisFile(BaseModel):
-    """One asset's contribution to the orchestration (provenance only, no inference when blocked)."""
+    """One asset's contribution — provenance only, no inference when blocked."""
 
     model_config = ConfigDict(allow_inf_nan=False)
     asset_id: str
