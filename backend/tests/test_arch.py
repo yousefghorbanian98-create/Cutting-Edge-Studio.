@@ -5,6 +5,7 @@ Reuses code from repo (no from-scratch business logic). Verifies
 - models/config are leaves (no heavy deps)
 - circular check is done via Madge for frontend; backend circular is implicitly covered by no self-dependency
 """
+
 from pytest_archon import archrule
 
 
