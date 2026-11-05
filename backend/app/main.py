@@ -22,6 +22,7 @@ from app.api import (
 )
 from app.config import ALLOWED_ORIGINS, API_PREFIX, Settings, get_settings
 from app.db import create_db_engine, create_session_factory, init_db
+from app.desktop import clear_receipt, mount_frontend, publish_receipt
 from app.logging import configure_logging, get_logger
 from app.services.audio.processor import FFmpegRhythmInspector
 from app.services.media.inspection import FFmpegInspector, InspectionService
@@ -63,8 +64,10 @@ def create_app(settings: Settings | None = None, prober: Prober | None = None) -
             offline=resolved.offline,
         )
         try:
+            publish_receipt(resolved, listener_owned=app.state.desktop_listener_owned)
             yield
         finally:
+            clear_receipt(resolved)
             app.state.inspection.shutdown()
             engine.dispose()
             LOG.info("backend.shutdown")
@@ -75,6 +78,7 @@ def create_app(settings: Settings | None = None, prober: Prober | None = None) -
         description="Local-first sports video editor backend. No telemetry, no network at runtime.",
         lifespan=lifespan,
     )
+    app.state.desktop_listener_owned = False
     app.state.settings = resolved
     app.state.media_service = MediaService(resolved, prober)
     app.state.jobs = JobRegistry()
@@ -98,6 +102,8 @@ def create_app(settings: Settings | None = None, prober: Prober | None = None) -
         inspection,
     ):
         app.include_router(module.router, prefix=API_PREFIX)
+    if resolved.serve_frontend:
+        mount_frontend(app, resolved)
     return app
 
 

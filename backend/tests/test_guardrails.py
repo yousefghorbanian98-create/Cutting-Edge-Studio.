@@ -24,6 +24,11 @@ def test_no_network_or_telemetry_imports() -> None:
                     f"{path.name}:{alias.name}"
                     for alias in node.names
                     if alias.name in FORBIDDEN_MODULES
+                    and not (
+                        path == APP_DIR / "__main__.py"
+                        and alias.name == "socket"
+                        and alias.asname is None
+                    )
                 )
             elif isinstance(node, ast.ImportFrom) and node.module in FORBIDDEN_MODULES:
                 offenders.append(f"{path.name}:{node.module}")
@@ -49,3 +54,38 @@ def test_bare_except_never_swallows_errors() -> None:
         if isinstance(node, ast.ExceptHandler) and node.type is None
     ]
     assert offenders == []
+
+
+def test_desktop_socket_is_listen_only() -> None:
+    """Narrow reviewed exception: the native entry binds loopback, never dials out."""
+    tree = ast.parse((APP_DIR / "__main__.py").read_text(encoding="utf-8"))
+    references = [
+        node
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Attribute)
+        and isinstance(node.value, ast.Name)
+        and node.value.id == "socket"
+    ]
+    assert references
+    assert {node.attr for node in references} <= {
+        "socket",
+        "AF_INET",
+        "SOCK_STREAM",
+        "SOL_SOCKET",
+        "SO_EXCLUSIVEADDRUSE",
+        "SO_REUSEADDR",
+    }
+    assert not any(
+        isinstance(node, ast.Attribute)
+        and node.attr
+        in {
+            "connect",
+            "connect_ex",
+            "send",
+            "sendall",
+            "sendto",
+            "getaddrinfo",
+            "create_connection",
+        }
+        for node in ast.walk(tree)
+    )

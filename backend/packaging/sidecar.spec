@@ -1,5 +1,5 @@
 # -*- mode: python ; coding: utf-8 -*-
-"""PyInstaller spec for the backend sidecar (one file, no console window).
+"""PyInstaller spec for the backend sidecar (onedir, no console window).
 
 PyInstaller is GPLv2+ with the bootloader exception — explicitly whitelisted
 for this project (protocol v2.5.1, §20).
@@ -40,9 +40,8 @@ pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
 exe = EXE(
     pyz,
     a.scripts,
-    a.binaries,
-    a.datas,
     [],
+    exclude_binaries=True,
     name="cutting-edge-backend",
     debug=False,
     bootloader_ignore_signals=False,
@@ -51,5 +50,14 @@ exe = EXE(
     console=False,
     disable_windowed_traceback=False,
 )
-# One-file build: Tauri's `externalBin` copies exactly one executable next to the
-# shell, so a onedir COLLECT tree would be silently dropped from the installer.
+# Tauri externalBin carries the executable; its matching _internal directory is
+# explicitly staged as a mapped bundle resource. No per-launch onefile extraction
+# or bootloader parent is needed, including on forceful native tree cleanup.
+collect = COLLECT(
+    exe,
+    a.binaries,
+    a.datas,
+    strip=False,
+    upx=False,
+    name="cutting-edge-backend",
+)

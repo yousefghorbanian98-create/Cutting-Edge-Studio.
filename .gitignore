@@ -41,3 +41,6 @@ delivery/*.sha256
 Thumbs.db
 .idea/
 .vscode/
+
+# Generated, mode-specific Tauri resource staging
+src-tauri/runtime/

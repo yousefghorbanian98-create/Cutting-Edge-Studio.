@@ -1,98 +1,216 @@
-//! Tauri shell for Cutting Edge v2.
-//!
-//! The shell only starts the local Python sidecar, waits for its health probe and
-//! then reveals the window. It never opens a network connection of its own: the
-//! health probe is a plain loopback TCP connect (OFFLINE POLICY, LOCK-05).
+//! Native shell glue: bundled same-origin HTTP UI, per-launch startup receipt,
+//! and OSS shell-plugin process-group cleanup on orderly exit.
+//! Abrupt shell death containment is NOT guaranteed by this plugin's Job Object.
+mod readiness;
 
-use std::net::{TcpStream};
-use std::time::{Duration, Instant};
+use std::net::TcpStream;
+use std::path::PathBuf;
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::{Arc, Mutex};
+use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 
 use tauri::{Manager, RunEvent};
-use tauri_plugin_shell::process::CommandChild;
+use tauri_plugin_shell::process::{CommandChild, CommandEvent};
 use tauri_plugin_shell::ShellExt;
 
-/// Loopback port of the FastAPI sidecar (must match `app.config.Settings.port`).
 const BACKEND_PORT: u16 = 8756;
-
-/// How long the splash stays up while the sidecar boots.
 const HEALTH_TIMEOUT: Duration = Duration::from_secs(60);
+const PROBE_INTERVAL: Duration = Duration::from_millis(200);
 
-/// Delay between loopback probes.
-const PROBE_INTERVAL: Duration = Duration::from_millis(500);
+struct Diagnostic(Mutex<Option<String>>);
 
-#[derive(Debug, thiserror::Error)]
-enum ShellError {
-    /// The sidecar could not be spawned or was not bundled.
-    #[error("failed to spawn backend sidecar: {0}")]
-    Spawn(String),
+struct BackendState {
+    child: Mutex<Option<CommandChild>>,
+    receipt: PathBuf,
+    alive: Arc<AtomicBool>,
 }
 
-/// Spawn `cutting-edge-backend.exe` as a Tauri sidecar.
-fn spawn_backend(app: &tauri::AppHandle) -> Result<CommandChild, ShellError> {
-    let command = app
-        .shell()
-        .sidecar("cutting-edge-backend")
-        .map_err(|error| ShellError::Spawn(error.to_string()))?;
-
-    let (mut _events, child) = command
-        .args(["--port", &BACKEND_PORT.to_string(), "--host", "127.0.0.1"])
-        .spawn()
-        .map_err(|error| ShellError::Spawn(error.to_string()))?;
-
-    Ok(child)
-}
-
-/// Blocking loopback probe: succeeds as soon as the port accepts a connection.
-fn probe_once() -> bool {
-    TcpStream::connect_timeout(
-        &format!("127.0.0.1:{BACKEND_PORT}")
-            .parse()
-            .expect("loopback address literal"),
-        Duration::from_millis(400),
-    )
-    .is_ok()
-}
-
-/// Poll the loopback port until the sidecar is listening, or give up after `HEALTH_TIMEOUT`.
-async fn wait_until_ready() -> bool {
-    let deadline = Instant::now() + HEALTH_TIMEOUT;
-    while Instant::now() < deadline {
-        if probe_once() {
-            return true;
+fn report_failure(app: &tauri::AppHandle, message: &str) {
+    eprintln!("shell.error: {message}");
+    if let Some(state) = app.try_state::<Diagnostic>() {
+        match state.0.lock() {
+            Ok(mut stored) => *stored = Some(message.to_owned()),
+            Err(error) => eprintln!("shell.error: diagnostic lock failed: {error}"),
         }
-        std::thread::sleep(PROBE_INTERVAL);
     }
-    false
+    if let Some(window) = app.get_webview_window("main") {
+        // Display a native title as well, including failures before DOM load.
+        if let Err(error) = window.set_title(&format!("Cutting Edge — {message}")) {
+            eprintln!("shell.error: cannot set error title: {error}");
+        }
+        // No IPC
+        // capability is granted to the remote (loopback) frontend.
+        let script = format!(
+            "document.body.textContent = {}; document.body.style.whiteSpace = 'pre-wrap';",
+            serde_json::to_string(&format!(
+                "Cutting Edge — startup/runtime error\nخطای راه‌اندازی / اجرا\n{message}\nClose other instances, check local logs, then restart.\nبرنامه‌های هم‌زمان را ببندید، گزارش محلی را بررسی و دوباره اجرا کنید."
+            ))
+            .expect("serializing a string cannot fail")
+        );
+        if let Err(error) = window.eval(script) {
+            eprintln!("shell.error: cannot display failure: {error}");
+        }
+    }
+}
+
+fn stop_backend(app: &tauri::AppHandle) {
+    if let Some(state) = app.try_state::<BackendState>() {
+        state.alive.store(false, Ordering::SeqCst);
+        match state.child.lock() {
+            Ok(mut slot) => {
+                if let Some(child) = slot.take() {
+                    if let Err(error) = child.kill() {
+                        report_failure(app, &format!("Backend tree cleanup failed: {error}"));
+                    }
+                }
+            }
+            Err(error) => report_failure(app, &format!("Backend state lock failed: {error}")),
+        }
+        if let Err(error) = std::fs::remove_file(&state.receipt) {
+            if error.kind() != std::io::ErrorKind::NotFound {
+                eprintln!("shell.error: receipt cleanup failed: {error}");
+            }
+        }
+    }
+}
+
+fn start_backend(app: &tauri::AppHandle) -> Result<(), Box<dyn std::error::Error>> {
+    let home = app.path().resource_dir()?;
+    let cache = app.path().app_cache_dir()?.join("startup");
+    std::fs::create_dir_all(&cache)?;
+    // Unique launch correlation, NOT an authentication secret.
+    let instance = format!(
+        "{}-{}",
+        std::process::id(),
+        SystemTime::now().duration_since(UNIX_EPOCH)?.as_nanos()
+    );
+    let receipt = cache.join(format!("{instance}.json"));
+    let (mut events, child) = app
+        .shell()
+        .sidecar("cutting-edge-backend")?
+        .args([
+            "--port",
+            &BACKEND_PORT.to_string(),
+            "--host",
+            "127.0.0.1",
+            "--serve-frontend",
+        ])
+        .env("CUTTING_EDGE_HOME", &home)
+        .env("CUTTING_EDGE_DESKTOP_INSTANCE_ID", &instance)
+        .env("CUTTING_EDGE_DESKTOP_READY_FILE", &receipt)
+        .set_process_group(true)
+        .kill_on_drop(true)
+        .spawn()?;
+    let alive = Arc::new(AtomicBool::new(true));
+    app.manage(BackendState {
+        child: Mutex::new(Some(child)),
+        receipt: receipt.clone(),
+        alive: alive.clone(),
+    });
+    let handle = app.clone();
+    let event_alive = alive.clone();
+    // Keep draining the OSS plugin's bounded channel; dropping the receiver is
+    // not supervision and can lose the sidecar's startup error diagnostics.
+    tauri::async_runtime::spawn(async move {
+        while let Some(event) = events.recv().await {
+            match event {
+                CommandEvent::Stdout(bytes) | CommandEvent::Stderr(bytes) => {
+                    eprintln!("sidecar: {}", String::from_utf8_lossy(&bytes));
+                }
+                CommandEvent::Error(error) => report_failure(&handle, &error),
+                CommandEvent::Terminated(payload) => {
+                    if event_alive.swap(false, Ordering::SeqCst) {
+                        report_failure(&handle, &format!("Backend exited: {payload:?}"));
+                        stop_backend(&handle);
+                    }
+                }
+                _ => {}
+            }
+        }
+    });
+    let handle = app.clone();
+    // Probe sleep runs on a blocking worker, never blocks Tauri's async executor.
+    tauri::async_runtime::spawn_blocking(move || {
+        let deadline = Instant::now() + HEALTH_TIMEOUT;
+        while Instant::now() < deadline && alive.load(Ordering::SeqCst) {
+            if readiness::matches(&receipt, &instance, &home, BACKEND_PORT)
+                && TcpStream::connect_timeout(
+                    &([127, 0, 0, 1], BACKEND_PORT).into(),
+                    Duration::from_millis(200),
+                )
+                .is_ok()
+                && alive.load(Ordering::SeqCst)
+            {
+                if let Some(window) = handle.get_webview_window("main") {
+                    if let Err(error) = window.navigate(
+                        format!("http://127.0.0.1:{BACKEND_PORT}")
+                            .parse()
+                            .expect("fixed loopback URL"),
+                    ) {
+                        report_failure(&handle, &format!("Cannot open desktop frontend: {error}"));
+                        stop_backend(&handle);
+                    }
+                }
+                return;
+            }
+            std::thread::sleep(PROBE_INTERVAL);
+        }
+        if alive.load(Ordering::SeqCst) {
+            report_failure(&handle, "Backend startup timed out; no matching readiness receipt");
+            stop_backend(&handle);
+        }
+    });
+    Ok(())
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let app = tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
+        .manage(Diagnostic(Mutex::new(None)))
         .setup(|app| {
-            let handle = app.handle().clone();
-            match spawn_backend(&handle) {
-                Ok(child) => {
-                    app.manage(child);
+            tauri::WebviewWindowBuilder::from_config(app, &app.config().app.windows[0])?
+                .on_navigation(|url| {
+                    (url.scheme() == "tauri" && url.host_str() == Some("localhost"))
+                        || (matches!(url.scheme(), "http" | "https")
+                            && url.host_str() == Some("tauri.localhost"))
+                        || (url.scheme() == "http"
+                            && url.host_str() == Some("127.0.0.1")
+                            && url.port() == Some(BACKEND_PORT))
+                        || (cfg!(debug_assertions)
+                            && url.scheme() == "http"
+                            && url.host_str() == Some("localhost")
+                            && url.port() == Some(1420))
+                })
+                .on_page_load(|window, _payload| {
+                    let message = match window.app_handle().state::<Diagnostic>().0.lock() {
+                        Ok(stored) => stored.clone(),
+                        Err(error) => {
+                            eprintln!("shell.error: diagnostic lock failed: {error}");
+                            None
+                        }
+                    };
+                    if let Some(message) = message {
+                        report_failure(window.app_handle(), &message);
+                    }
+                })
+                .build()?;
+            if cfg!(debug_assertions) {
+                if let Some(window) = app.get_webview_window("main") {
+                    window.navigate("http://localhost:1420".parse()?)?;
                 }
-                Err(error) => {
-                    // Surfaced to the UI through the health badge; never swallowed.
-                    eprintln!("{error}");
-                }
+            } else if let Err(error) = start_backend(app.handle()) {
+                report_failure(app.handle(), &format!("Cannot start bundled backend: {error}"));
             }
-            tauri::async_runtime::spawn(async move {
-                if !wait_until_ready().await {
-                    eprintln!("backend sidecar did not answer on loopback in time");
-                }
-            });
             Ok(())
         })
         .build(tauri::generate_context!())
         .expect("error while building Cutting Edge v2 shell");
 
-    app.run(|_handle, event| {
-        if let RunEvent::ExitRequested { .. } = event {
-            // Sidecar children are killed by the shell plugin on exit.
+    app.run(|handle, event| {
+        // Exit (not ExitRequested, which other handlers can cancel).
+        if let RunEvent::Exit = event {
+            stop_backend(handle);
         }
     });
 }

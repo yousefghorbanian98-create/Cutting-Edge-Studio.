@@ -20,7 +20,9 @@
         "resizable": true,
         "fullscreen": false,
         "visible": true,
-        "label": "main"
+        "label": "main",
+        "url": "startup.html",
+        "create": false
       }
     ],
     "security": {
@@ -34,15 +36,17 @@
     ],
     "category": "Video",
     "shortDescription": "Offline sports video editor",
-    "longDescription": "Cutting Edge v2 — offline, OSS-first sports video editor for bodybuilding and volleyball creators.",
+    "longDescription": "Cutting Edge v2 \u2014 offline, OSS-first sports video editor for bodybuilding and volleyball creators.",
     "copyright": "MIT",
     "externalBin": [
       "binaries/cutting-edge-backend"
     ],
-    "resources": [
-      "../licenses/*",
-      "../docs/*.md"
-    ],
+    "resources": {
+      "../frontend/dist": "frontend",
+      "runtime": ".",
+      "../licenses": "licenses",
+      "../docs/*.md": "docs"
+    },
     "windows": {
       "nsis": {
         "installMode": "perMachine",

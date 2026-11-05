@@ -6,7 +6,7 @@
     Offline-by-design build:
       1. Verifies every pinned artifact in scripts/pins.json (SHA-256 required).
       2. Downloads artifacts only on the BUILD machine (never at runtime, LOCK-05).
-      3. Builds the React frontend, the Python sidecar (PyInstaller, one file) and the Tauri shell.
+      3. Builds the React frontend, the Python sidecar (PyInstaller, onedir + mapped _internal) and the Tauri shell.
       4. Packages the NSIS installer and writes a .sha256 next to it.
 
     The produced installer carries every model, binary and the WebView2 fixed-version
@@ -164,18 +164,49 @@ try {
     if (-not (Test-Path '.venv')) { python -m venv .venv }
     $py = Join-Path (Get-Location) '.venv/Scripts/python.exe'
     & $py -m pip install --upgrade pip
+    Assert-NativeSuccess 'pip bootstrap'
     & $py -m pip install -r requirements.txt
+    Assert-NativeSuccess 'runtime requirements'
     & $py -m pip install pyinstaller==6.22.3
+    Assert-NativeSuccess 'PyInstaller requirements'
     & (Join-Path (Get-Location) '.venv/Scripts/pyinstaller.exe') --noconfirm --clean packaging/sidecar.spec
     Assert-NativeSuccess 'pyinstaller'
 } finally { Pop-Location }
 
-$builtSidecar = Join-Path $root 'backend/dist/cutting-edge-backend.exe'
+$builtSidecar = Join-Path $root 'backend/dist/cutting-edge-backend/cutting-edge-backend.exe'
 if (-not (Test-Path $builtSidecar)) { throw "sidecar executable not produced at $builtSidecar" }
 New-Item -ItemType Directory -Force -Path $binariesDir | Out-Null
 Copy-Item $builtSidecar $sidecarTarget -Force
 $sidecarSize = [math]::Round((Get-Item $sidecarTarget).Length / 1MB, 1)
 Write-Host "[ok  ] sidecar staged ($sidecarSize MB) -> $sidecarTarget"
+
+# One resource layout, shared by cargo-run and NSIS installation. Never reuse
+# a full build's stale assets in a light build. This directory is generated/ignored.
+$runtime = Join-Path $root 'src-tauri/runtime'
+if (Test-Path $runtime) { Remove-Item -Recurse -Force $runtime }
+New-Item -ItemType Directory -Force (Join-Path $runtime 'binaries'), (Join-Path $runtime 'models') | Out-Null
+$internal = Join-Path $root 'backend/dist/cutting-edge-backend/_internal'
+if (-not (Test-Path $internal)) { throw 'PyInstaller onedir dependency tree was not produced.' }
+Copy-Item $internal (Join-Path $runtime '_internal') -Recurse -Force
+$mode = 'light'
+if (-not $WithoutPinnedBinaries) {
+    $mode = 'full'
+    $ffmpegRoot = Join-Path $root $pins.ffmpeg.target
+    $tools = @(Get-ChildItem -Path $ffmpegRoot -Recurse -File -Filter 'ffmpeg.exe')
+    if ($tools.Count -ne 1) { throw 'Expected exactly one verified LGPL FFmpeg archive tool directory.' }
+    $toolDir = $tools[0].Directory.FullName
+    if (-not (Test-Path (Join-Path $toolDir 'ffprobe.exe'))) { throw 'Verified archive has no ffprobe.exe.' }
+    $native = Join-Path $runtime 'binaries/ffmpeg/bin'
+    New-Item -ItemType Directory -Force $native | Out-Null
+    Copy-Item (Join-Path $toolDir '*') $native -Recurse -Force
+    $sourceModels = Join-Path $root 'models'
+    if (-not (Test-Path $sourceModels)) { throw 'Verified model staging is missing; full bundle is blocked.' }
+    Copy-Item (Join-Path $sourceModels '*') (Join-Path $runtime 'models') -Recurse -Force
+}
+@{ schema = 1; mode = $mode; frontend = 'frontend'; binaries = 'binaries'; models = 'models' } |
+    ConvertTo-Json | Set-Content (Join-Path $runtime 'bundle-status.json') -Encoding utf8
+Write-Host "[ok] $mode resources staged; installed paths resolve from CUTTING_EDGE_HOME."
+
 
 # tauri-build copies FixedRuntime into resources during cargo build, not just bundling.
 # Apply light-mode configuration BEFORE both builds and restore it even on failure.
@@ -201,6 +232,8 @@ try {
             Write-Output "::error title=cargo build context::$context"
         }
         Assert-NativeSuccess 'cargo build'
+        cargo test --release --lib --message-format=short
+        Assert-NativeSuccess 'cargo readiness contract tests'
     } finally { Pop-Location }
 
     if ($SkipInstaller) {
