@@ -25,11 +25,13 @@ from app.db import create_db_engine, create_session_factory, init_db
 from app.desktop import clear_receipt, mount_frontend, publish_receipt
 from app.logging import configure_logging, get_logger
 from app.services.audio.processor import FFmpegRhythmInspector
+from app.services.inference.registry import InferenceRegistry
 from app.services.media.inspection import FFmpegInspector, InspectionService
 from app.services.media.jobs import JobRegistry
 from app.services.media.scenes import FFmpegSceneInspector
 from app.services.media.service import MediaService, Prober
 from app.services.media.workspaces import recover_workspaces
+from app.services.stylematch.analysis import AnalysisOrchestrator
 
 LOG = get_logger(__name__)
 
@@ -50,12 +52,14 @@ def create_app(settings: Settings | None = None, prober: Prober | None = None) -
         init_db(engine)
         app.state.engine = engine
         app.state.session_factory = create_session_factory(engine)
+        app.state.registry = InferenceRegistry()
         app.state.inspection = InspectionService(
             app.state.session_factory,
             app.state.jobs,
             FFmpegInspector(resolved),
             rhythm_inspector=FFmpegRhythmInspector(resolved),
             scene_inspector=FFmpegSceneInspector(resolved),
+            analysis_inspector=AnalysisOrchestrator(resolved, app.state.registry),
         )
         LOG.info(
             "backend.startup",

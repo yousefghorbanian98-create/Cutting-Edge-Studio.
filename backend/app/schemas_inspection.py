@@ -6,10 +6,11 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from app.schemas_analysis import AnalysisReport  # noqa: F401 — re-export for API
 from app.schemas_rhythm import RhythmReport
 from app.schemas_scenes import SceneReport
 
-Operation = Literal["decode", "rhythm", "scenes"]
+Operation = Literal["decode", "rhythm", "scenes", "analysis"]
 
 AssetId = Annotated[str, Field(pattern=r"^[a-f0-9]{32}$")]
 
@@ -76,7 +77,10 @@ class InspectionRead(BaseModel):
     error: str | None = None
     stale: bool = False
     report: (
-        Annotated[InspectionReport | RhythmReport | SceneReport, Field(discriminator="scope")]
+        Annotated[
+            InspectionReport | RhythmReport | SceneReport | AnalysisReport,
+            Field(discriminator="scope"),
+        ]
         | None
     ) = None
 
@@ -90,6 +94,7 @@ class InspectionRead(BaseModel):
                 "decode": "media-inspection-only",
                 "rhythm": "audio-rhythm-only",
                 "scenes": "shot-candidates-only",
+                "analysis": "analysis-orchestration-only",
             }[self.operation]
             if self.report.scope != expected:
                 raise ValueError("Report scope disagrees with job operation")

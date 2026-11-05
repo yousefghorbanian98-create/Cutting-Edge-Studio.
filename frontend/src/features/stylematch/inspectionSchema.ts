@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export type InspectionOperation = 'decode' | 'rhythm' | 'scenes';
+export type InspectionOperation = 'decode' | 'rhythm' | 'scenes' | 'analysis';
 const identity = {
   asset_id:z.string(), role:z.string(), name:z.string(), sha256:z.string().regex(/^[a-f0-9]{64}$/),
   size_bytes:z.number().nonnegative(), mtime_ns:z.string(), duration:z.number().finite().positive(),
@@ -28,7 +28,8 @@ const sceneEstimate = z.object({
 const sceneFile = z.object({...identity,has_video:z.boolean(),status:z.enum(['candidates','no-candidates','no-video']),estimate:sceneEstimate.nullable()})
   .refine(f => f.status==='no-video' ? !f.has_video && f.estimate===null : f.has_video && f.estimate!==null
     && (f.status==='candidates')===(f.estimate.candidates.length>0),{message:'Inconsistent video candidate state'});
-const scopeForOperation={decode:'media-inspection-only',rhythm:'audio-rhythm-only',scenes:'shot-candidates-only'};
+const scopeForOperation={decode:'media-inspection-only',rhythm:'audio-rhythm-only',scenes:'shot-candidates-only',analysis:'analysis-orchestration-only'};
+const analysisFile = z.object({...identity,has_video:z.boolean()});
 const report = z.discriminatedUnion('scope',[
   z.object({version:z.literal(1),method:z.literal('ffprobe-lavfi+scdet'),scope:z.literal('shot-candidates-only'),
     unavailable:z.array(z.string()),files:z.array(sceneFile).min(1).max(101)}),
@@ -41,9 +42,11 @@ const report = z.discriminatedUnion('scope',[
   }),
   z.object({version:z.literal(1),method:z.literal('ffmpeg-pcm+librosa.beat.beat_track'),scope:z.literal('audio-rhythm-only'),
     unavailable:z.array(z.string()),files:z.array(rhythmFile).min(1).max(101)}),
+  z.object({version:z.literal(1),method:z.literal('registry-checked-orchestration'),scope:z.literal('analysis-orchestration-only'),
+    unavailable:z.array(z.string()),files:z.array(analysisFile).min(1).max(101)}),
 ]);
 export const inspectionSchema = z.object({
-  operation:z.enum(['decode','rhythm','scenes']).default('decode'),
+  operation:z.enum(['decode','rhythm','scenes','analysis']).default('decode'),
   id:z.string().min(1), project_id:z.string().min(1), reference_asset_id:z.string(), source_asset_ids:z.array(z.string()).max(100),
   state:z.enum(['queued','running','done','failed','cancelled','interrupted']), percent:z.number().finite().min(0).max(100),
   message:z.string(), error:z.string().nullable(), stale:z.boolean(), report:report.nullable(),
@@ -51,9 +54,9 @@ export const inspectionSchema = z.object({
   .refine(job => !job.report || job.report.scope === scopeForOperation[job.operation],{message:'Report scope disagrees with operation'});
 export const inspectionCapabilitiesSchema = z.object({
   cache_recovery:z.object({removed:z.number().int().nonnegative(),retained:z.number().int().nonnegative(),scanned:z.number().int().nonnegative(),limited:z.boolean(),message:z.string()}).optional(),
-  operation:z.enum(['decode','rhythm','scenes']).default('decode'),
+  operation:z.enum(['decode','rhythm','scenes','analysis']).default('decode'),
   inspection:z.object({available:z.boolean(),reason:z.string().nullable()}),
-  model_analysis:z.object({available:z.literal(false),reason:z.string(),unavailable:z.array(z.string()),models_directory:z.string()}),
+  model_analysis:z.object({available:z.boolean(),reason:z.string(),unavailable:z.array(z.string()),models_directory:z.string()}),
 });
 export type InspectionResponse = z.infer<typeof inspectionSchema>;
 export type InspectionCapabilities = z.infer<typeof inspectionCapabilitiesSchema>;

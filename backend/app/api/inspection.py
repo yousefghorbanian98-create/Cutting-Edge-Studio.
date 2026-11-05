@@ -15,6 +15,7 @@ from app.services.audio.processor import rhythm_unavailable
 from app.services.media.ffmpeg import FFmpegNotFoundError, resolve_binaries
 from app.services.media.inspection import InspectionBusyError
 from app.services.media.scenes import scenes_unavailable
+from app.services.stylematch.analysis import analysis_unavailable
 
 LOG = get_logger(__name__)
 
@@ -49,6 +50,14 @@ def _assets(session: SessionDep, project_id: str, payload: InspectionRequest) ->
 
 
 def _unavailable(settings: SettingsDep, operation: Operation) -> str | None:
+    if operation == "analysis":
+        # Analysis orchestration checks models first; FFmpeg is still required for provenance
+        # but model absence is the primary actionable gate for R2.
+        from app.services.inference.registry import InferenceRegistry
+
+        reason = analysis_unavailable(settings, InferenceRegistry())
+        if reason is not None:
+            return reason
     try:
         resolve_binaries(settings, allow_path_fallback=False)
     except FFmpegNotFoundError as error:
@@ -56,7 +65,16 @@ def _unavailable(settings: SettingsDep, operation: Operation) -> str | None:
         return str(error)
     if operation == "scenes":
         return scenes_unavailable(settings)
-    return rhythm_unavailable(settings) if operation == "rhythm" else None
+    if operation == "rhythm":
+        return rhythm_unavailable(settings)
+    if operation == "analysis":
+        # FFmpeg ok — now check models as second gate (keeps 503 detail actionable)
+        from app.services.inference.registry import InferenceRegistry
+
+        model_reason = analysis_unavailable(settings, InferenceRegistry())
+        if model_reason is not None:
+            return model_reason
+    return None
 
 
 def _require_tools(settings: SettingsDep, operation: Operation) -> None:
@@ -68,7 +86,9 @@ def _require_tools(settings: SettingsDep, operation: Operation) -> None:
 
 def _routes(operation: Operation) -> APIRouter:
     """Reuse existing request/identity/error semantics, without a second job framework."""
-    path = {"decode": "inspection", "rhythm": "rhythm", "scenes": "scenes"}[operation]
+    path = {"decode": "inspection", "rhythm": "rhythm", "scenes": "scenes", "analysis": "analysis"}[
+        operation
+    ]
     routes = APIRouter(prefix=f"/projects/{{project_id}}/{path}", tags=[path])
 
     @routes.get("/capabilities")
@@ -77,18 +97,21 @@ def _routes(operation: Operation) -> APIRouter:
     ) -> dict[str, object]:
         _project(session, project_id)
         reason = _unavailable(settings, operation)
+        # Honest model_analysis gate — checks local bundle, never downloads
+        from app.services.inference.registry import InferenceRegistry
+
+        model_reason = analysis_unavailable(settings, InferenceRegistry())
         return {
             "inspection": {"available": reason is None, "reason": reason},
             "operation": operation,
             "cache_recovery": request.app.state.cache_recovery,
             "model_analysis": {
-                "available": False,
-                "reason": (
-                    "Verified pretrained weights and wired inference adapters are required. "
-                    "Configure pinned local models on the build machine; "
-                    "no runtime downloads are performed."
-                ),
-                "unavailable": ["shot boundaries", "pose/action inference", "StyleDNA", "EDL"],
+                "available": model_reason is None,
+                "reason": model_reason
+                or "Verified pretrained weights and wired inference adapters are present.",
+                "unavailable": []
+                if model_reason is None
+                else ["shot boundaries", "pose/action inference", "StyleDNA", "EDL"],
                 "models_directory": str(settings.home_dir / "models"),
             },
         }
@@ -165,3 +188,4 @@ router = APIRouter()
 router.include_router(_routes("decode"))
 router.include_router(_routes("rhythm"))
 router.include_router(_routes("scenes"))
+router.include_router(_routes("analysis"))

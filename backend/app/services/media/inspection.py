@@ -42,7 +42,12 @@ ACTIVE = {"queued", "running"}
 
 
 def operation_kind(operation: Operation) -> str:
-    return {"decode": KIND, "rhythm": "audio-rhythm", "scenes": "shot-candidates"}[operation]
+    return {
+        "decode": KIND,
+        "rhythm": "audio-rhythm",
+        "scenes": "shot-candidates",
+        "analysis": "analysis-orchestration",
+    }[operation]
 
 
 def hash_input(path: Path, cancel: threading.Event) -> str:
@@ -178,10 +183,12 @@ class InspectionService:
         inspector: Inspector,
         rhythm_inspector: Inspector | None = None,
         scene_inspector: Inspector | None = None,
+        analysis_inspector: Inspector | None = None,
     ) -> None:
         self.factory, self.jobs, self.inspector = factory, jobs, inspector
         self.rhythm_inspector = rhythm_inspector
         self.scene_inspector = scene_inspector
+        self.analysis_inspector = analysis_inspector
         self.lock = threading.Lock()
         self.active: Job | None = None
         self.worker: threading.Thread | None = None
@@ -290,6 +297,7 @@ class InspectionService:
             "decode": self.inspector,
             "rhythm": self.rhythm_inspector,
             "scenes": self.scene_inspector,
+            "analysis": self.analysis_inspector,
         }[operation]
         if inspector is None:
             raise RuntimeError(f"{operation} processor is not configured")
@@ -313,9 +321,17 @@ class InspectionService:
                 inspector = self._inspector(initial.operation)
                 files.append(inspector.inspect(asset, job.cancel_event, progress))
                 self.jobs.update(job.id, percent=min(99, 100 * (index + 1) / len(assets)))
-            report = {"decode": InspectionReport, "rhythm": RhythmReport, "scenes": SceneReport}[
-                initial.operation
-            ](files=files)
+            report_cls = {
+                "decode": InspectionReport,
+                "rhythm": RhythmReport,
+                "scenes": SceneReport,
+                "analysis": None,  # imported lazily to avoid circular
+            }[initial.operation]
+            if report_cls is None:
+                from app.schemas_analysis import AnalysisReport
+
+                report_cls = AnalysisReport
+            report = report_cls(files=files)
             with self.lock:
                 _check_cancel(job)
                 with self.factory() as session:
