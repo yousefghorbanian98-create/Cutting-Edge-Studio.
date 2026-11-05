@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import contextlib
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
@@ -77,10 +78,8 @@ def create_app(settings: Settings | None = None, prober: Prober | None = None) -
         finally:
             clear_receipt(resolved)
             app.state.inspection.shutdown()
-            try:
+            with contextlib.suppress(Exception):
                 app.state.render.shutdown()
-            except Exception:
-                pass
             engine.dispose()
             LOG.info("backend.shutdown")
 

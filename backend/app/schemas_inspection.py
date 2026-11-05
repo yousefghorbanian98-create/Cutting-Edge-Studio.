@@ -6,7 +6,7 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from app.schemas_analysis import AnalysisReport  # noqa: F401 — re-export for API
+from app.schemas_analysis import AnalysisReport
 from app.schemas_rhythm import RhythmReport
 from app.schemas_scenes import SceneReport
 
