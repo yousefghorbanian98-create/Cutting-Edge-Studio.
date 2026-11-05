@@ -6,6 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const assert = require('assert/strict');
+const { stripVTControlCharacters } = require('node:util');
 const output = process.argv[2];
 assert.ok(output, 'output directory required');
 fs.mkdirSync(output, { recursive: true });
@@ -14,7 +15,7 @@ const result = { checks: [], observedPageErrors: [], observedConsoleErrors: [],
     'Installed light build, not approved full offline model/render/export acceptance.'] };
 function check(name, ok, detail = '') {
   result.checks.push({ name, passed: !!ok, detail });
-  console.log(`::${ok ? 'notice' : 'error'} title=Installed WebView acceptance::${name} : ${!!ok}`);
+  console.log(`${ok ? 'PASS ' : '::error title=Installed WebView acceptance::'}${name} : ${!!ok}`);
   assert.ok(ok, name);
 }
 (async () => {
@@ -31,7 +32,9 @@ function check(name, ok, detail = '') {
           result.cdpEndpoint = endpoint;
           break;
         } catch (error) {
-          result.connectionAttempts.push({ endpoint, error: error.message.slice(0, 300) });
+          result.connectionAttemptCount = (result.connectionAttemptCount || 0) + 1;
+          result.connectionAttempts.push({ endpoint, error: stripVTControlCharacters(error.message).slice(0, 300) });
+          result.connectionAttempts = result.connectionAttempts.slice(-12);
           console.log('Awaiting native CDP listener:', endpoint, error.message.split('\n')[0]);
         }
       }
@@ -67,15 +70,15 @@ function check(name, ok, detail = '') {
     check('native WebView screenshot captured', bytes.length > 10000);
     check('no page errors observed after CDP attachment', result.observedPageErrors.length === 0, JSON.stringify(result.observedPageErrors));
     check('no console errors observed after CDP attachment', result.observedConsoleErrors.length === 0, JSON.stringify(result.observedConsoleErrors));
-    console.log('::notice title=Installed WebView summary::' + JSON.stringify({ page: result.page, screenshot: result.screenshot, checks: result.checks.length }));
+    console.log('::notice title=Installed WebView summary::' + JSON.stringify({ page: result.page, screenshot: result.screenshot, checks: result.checks, pageErrors: result.observedPageErrors, consoleErrors: result.observedConsoleErrors }));
   } catch (error) {
-    result.failure = error.message;
+    result.failure = stripVTControlCharacters(error.message);
     throw error;
   } finally {
     fs.writeFileSync(path.join(output, 'webview.json'), JSON.stringify(result, null, 2));
     if (browser) await browser.close(); // connectOverCDP disconnects its transport; it does not own the native app.
   }
 })().catch(error => {
-  console.error('::error title=Installed WebView execution::' + error.message.replace(/%/g, '%25').replace(/\r/g, '%0D').replace(/\n/g, '%0A'));
+  console.error('::error title=Installed WebView execution::' + stripVTControlCharacters(error.message).replace(/%/g, '%25').replace(/\r/g, '%0D').replace(/\n/g, '%0A'));
   process.exitCode = 1;
 });

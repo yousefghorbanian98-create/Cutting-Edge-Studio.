@@ -1,7 +1,7 @@
 <# Real NSIS installation + native shell launch + orderly process-tree exit.
    Light build only. Does not certify WebView pixels, offline models or abrupt shell death. #>
 [CmdletBinding()]
-param([Parameter(Mandatory=$true)][string]$OutputDir)
+param([Parameter(Mandatory=$true)][string]$OutputDir, [switch]$AllowMachineCdpPolicy)
 $ErrorActionPreference = 'Stop'
 New-Item -ItemType Directory -Force $OutputDir | Out-Null
 $OutputDir = (Resolve-Path $OutputDir).Path
@@ -9,7 +9,6 @@ $records = [System.Collections.Generic.List[object]]::new()
 function Check([string]$Name, [bool]$Passed) {
     $records.Add(@{ name = $Name; passed = $Passed })
     Write-Host "[$Passed] $Name"
-    Write-Output "::notice title=Installed desktop acceptance::$Passed : $Name"
     if (-not $Passed) {
         Write-Output "::error title=Installed desktop acceptance::$Name"
         throw "Installed desktop gate failed: $Name"
@@ -24,6 +23,11 @@ function Same-LocalPath([string]$Left, [string]$Right) {
     return "$same".Trim() -eq 'True'
 }
 $pathEvidence = @{}
+$edgeDiagnostics = @()
+$policyPath = 'HKLM:\SOFTWARE\Policies\Microsoft\Edge\WebView2\AdditionalBrowserArguments'
+$policyWasPresent = $false
+$policyBackups = [System.Collections.Generic.List[object]]::new()
+$policyRestoreFailed = $false
 $install = Join-Path $env:TEMP 'CE installed smoke نصب با فاصله'
 $data = Join-Path $env:TEMP ('ce-installed-data-' + [guid]::NewGuid().ToString('N'))
 $native = $null
@@ -48,6 +52,29 @@ try {
     Check 'test-only CDP port initially unused' (-not (Get-NetTCPConnection -LocalPort 9222 -State Listen -ErrorAction SilentlyContinue))
     # Test process only: installed binaries/config do not ship this debugging flag.
     $env:WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS = '--remote-debugging-port=9222'
+    if ($AllowMachineCdpPolicy) {
+        # Runtime >=150 ignores env/HKCU overrides for elevated Windows runners.
+        # Microsoft-supported, app-specific HKLM test policy; never modify product code.
+        # https://github.com/MicrosoftEdge/WebView2Feedback/issues/5645
+        Check 'machine CDP policy restricted to disposable GitHub Windows runner' ($env:GITHUB_ACTIONS -eq 'true' -and $env:RUNNER_OS -eq 'Windows')
+        $policyWasPresent = Test-Path $policyPath
+        if (-not $policyWasPresent) { New-Item -Path $policyPath -Force | Out-Null }
+        $policy = Get-Item $policyPath
+        $appId = (Get-Content src-tauri/tauri.conf.json -Raw | ConvertFrom-Json).identifier
+        foreach ($name in @($appId, (Split-Path $shell -Leaf))) {
+            $exists = $policy.GetValueNames() -contains $name
+            $backup = @{ name = $name; existed = $exists }
+            if ($exists) {
+                $backup.value = $policy.GetValue($name, $null, [Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames)
+                $backup.kind = $policy.GetValueKind($name).ToString()
+            }
+            $policyBackups.Add($backup)
+            New-ItemProperty -Path $policyPath -Name $name -Value '--remote-debugging-port=9222' -PropertyType String -Force | Out-Null
+        }
+        $policy.Close()
+        # No wildcard or user-scoped policy; remove env override so HKLM is selected.
+        $env:WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS = $null
+    }
     $env:NODE_PATH = Join-Path $env:RUNNER_TEMP 'ce-webview-tools/node_modules'
     $native = Start-Process $shell -WorkingDirectory $env:TEMP -PassThru
     $deadline = (Get-Date).AddSeconds(75)
@@ -73,7 +100,9 @@ try {
     })
     Write-Output "::notice title=Native WebView debug diagnostics::$($edgeDiagnostics | ConvertTo-Json -Compress)"
     & node scripts/ci/windows-webview-smoke.cjs $OutputDir
-    Check 'actual installed WebView DOM and screenshot verified' ($LASTEXITCODE -eq 0)
+    $uiPassed = $LASTEXITCODE -eq 0
+    $records.Add(@{ name = 'actual installed WebView DOM and screenshot verified'; passed = $uiPassed })
+    if (-not $uiPassed) { Write-Output '::error title=Installed WebView gate::Native DOM/screenshot gate failed; orderly cleanup is still tested independently.' }
     # Record backend descendants of this shell only; no unrelated process inspection in evidence.
     $all = @(Get-CimInstance Win32_Process)
     $parents = @($native.Id)
@@ -95,6 +124,7 @@ try {
     } while ($remaining.Count -gt 0 -and (Get-Date) -lt $deadline)
     Check 'owned backend gone after orderly native exit' ($remaining.Count -eq 0)
     Check 'desktop listening port released' (-not (Get-NetTCPConnection -LocalPort 8756 -State Listen -ErrorAction SilentlyContinue))
+    if (-not $uiPassed) { throw 'Actual installed WebView DOM/screenshot gate failed; see webview.json.' }
 } catch {
     $detail = $_.Exception.Message.Replace('%', '%25').Replace("`r", '%0D').Replace("`n", '%0A')
     Write-Output "::error title=Installed desktop execution::$detail"
@@ -104,17 +134,41 @@ try {
         & taskkill /PID $native.Id /T /F
         Write-Host "Emergency harness cleanup exit: $LASTEXITCODE (not runtime containment proof)"
     }
+    foreach ($backup in $policyBackups) {
+        try {
+            if ($backup.existed) {
+                New-ItemProperty -Path $policyPath -Name $backup.name -Value $backup.value -PropertyType $backup.kind -Force | Out-Null
+            } else { Remove-ItemProperty -Path $policyPath -Name $backup.name -ErrorAction Stop }
+        } catch {
+            $policyRestoreFailed = $true
+            Write-Output "::error title=Test policy cleanup::Failed to restore app-specific machine CDP policy: $($_.Exception.GetType().Name)"
+        }
+    }
+    if ($policyBackups.Count -gt 0 -and -not $policyWasPresent -and -not $policyRestoreFailed) {
+        try {
+            $key = Get-Item $policyPath
+            $empty = $key.ValueCount -eq 0 -and $key.SubKeyCount -eq 0
+            $key.Close()
+            if ($empty) { Remove-Item $policyPath -ErrorAction Stop }
+        } catch {
+            $policyRestoreFailed = $true
+            Write-Output "::error title=Test policy cleanup::Failed to remove empty test policy key: $($_.Exception.GetType().Name)"
+        }
+    }
     $env:CUTTING_EDGE_DATA_DIR = $oldData
     $env:CUTTING_EDGE_HOME = $oldHome
     $env:WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS = $oldWebViewArgs
     $env:NODE_PATH = $oldNodePath
     $log = Join-Path $data 'logs/backend.jsonl'
     if (Test-Path $log) { Copy-Item $log (Join-Path $OutputDir 'backend.jsonl') -Force }
-    @{ checks = $records.ToArray(); paths = $pathEvidence; limitations = @('Light installer only; pretrained artifacts and fixed WebView runtime are absent.', 'Native WebView DOM/CDP screenshot gate is separate from full media/render quality acceptance.', 'Orderly close only; abrupt shell-death OS containment remains OPEN.'); install = $install } |
-        ConvertTo-Json -Depth 8 | Set-Content (Join-Path $OutputDir 'installed.json') -Encoding utf8
+    $report = @{ checks = $records.ToArray(); paths = $pathEvidence; browser_processes = $edgeDiagnostics; limitations = @('Light installer only; pretrained artifacts and fixed WebView runtime are absent.', 'Native WebView DOM/CDP screenshot gate is separate from full media/render quality acceptance.', 'Orderly close only; abrupt shell-death OS containment remains OPEN.'); install = $install; test_only_cdp_policy = @{ app_ids = @($policyBackups | ForEach-Object { $_.name }); restored = -not $policyRestoreFailed } }
+    $report | ConvertTo-Json -Depth 8 | Set-Content (Join-Path $OutputDir 'installed.json') -Encoding utf8
+    # One bounded summary avoids GitHub's per-step annotation quota.
+    Write-Output "::notice title=Installed desktop summary::$($report | ConvertTo-Json -Depth 8 -Compress)"
     $uninstaller = Join-Path $install 'uninstall.exe'
     if (Test-Path $uninstaller) {
         $uninstall = Start-Process $uninstaller -ArgumentList '/S' -PassThru -Wait
         Write-Host "NSIS cleanup exit: $($uninstall.ExitCode)"
     }
+    if ($policyRestoreFailed) { throw 'App-specific CI CDP policy restoration failed.' }
 }
