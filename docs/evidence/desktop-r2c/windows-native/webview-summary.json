@@ -1,0 +1,67 @@
+{
+  "page": "http://127.0.0.1:8756/",
+  "screenshot": {
+    "file": "installed-webview-fa.png",
+    "bytes": 86057,
+    "sha256": "b12045625662b7f885301d6d04d50a3ab0c977dc32e97d1feefd1919494b32f4"
+  },
+  "checks": [
+    {
+      "name": "native CDP listener becomes reachable within startup budget",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "native WebView actually navigated to owned same-origin backend",
+      "passed": true,
+      "detail": "[\"http://127.0.0.1:8756/\"]"
+    },
+    {
+      "name": "real installed React reports connected processing core",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "real installed main workspace visible",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "native default Persian RTL renders",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "relative fetch from native WebView reaches healthy offline API",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "native frontend never loaded Vite client",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "observed native resource entries stay local",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "native WebView screenshot captured",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "no page errors observed after CDP attachment",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "no console errors observed after CDP attachment",
+      "passed": true,
+      "detail": "[]"
+    }
+  ],
+  "pageErrors": [],
+  "consoleErrors": []
+}

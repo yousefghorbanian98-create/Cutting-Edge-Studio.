@@ -37,6 +37,20 @@ checks. See [RECOVERY-R2B4-REPORT.md](RECOVERY-R2B4-REPORT.md). Legacy/unknown/l
 cache is retained, not swept. Independent native containment, real Windows adapter/GC/resource
 routing, models/render and full offline release remain OPEN; 260/260 is still only authored.
 
+R2c same-origin desktop integration now has **333 backend tests / 93.97%**, **168 frontend**,
+**27/27 source CLI** and **22/22 built-source browser** checks. Actual Windows frozen
+27/27 and installed NSIS/native resource/profile/HTTP/window checks passed; 908bb59 and
+83179cc failed CDP. Runtime >=150 elevated-host policy is documented upstream;
+**4d4a639 VERIFIED SUCCESS 41997214939: 20/20 installed-native PASS (including resource/profile
+identity, served React, native window, orderly close within 20s, backend cleanup and HKLM
+policy restored:true) and 11/11 WebView DOM PASS (connected workspace, RTL, relative API,
+no Vite, screenshot 86057 bytes SHA b120..., no page/console errors).** Light-only; full
+models/pins/licenses/fixed runtime/offline/render/abrupt-containment remain BLOCKED.
+[Report](DESKTOP-R2C-REPORT.md) and `evidence/desktop-r2c/windows-native/` (artifact
+`installed-native-desktop-smoke` 13401078754, 86725 zip, image via artifact). d68 adds
+bounded base64 JSON recovery and pin guards (PASS) with metadata-only screenshot notice
+(not 64k chunks) due to GH ~4k notice limit.
+
 ## P0 — Foundation & Setup (week 1, 20 steps)
 
 | Step | Item | Status | Evidence |
@@ -272,7 +286,7 @@ Fallback if it misbehaves: `dnd-timeline` (MIT). See `docs/PROTOCOL-ISSUES.md` R
 |---|---|---|---|
 | P9-S01–S04 | App icons (ico + 32/128 png) | GREEN | `src-tauri/icons/` |
 | P9-S05–S08 | Shell hardening: no undeclared crates, loopback TCP health probe | GREEN | `src-tauri/src/lib.rs` |
-| P9-S09–S12 | Sidecar one-file packaging + CLI (`--host/--port/--log-level`) | GREEN | `backend/packaging/sidecar.spec`, `app/__main__.py` |
+| P9-S09–S12 | Sidecar packaging + CLI (R2c: mapped onedir) (`--host/--port/--log-level`) | GREEN | `backend/packaging/sidecar.spec`, `app/__main__.py` |
 | P9-S13–S18 | `build-installer.ps1`: pins, target triple, sidecar staging, `-WithoutPinnedBinaries`, config restore | GREEN | `scripts/build-installer.ps1` |
 | P9-S19–S24 | CI installer job (Windows-safe workspace, NSIS, artifact upload) | GREEN | `.github/workflows/ci.yml` |
 | P9-S25–S30 | Install guides fa/en, quick start fa/en | GREEN | `docs/install-guide-v1.0.0-{fa,en}.md`, `docs/quick-start-v1.0.0-{fa,en}.md` |
@@ -281,11 +295,13 @@ Fallback if it misbehaves: `dnd-timeline` (MIT). See `docs/PROTOCOL-ISSUES.md` R
 | P9-S45–S52 | Release checklist, PR evidence, v1.0.0 tag prep, handover note | GREEN | `docs/RELEASE-CHECKLIST.md`, PR #1 |
 
 ### P9 notes
-- The **light** installer job runs on pushes, but the last observed completed installer run
-  failed during cargo compilation. Artifact delivery is not confirmed; see the local report.
-- The **full** offline installer needs one `-UpdatePins` run on a trusted Windows machine to
-  fill the SHA-256 values for FFmpeg/models/WebView2 (`scripts/pins.json` currently `null`
-  by design, so the build refuses unpinned downloads).
+- Actual **light** Windows builds/frozen tests and native HTTP/window checks pass; **4d4a639
+  VERIFIED: 20/20 installed-native and 11/11 WebView DOM/RTL/API/screenshot/orderly cleanup PASS
+  (light-only)**, with HKLM test policy restored; abrupt containment still OPEN. d68 pin
+  guards PASS; PNG transport now metadata-only due to GH notice limit.
+- The **full** offline installer needs real reviewed URLs, hashes, redistribution licenses
+  and fixed WebView2 inputs. `-UpdatePins` cannot turn placeholder URLs into approved
+  artifacts; null/placeholder model/runtime inputs still block delivery.
 - Performance and Golden-Set numbers are Owner-machine measurements; see
   `docs/TEST-PLAN.md §4` — they are **not** claimed as GREEN here.
 

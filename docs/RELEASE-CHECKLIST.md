@@ -1,12 +1,12 @@
 # Release checklist — v1.0.0
 
 > **2026-11-05:** release is **BLOCKED**. Local evidence and remaining integration gaps are in
-> [LOCAL-TEST-REPORT.md](LOCAL-TEST-REPORT.md). Historical CI passes do not certify a delivered installer.
+> [DESKTOP-R2C-REPORT.md](DESKTOP-R2C-REPORT.md) and [LOCAL-TEST-REPORT.md](LOCAL-TEST-REPORT.md). Historical CI passes do not certify a delivered installer.
 
 ## A. Automated checks (local results and earlier CI evidence)
 
 - [x] Backend: `ruff check .` + `ruff format --check .`
-- [x] Backend: `pytest --cov=app` → 310 passed with provisioned optional/native analysis, coverage 93.66 %; base test mode 304 passed + 6 explicit optional skips (R2b4, not clean environment)
+- [x] Backend: `pytest --cov=app` → 333 passed with provisioned optional/native analysis, coverage 93.97 % (R2c local environment, not clean Windows inference acceptance)
 - [x] Backend: `pip-audit --strict` → no known advisories in the local Python environment after pytest 9.0.3 update (native libraries/Windows distribution not certified)
 - [x] Frontend: `npm run lint`, `npm test` (168), `npm run build`
 - [x] Frontend: `npm audit --audit-level=high` → 0 high/critical; 8 moderate dev-tool findings remain
@@ -31,7 +31,10 @@
 - [ ] Audio: authorized real-music quality, video timestamp alignment, legacy/ambiguous PCM cache, native extraction-crash containment/resource hardening, audited optional/native Windows build
 - [ ] Wizard starts genuine pretrained model analysis and shows backend progress/results
 - [ ] Preview/export controls invoke the approved renderer and play the result
-- [ ] Packaged Tauri has working sidecar API routing without Vite
+- [x] R2c source CLI **27/27** and built-source browser **22/22**: same-origin API/media/persistence without Vite; [report](DESKTOP-R2C-REPORT.md)
+- [x] Actual Windows frozen onedir **27/27**, NSIS installation, native resource/profile identity, served built React and native window (908bb59 / 83179cc verified HTTP/window, FAIL at CDP; d68 pin guard PASS)
+- [x] Actual installed Tauri WebView DOM/relative API/RTL/screenshot and orderly native/backend cleanup — **VERIFIED 4d4a639 push 41997214939: 20/20 installed-native PASS + 11/11 WebView PASS, 86057 bytes SHA b120..., independent orderly close, HKLM policy restored:true** (light-only, not full delivery)
+- [ ] Full packaged Tauri/approved fixed runtime, model/render resources and clean offline acceptance — `pins.json` null/placeholder, full bundle still BLOCKED; d68 transport now metadata-only (see DESKTOP-R2C-REPORT)
 - [ ] Real model/beat/shot/color measurements replace synthetic analysis fixtures
 - [ ] NVENC or openh264 export passes using the approved LGPL shared build
 
@@ -55,7 +58,8 @@
 ## C. Full offline build (one-time, trusted network)
 
 ```powershell
-pwsh -File scripts/build-installer.ps1 -UpdatePins   # writes real SHA-256 values
+# First resolve/review real URLs, licenses and fixed-runtime inputs; null/placeholder pins block delivery.
+pwsh -File scripts/build-installer.ps1 -UpdatePins   # operator hash utility, not a license audit
 git diff scripts/pins.json                           # review every hash
 pwsh -File scripts/build-installer.ps1               # full installer, ~3.5 GB
 ```

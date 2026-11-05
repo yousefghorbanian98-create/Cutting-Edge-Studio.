@@ -78,14 +78,14 @@ jobs:
               found += 1
           if found == 0:
               print('::notice::No desktop smoke JSON in the selected failed run; no product acceptance inferred')
-      - name: Expose bounded test-only native screenshot
+      - name: Expose bounded test-only native screenshot metadata
         if: steps.prior.outputs.run != ''
         shell: python
         env:
           EVIDENCE_DIR: ${{ runner.temp }}/desktop-evidence
           SOURCE_RUN: ${{ steps.prior.outputs.run }}
         run: |
-          import base64, hashlib, json, os
+          import hashlib, json, os
           from pathlib import Path
           for path in Path(os.environ['EVIDENCE_DIR']).rglob('installed-webview-fa.png'):
               if path.parent.name != 'installed-native-desktop-smoke':
@@ -93,11 +93,9 @@ jobs:
               if path.stat().st_size > 384000:
                   raise SystemExit('Native screenshot exceeds bounded annotation transport; use original artifact')
               data = path.read_bytes()
-              payload = base64.b64encode(data).decode()
-              chunks = [payload[i:i + 64000] for i in range(0, len(payload), 64000)]
-              for index, chunk in enumerate(chunks):
-                  report = {'source_run': os.environ['SOURCE_RUN'], 'file': path.name, 'encoding': 'base64-png', 'index': index, 'count': len(chunks), 'sha256': hashlib.sha256(data).hexdigest(), 'data': chunk}
-                  print('::notice title=Existing native screenshot::' + json.dumps(report, separators=(',', ':')))
+              sha = hashlib.sha256(data).hexdigest()
+              report = {'source_run': os.environ['SOURCE_RUN'], 'file': path.name, 'artifact': path.parent.name, 'bytes': len(data), 'sha256': sha, 'note': 'Annotation image transport limited to ~4k per notice; download artifact for actual PNG'}
+              print('::notice title=Existing native screenshot metadata::' + json.dumps(report, separators=(',', ':')))
 
   backend:
     if: inputs.evidence_run == ''
