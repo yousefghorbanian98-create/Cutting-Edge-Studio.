@@ -9,7 +9,11 @@ $records = [System.Collections.Generic.List[object]]::new()
 function Check([string]$Name, [bool]$Passed) {
     $records.Add(@{ name = $Name; passed = $Passed })
     Write-Host "[$Passed] $Name"
-    if (-not $Passed) { throw "Installed desktop gate failed: $Name" }
+    Write-Output "::notice title=Installed desktop acceptance::$Passed : $Name"
+    if (-not $Passed) {
+        Write-Output "::error title=Installed desktop acceptance::$Name"
+        throw "Installed desktop gate failed: $Name"
+    }
 }
 $install = Join-Path $env:TEMP 'CE installed smoke نصب با فاصله'
 $data = Join-Path $env:TEMP ('ce-installed-data-' + [guid]::NewGuid().ToString('N'))
@@ -66,6 +70,10 @@ try {
     } while ($remaining.Count -gt 0 -and (Get-Date) -lt $deadline)
     Check 'owned backend gone after orderly native exit' ($remaining.Count -eq 0)
     Check 'desktop listening port released' (-not (Get-NetTCPConnection -LocalPort 8756 -State Listen -ErrorAction SilentlyContinue))
+} catch {
+    $detail = $_.Exception.Message.Replace('%', '%25').Replace("`r", '%0D').Replace("`n", '%0A')
+    Write-Output "::error title=Installed desktop execution::$detail"
+    throw
 } finally {
     if ($native -and -not $native.HasExited) {
         & taskkill /PID $native.Id /T /F

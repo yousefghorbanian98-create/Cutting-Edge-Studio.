@@ -6,13 +6,55 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      evidence_run:
+        description: 'Read only: surface existing desktop-smoke JSON from this repository run (no build)'
+        required: false
+        default: ''
 
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
+  desktop-evidence:
+    name: Read existing desktop gate evidence (no build)
+    if: github.event_name == 'workflow_dispatch' && inputs.evidence_run != ''
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+    steps:
+      - name: Download existing structured smoke evidence
+        uses: actions/download-artifact@v4
+        with:
+          run-id: ${{ inputs.evidence_run }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          pattern: '*desktop*smoke'
+          path: ${{ runner.temp }}/desktop-evidence
+      - name: Expose bounded test-only JSON in check annotations
+        shell: python
+        env:
+          EVIDENCE_DIR: ${{ runner.temp }}/desktop-evidence
+        run: |
+          import json, os
+          from pathlib import Path
+          found = 0
+          for path in Path(os.environ['EVIDENCE_DIR']).rglob('*.json'):
+              if path.name not in {'installed.json', 'smoke.json'}:
+                  continue
+              if path.stat().st_size > 65536:
+                  raise SystemExit('Unexpected oversized structured smoke evidence')
+              body = json.loads(path.read_text(encoding='utf-8-sig'))
+              report = {'artifact': path.parent.name, 'evidence': body}
+              message = json.dumps(report, ensure_ascii=True, separators=(',', ':'))
+              print('::notice title=Existing desktop evidence::' + message.replace('%', '%25'))
+              found += 1
+          if found == 0:
+              raise SystemExit('No known structured desktop smoke evidence found')
+
   backend:
+    if: inputs.evidence_run == ''
     name: Backend — lint + tests (Linux)
     runs-on: ubuntu-latest
     defaults:
@@ -42,6 +84,7 @@ jobs:
           path: backend/coverage.xml
 
   frontend:
+    if: inputs.evidence_run == ''
     name: Frontend — lint + tests + build (Linux)
     runs-on: ubuntu-latest
     defaults:
@@ -62,6 +105,7 @@ jobs:
         run: npm audit --audit-level=high
 
   security:
+    if: inputs.evidence_run == ''
     name: Security — gitleaks + trivy fs
     runs-on: ubuntu-latest
     steps:
@@ -100,7 +144,7 @@ jobs:
 
   installer:
     name: Installer — Windows NSIS build
-    if: github.event_name == 'workflow_dispatch' || github.event_name == 'push'
+    if: inputs.evidence_run == '' && (github.event_name == 'workflow_dispatch' || github.event_name == 'push')
     runs-on: windows-latest
     defaults:
       run:

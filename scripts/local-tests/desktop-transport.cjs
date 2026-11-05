@@ -64,13 +64,14 @@ async function saved(page) { await page.waitForFunction(() => document.querySele
     check('timeline change persists through real API', true);
     await page.screenshot({ path: path.join(out, 'built-ui-en.png'), fullPage: true });
     await page.reload();
-    await page.getByRole('button', { name: 'زبان', exact: true }).click();
     await saved(page);
     check('project reload survives without Vite', await page.getByRole('textbox', { name: 'Project name', exact: true }).inputValue() === title);
     check('import is restored from SQLite', await page.getByRole('button', { name: path.basename(fixture), exact: true }).count() === 1);
     const health = await page.request.get(new URL('/api/v1/health', base).href);
     const project = await page.request.get(new URL('/api/v1/projects/' + asset.project_id, base).href);
     check('same-origin persisted project API', project.status() === 200 && (await project.json()).name === title);
+    const workspace = await (await page.request.get(new URL('/api/v1/projects/' + asset.project_id + '/workspace', base).href)).json();
+    check('SQLite restores actual timeline clip', workspace.snapshot.timeline.clips.some(c => c.mediaId === asset.path));
     check('diagnostic profile isolated from primary', (await health.json()).database.startsWith('/tmp/ce-desktop-browser-data/'));
     await page.getByRole('button', { name: 'Language', exact: true }).click();
     check('built frontend switches to Persian RTL', await page.locator('html').getAttribute('dir') === 'rtl');
