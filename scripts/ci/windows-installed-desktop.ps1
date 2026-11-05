@@ -15,6 +15,15 @@ function Check([string]$Name, [bool]$Passed) {
         throw "Installed desktop gate failed: $Name"
     }
 }
+function Same-LocalPath([string]$Left, [string]$Right) {
+    # TEMP may use RUNNER~1 while GetModuleFileName/resource_dir uses the long
+    # name. Compare canonical Windows path identity, NOT unequal string spellings.
+    $same = & python -c 'import sys; from pathlib import Path; print(Path(sys.argv[1]).resolve() == Path(sys.argv[2]).resolve())' $Left $Right
+    if ($LASTEXITCODE -ne 0) { throw 'Canonical path comparison failed.' }
+    Write-Host "path identity: $Left <=> $Right : $same"
+    return "$same".Trim() -eq 'True'
+}
+$pathEvidence = @{}
 $install = Join-Path $env:TEMP 'CE installed smoke نصب با فاصله'
 $data = Join-Path $env:TEMP ('ce-installed-data-' + [guid]::NewGuid().ToString('N'))
 $native = $null
@@ -43,8 +52,10 @@ try {
         catch { Write-Host "Waiting for installed backend: $($_.Exception.Message)"; Start-Sleep -Milliseconds 250 }
     } while (-not $health -and (Get-Date) -lt $deadline)
     Check 'native shell launched healthy sidecar without Vite' ($health.status -eq 'ok')
-    Check 'native resource_dir overrides inherited home' ($health.models_dir -eq (Join-Path $install 'models'))
-    Check 'profile is separate from installation' ($health.database -eq (Join-Path $data 'cutting-edge.db'))
+    $pathEvidence = @{ expected_models = (Join-Path $install 'models'); observed_models = $health.models_dir; expected_database = (Join-Path $data 'cutting-edge.db'); observed_database = $health.database }
+    Write-Output "::notice title=Installed native paths::$($pathEvidence | ConvertTo-Json -Compress)"
+    Check 'native resource_dir overrides inherited home' (Same-LocalPath $health.models_dir (Join-Path $install 'models'))
+    Check 'profile is separate from installation' (Same-LocalPath $health.database (Join-Path $data 'cutting-edge.db'))
     $page = Invoke-WebRequest 'http://127.0.0.1:8756/' -NoProxy
     Check 'installed same-origin built React is served' ($page.StatusCode -eq 200 -and $page.Content.Contains('type="module"'))
     $native.Refresh()
@@ -83,7 +94,7 @@ try {
     $env:CUTTING_EDGE_HOME = $oldHome
     $log = Join-Path $data 'logs/backend.jsonl'
     if (Test-Path $log) { Copy-Item $log (Join-Path $OutputDir 'backend.jsonl') -Force }
-    @{ checks = $records.ToArray(); limitations = @('Light installer only; pretrained artifacts and fixed WebView runtime are absent.', 'HTTP + native window presence is not a WebView pixel/render assertion.', 'Orderly close only; abrupt shell-death OS containment remains OPEN.'); install = $install } |
+    @{ checks = $records.ToArray(); paths = $pathEvidence; limitations = @('Light installer only; pretrained artifacts and fixed WebView runtime are absent.', 'HTTP + native window presence is not a WebView pixel/render assertion.', 'Orderly close only; abrupt shell-death OS containment remains OPEN.'); install = $install } |
         ConvertTo-Json -Depth 8 | Set-Content (Join-Path $OutputDir 'installed.json') -Encoding utf8
     $uninstaller = Join-Path $install 'uninstall.exe'
     if (Test-Path $uninstaller) {

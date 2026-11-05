@@ -75,6 +75,7 @@ async function saved(page) { await page.waitForFunction(() => document.querySele
     check('diagnostic profile isolated from primary', (await health.json()).database.startsWith('/tmp/ce-desktop-browser-data/'));
     await page.getByRole('button', { name: 'Language', exact: true }).click();
     check('built frontend switches to Persian RTL', await page.locator('html').getAttribute('dir') === 'rtl');
+    await page.waitForFunction(() => document.querySelector('[data-testid="workspace-status"]')?.textContent === 'ذخیره‌شده در رایانه', {}, { timeout: 20000 });
     await page.screenshot({ path: path.join(out, 'built-ui-fa.png'), fullPage: true });
     const missing = await page.request.get(new URL('/api/v1/nonexistent', base).href);
     check('API misses remain 404, never SPA success', missing.status() === 404 && !(await missing.text()).includes('<html'));
