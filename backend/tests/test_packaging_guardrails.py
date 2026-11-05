@@ -16,8 +16,8 @@ def test_pins_json_is_pinned_and_no_hidden_downloads() -> None:
     """Every remote artifact must have a SHA-256; null = not deliverable."""
     data = json.loads(PINS.read_text(encoding="utf-8"))
     # ffmpeg must be pinned (LGPL shared build)
-    assert data["ffmpeg"]["sha256"]  # noqa: PT018
-    assert len(data["ffmpeg"]["sha256"]) == 64  # noqa: PT018
+    assert data["ffmpeg"]["sha256"]
+    assert len(data["ffmpeg"]["sha256"]) == 64
     assert data["ffmpeg"]["sha256"].lower() == data["ffmpeg"]["sha256"]
     assert "lgpl" in data["ffmpeg"]["license"].lower()
     # models may still be null before 100% — but we must not claim delivery
