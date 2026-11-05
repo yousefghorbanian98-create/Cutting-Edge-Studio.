@@ -7,12 +7,11 @@ import threading
 from pathlib import Path
 
 import pytest
-from fastapi.testclient import TestClient
-
 from app.config import Settings
 from app.main import create_app
 from app.services.inference.registry import InferenceRegistry, ModelSpec, ModelUnavailableError
 from app.services.stylematch.analysis import AnalysisOrchestrator, analysis_unavailable
+from fastapi.testclient import TestClient
 
 
 def _settings(tmp: Path) -> Settings:
@@ -45,10 +44,10 @@ def test_orchestrator_blocks_and_reports_actionable_error_via_api(settings) -> N
     for name in ("ffmpeg", "ffprobe"):
         (binaries / name).touch()
     # Reuse the inspection fixture pattern but for analysis
-    from tests.test_inspection import FixtureInspector
+    from app.services.media.probe import parse_probe
     from tests.fixtures import FFPROBE_VIDEO
     from tests.test_assets_api import FakeProber
-    from app.services.media.probe import parse_probe
+    from tests.test_inspection import FixtureInspector
 
     with TestClient(create_app(settings, prober=FakeProber(parse_probe(FFPROBE_VIDEO)))) as client:
         client.app.state.inspection.inspector = FixtureInspector()
