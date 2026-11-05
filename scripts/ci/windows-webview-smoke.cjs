@@ -20,7 +20,25 @@ function check(name, ok, detail = '') {
 (async () => {
   let browser;
   try {
-    browser = await chromium.connectOverCDP('http://127.0.0.1:9222', { timeout: 30000 });
+    // connectOverCDP's timeout does not retry an immediate ECONNREFUSED. The
+    // native window/backend can be ready before the asynchronous debug listener.
+    const connectionDeadline = Date.now() + 30000;
+    result.connectionAttempts = [];
+    while (!browser && Date.now() < connectionDeadline) {
+      for (const endpoint of ['http://127.0.0.1:9222', 'http://[::1]:9222']) {
+        try {
+          browser = await chromium.connectOverCDP(endpoint, { timeout: 2000 });
+          result.cdpEndpoint = endpoint;
+          break;
+        } catch (error) {
+          result.connectionAttempts.push({ endpoint, error: error.message.slice(0, 300) });
+          console.log('Awaiting native CDP listener:', endpoint, error.message.split('\n')[0]);
+        }
+      }
+      if (!browser) await new Promise(resolve => setTimeout(resolve, 250));
+    }
+    check('native CDP listener becomes reachable within startup budget', !!browser,
+      JSON.stringify(result.connectionAttempts.slice(-2)));
     let page;
     const deadline = Date.now() + 30000;
     do {

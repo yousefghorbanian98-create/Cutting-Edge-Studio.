@@ -68,6 +68,10 @@ try {
     Check 'installed same-origin built React is served' ($page.StatusCode -eq 200 -and $page.Content.Contains('type="module"'))
     $native.Refresh()
     Check 'native window is present' ($native.MainWindowHandle -ne 0)
+    $edgeDiagnostics = @(Get-CimInstance Win32_Process | Where-Object { $_.Name -eq 'msedgewebview2.exe' } | ForEach-Object {
+        @{ pid = $_.ProcessId; parent = $_.ParentProcessId; debug_flag = [bool]($_.CommandLine -match '--remote-debugging-port=9222') }
+    })
+    Write-Output "::notice title=Native WebView debug diagnostics::$($edgeDiagnostics | ConvertTo-Json -Compress)"
     & node scripts/ci/windows-webview-smoke.cjs $OutputDir
     Check 'actual installed WebView DOM and screenshot verified' ($LASTEXITCODE -eq 0)
     # Record backend descendants of this shell only; no unrelated process inspection in evidence.
