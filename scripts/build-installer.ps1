@@ -9,8 +9,8 @@
       3. Builds the React frontend, the Python sidecar (PyInstaller, onedir + mapped _internal) and the Tauri shell.
       4. Packages the NSIS installer and writes a .sha256 next to it.
 
-    The produced installer carries every model, binary and the WebView2 fixed-version
-    runtime; nothing is downloaded at runtime.
+    Full delivery is BLOCKED until real model/runtime artifacts, licenses and pins are
+    verified. Light mode does not certify offline model/render capability.
 
 .PARAMETER UpdatePins
     Downloads the artifacts and writes their SHA-256 into scripts/pins.json.
@@ -99,6 +99,14 @@ function Get-PinnedArtifact {
         Write-Host "[skip] $Name ships inside its wheel"
         return
     }
+    # Fail BEFORE target creation or network access. -UpdatePins is an explicit
+    # build-operator action, never a product/runtime download permission.
+    if (-not $UpdatePins -and $Pin.sha256 -notmatch '^[a-fA-F0-9]{64}$') {
+        throw "Invalid SHA-256 pin for '$Name'; no artifact downloaded. Review the source URL/license before -UpdatePins."
+    }
+    if ([string]::IsNullOrWhiteSpace($Pin.target)) {
+        throw "Missing artifact target for '$Name'; no artifact downloaded."
+    }
     if ($Pin.url -like 'https://developer.microsoft.com*') {
         Write-Host "[note] $Name must be placed in src-tauri/webview2-fixed-runtime/ manually (docs/bypass-smartscreen.md)."
         return
@@ -118,9 +126,6 @@ function Get-PinnedArtifact {
         $Pin.sha256 = $hash
         Write-Host "[pin ] $Name -> $hash"
         return
-    }
-    if (-not $Pin.sha256) {
-        throw "No pinned SHA-256 for '$Name'. Run with -UpdatePins once, review the pins.json diff and commit it."
     }
     if ($hash -ne $Pin.sha256.ToLowerInvariant()) {
         throw "SHA-256 mismatch for '$Name': expected $($Pin.sha256), got $hash"
