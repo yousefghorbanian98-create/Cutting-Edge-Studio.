@@ -78,6 +78,7 @@ def capabilities(
         enc = pick_encoder(settings)
         available, reason = True, f"Encoder {enc} ready"
     except (FFmpegNotFoundError, RuntimeError, ValueError) as exc:
+        LOG.warning("render.capabilities.unavailable", project_id=project_id, error=str(exc))
         available, reason = False, str(exc)
     return {
         "render": {"available": available, "reason": None if available else reason},

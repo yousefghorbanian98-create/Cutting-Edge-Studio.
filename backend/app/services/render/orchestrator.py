@@ -243,8 +243,8 @@ class RenderService:
                 partial = out_dir / f"{job.id}.mp4"
                 if partial.exists():
                     partial.unlink(missing_ok=True)
-            except Exception:  # noqa: S110
-                pass
+            except Exception as cleanup_exc:  # noqa: S110
+                LOG.warning("render.cleanup.partial_failed", job_id=job.id, error=str(cleanup_exc))
             self._finish(job, initial, "failed", error=str(exc))
 
     def read(self, session: Session, project_id: str, job_id: str | None = None) -> RenderRead:
