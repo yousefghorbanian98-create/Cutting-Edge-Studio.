@@ -236,24 +236,14 @@ jobs:
         with:
           python-version: '3.11'
       - uses: dtolnay/rust-toolchain@stable
-      - name: Compute cargo cache key outside the default checkout
-        id: cargo-key
-        shell: pwsh
-        run: |
-          $compiler = (& rustc -V) -replace '[^a-zA-Z0-9.-]', '-'
-          $manifest = (Get-FileHash src-tauri/Cargo.toml -Algorithm SHA256).Hash
-          $tests = (Get-FileHash scripts/ci/readiness-contract/Cargo.toml -Algorithm SHA256).Hash
-          "key=cargo-win-$compiler-$manifest-$tests" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
-      - name: Restore cargo
-        id: cargo-cache
-        uses: actions/cache/restore@v4
+      - name: Rust cache (cargo registry + target, OSS)
+        uses: Swatinem/rust-cache@v2
         with:
-          path: |
-            ~/.cargo/registry
-            C:\build\src-tauri\target
-            C:\build\scripts\ci\readiness-contract\target
-          key: ${{ steps.cargo-key.outputs.key }}
-          restore-keys: cargo-
+          workspaces: |
+            C:\build\src-tauri -> target
+            C:\build\scripts\ci\readiness-contract -> target
+          cache-all-crates: true
+          save-if: ${{ github.event_name == 'push' }}
       - name: Build installer (light build, no pinned FFmpeg/models)
         shell: pwsh
         run: |
@@ -266,17 +256,7 @@ jobs:
             exit 1
           }
           exit 0
-      # Save a successful compilation BEFORE installed-runtime tests: a useful
-      # failing acceptance gate must not force a full dependency rebuild next loop.
-      - name: Save successfully built cargo graph
-        if: steps.cargo-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v4
-        with:
-          path: |
-            ~/.cargo/registry
-            C:\build\src-tauri\target
-            C:\build\scripts\ci\readiness-contract\target
-          key: ${{ steps.cargo-key.outputs.key }}
+      # Rust cache via Swatinem/rust-cache automatically saves on push; no manual save step needed.
       - name: Frozen sidecar same-origin resource smoke (no Vite)
         shell: pwsh
         run: |

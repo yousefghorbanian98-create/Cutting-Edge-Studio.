@@ -129,9 +129,8 @@ repaired by a custom parser.
 The exact production readiness module is tested by a tiny standalone Cargo harness, not
 a copied implementation. This avoids recompiling the whole GUI dependency graph in the
 separate unwind-enabled test profile; Windows 908bb59 and 4d4a639 actually passed it. The
-workflow attempts cache saving before later acceptance failures, but observed runs warned
-**Cache save failed** (`C:\Program` / GNU tar exit 2); cause is unproven and not claimed
-as warm. The new `windows-pin-guards.ps1` negative contract (null hash, malformed hash,
+workflow previously used manual `actions/cache/restore|save` over `C:\build\src-tauri\target` which warned
+**Cache save failed** (`C:\Program` / GNU tar exit 2) from long Windows paths/locks; replaced with OSS `Swatinem/rust-cache@v2` (MIT) that caches `~/.cargo` + workspaces `C:\build\src-tauri -> target` correctly and saves automatically on push. Build speed is not release acceptance; actual 12m17s build observed. The new `windows-pin-guards.ps1` negative contract (null hash, malformed hash,
 missing target → fail before file/network via AST of real `Get-PinnedArtifact`) is enforced
 before network and verified PASS on Windows in d68. No compiler speedup is claimed.
 
