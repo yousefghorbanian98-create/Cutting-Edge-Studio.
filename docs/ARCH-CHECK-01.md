@@ -83,7 +83,13 @@ Combined with existing hygiene suite: `backend/tests` now **333 → 337 tests** 
 
 No Ollama/Aider/Continue/OpenHands used (per forbidden list), no model weights >3GB, no GPL runtime.
 
+## Verification — CI 2026-11-05 12:21 UTC
+- Push **42026228147** (025828b) — `success`: Arch (Madge 67 files 0 circular + Dependency Cruiser + pytest-archon 4 passed), Backend (ruff/format/pytest), Frontend, Security, Installer all green.
+- PR **42026240791** (025828b) — `success`: Arch/Backend/Frontend/Security green (Installer/Read-evidence skipped per PR rules).
+- Result: **A1 VERIFIED** — lightweight guardrail active in CI on every push/PR.
+
 ## Remaining loops
-- A1 is **IN PROGRESS** → will be **VERIFIED** after CI shows `madge --circular` + `test_arch.py` 4 passed in `Backend — lint + tests` job.
+- A1 **VERIFIED 025828b** — guardrail now enforced in CI.
 - Heavy A2 (CodeCharta/SonarQube) stays **DEFERRED to post-100%** per user approval.
+- Next: **R2 Honest analysis orchestration** (explicit reference selection, real pretrained jobs, missing-model blocking).
 
