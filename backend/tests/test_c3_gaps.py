@@ -14,7 +14,11 @@ def test_c3_provisional_not_claiming_observation() -> None:
     assert "C2 BLOCKED" in text or "No competitor artifact" in text
     lower = text.lower()
     # Must explicitly say it's not a competitor result
-    assert "not competitor" in lower or "not a competitor" in lower or "provisional requirements only" in lower
+    assert (
+        "not competitor" in lower
+        or "not a competitor" in lower
+        or "provisional requirements only" in lower
+    )
     assert "UNKNOWN" in text or "C2" in text
     # Must map to C2 tasks and to user value / OSS options
     assert "User value" in text
@@ -30,7 +34,11 @@ def test_c3_references_pins_and_no_downloads() -> None:
     """Gaps that need models must point at pins.json, not hidden runtime downloads."""
     text = DOC.read_text(encoding="utf-8")
     assert "pins.json" in text
-    assert "no runtime downloads" in text.lower() or "allow-list" in text.lower() or "libopenh264" in text.lower()
+    assert (
+        "no runtime downloads" in text.lower()
+        or "allow-list" in text.lower()
+        or "libopenh264" in text.lower()
+    )
 
 
 def test_c3_does_not_mark_c2_verified() -> None:
