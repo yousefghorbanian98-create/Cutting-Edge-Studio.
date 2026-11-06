@@ -51,7 +51,7 @@ R2c transport evidence: [DESKTOP-R2C-REPORT.md](DESKTOP-R2C-REPORT.md). Reused S
 
 R1 source playback is **not** timeline-composited playback or rendered-preview acceptance. R2/R3 must not be marked complete because a wizard or button changes local state.
 
-**Loop update 2026-11-05 R3-hardening (post-lightweight):** Coverage of `services/render/orchestrator.py` raised **26%→53%** (158 stmts, 70 miss, branch 5/44) via `test_render_orchestrator_coverage.py` 9 tests — `pick_encoder` forbidden/no-approved/preferred, busy-rejection under lock, interrupted-read marking, cancel-event, `_output_dir`, `shutdown` join, `_probe_encoder`; total suite **91%** (4109 stmts) still ≥80% gate, PR `42206004554` green; remaining `_run` (172-248) + `_finish`/`read`/`cancel` gaps deferred to next heavy iteration with real FFmpeg smoke.
+**Loop update 2026-11-05 R3-hardening (post-lightweight):** Coverage of `services/render/orchestrator.py` raised **26%→53%→95%** — `a9a2650` `test_render_orchestrator_coverage.py` 9 tests (53%), `f162505` `test_render_run_full.py` 10 tests (95%: 158 stmts 6 miss, branch 5/44): preview 1200/libopenh264 forced, final 6000, empty EDL, cancelled-before-start, missing output, no-duration, live-merge + identity-mismatch, cancel-active, persist-missing, finish-db-down; total suite **92%** (4109 stmts 263 miss) ≥80% gate, PR `f162505` green then deterministic fix `7adb191` PR `42208051712` + push green (flaky sleep→mock lock); remaining 5 branch gaps (189→194,246,278→289 etc) deferred to FFmpeg smoke.
 
 ## C1 — shared benchmark contract
 
