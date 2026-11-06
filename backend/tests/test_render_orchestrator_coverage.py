@@ -92,40 +92,34 @@ def test_pick_encoder_returns_preferred_when_available() -> None:
 def test_render_start_busy_second_call_rejected() -> None:
     with tempfile.TemporaryDirectory() as td:
         s = _settings(Path(td))
-        import time as _t
+        s.ensure_dirs()
+        from app.db import create_db_engine, create_session_factory, init_db
+        from app.models import Project
+        from app.services.media.jobs import JobRegistry
+        from app.services.render.orchestrator import RenderService
 
-        import app.services.render.orchestrator as orch
+        engine = create_db_engine(s.database_url)
+        init_db(engine)
+        factory = create_session_factory(engine)
+        with factory() as sess:
+            if sess.get(Project, "p1") is None:
+                sess.add(Project(id="p1", name="busy"))
+                sess.commit()
+        jobs = JobRegistry()
+        svc = RenderService(factory=factory, jobs=jobs, settings=s)  # type: ignore[arg-type]
 
-        orig_run = orch.RenderService._run
+        # make _run do nothing but keep thread alive briefly so active stays
+        def _fake_run(self, job, initial, edl, quality):  # noqa: ARG001
+            time.sleep(0.5)
 
-        def stuck(self, job, initial, edl, quality):  # noqa: ARG001
-            _t.sleep(2)
-
-        with mock.patch.object(orch.RenderService, "_run", stuck):
-            with TestClient(create_app(s)) as c:
-                pid = c.post("/api/v1/projects", json={"name": "busy"}).json()["id"]
-                bin_dir = s.binaries_dir / "ffmpeg" / "bin"
-                bin_dir.mkdir(parents=True, exist_ok=True)
-                (bin_dir / "ffmpeg").write_text("#!/bin/sh\necho\n")
-                (bin_dir / "ffmpeg").chmod(0o755)
-                (bin_dir / "ffprobe").write_text("#!/bin/sh\necho\n")
-                (bin_dir / "ffprobe").chmod(0o755)
-                with (
-                    mock.patch(
-                        "app.services.render.orchestrator._probe_encoder",
-                        return_value={"libopenh264"},
-                    ),
-                    mock.patch(
-                        "app.services.render.orchestrator.build_edl_command",
-                        return_value=["echo", "hi"],
-                    ),
-                    mock.patch("app.services.render.orchestrator.run_command"),
-                ):
-                    r1 = c.post(f"/api/v1/projects/{pid}/render/jobs", json={"edl": MIN_EDL})
-                    assert r1.status_code in (200, 201, 202)
-                    r2 = c.post(f"/api/v1/projects/{pid}/render/jobs", json={"edl": MIN_EDL})
-                    assert r2.status_code in (409, 423, 503)
-        orch.RenderService._run = orig_run  # type: ignore[assignment]
+        with mock.patch.object(RenderService, "_run", _fake_run):
+            with factory() as sess:
+                first = svc.start(sess, "p1", MIN_EDL, "preview")
+                assert first.state == "queued"
+                with pytest.raises(Exception, match="already running"):
+                    svc.start(sess, "p1", MIN_EDL, "preview")
+            if svc.worker:
+                svc.worker.join(timeout=1)
 
 
 def test_render_read_reports_interrupted_after_restart() -> None:
