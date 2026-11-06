@@ -51,6 +51,8 @@ R2c transport evidence: [DESKTOP-R2C-REPORT.md](DESKTOP-R2C-REPORT.md). Reused S
 
 R1 source playback is **not** timeline-composited playback or rendered-preview acceptance. R2/R3 must not be marked complete because a wizard or button changes local state.
 
+**Loop update 2026-11-05 R3-hardening (post-lightweight):** Coverage of `services/render/orchestrator.py` raised **26%→53%** (158 stmts, 70 miss, branch 5/44) via `test_render_orchestrator_coverage.py` 9 tests — `pick_encoder` forbidden/no-approved/preferred, busy-rejection under lock, interrupted-read marking, cancel-event, `_output_dir`, `shutdown` join, `_probe_encoder`; total suite **91%** (4109 stmts) still ≥80% gate, PR `42206004554` green; remaining `_run` (172-248) + `_finish`/`read`/`cancel` gaps deferred to next heavy iteration with real FFmpeg smoke.
+
 ## C1 — shared benchmark contract
 
 Targets: CapCut Desktop and Wondershare Filmora Desktop, Windows 11 x64. Exact versions/editions/build dates are TBD until official artifacts are acquired and execution is available. Do not use unofficial repacks, bypass activation/DRM, upload user media to cloud services, or install competitor software into our runtime bundle. If a task requires cloud processing, mark it separately; do not equate it to offline functionality.
