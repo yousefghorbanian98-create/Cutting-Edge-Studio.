@@ -1,0 +1,45 @@
+{
+  "passed": true,
+  "passed_count": 4,
+  "required": 3,
+  "metrics": {
+    "cut_length_ks": {
+      "metric": "cut_length_ks",
+      "passed": true,
+      "value": 1.0,
+      "statistic": 0.0,
+      "note": "p > 0.05 means the distributions are statistically similar"
+    },
+    "shot_type_f1": {
+      "metric": "shot_type_f1",
+      "passed": true,
+      "value": 0.8534,
+      "per_label": {
+        "closeup": 0.923,
+        "detail": 0.857,
+        "medium": 0.833,
+        "wide": 0.8
+      },
+      "note": "macro F1 over CLIP zero-shot shot types"
+    },
+    "beat_alignment": {
+      "metric": "beat_alignment",
+      "passed": true,
+      "value": 0.0,
+      "unit": "ms",
+      "note": "mean distance from cut to the closest beat"
+    },
+    "pacing_similarity": {
+      "metric": "pacing_similarity",
+      "passed": false,
+      "value": 0.3572,
+      "note": "Pearson correlation of energy over time"
+    },
+    "color_delta_e": {
+      "metric": "color_delta_e",
+      "passed": true,
+      "value": 0.0,
+      "note": "CIE76 \u0394E of the duration-weighted average colour"
+    }
+  }
+}

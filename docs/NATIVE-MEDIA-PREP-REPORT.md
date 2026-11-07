@@ -1,0 +1,110 @@
+# Evidence Report — pinned tools and actual Windows native media probe
+
+2026-11-05 · same branch / PR #1, Owner merges. **Native CLI evidence, not installed-app acceptance.**
+Historical authored steps remain **260/260 (100%)**, NOT full release readiness.
+
+## Why this step
+
+R2b2 audio jobs/UI passed locally, and post-correction PR CI **41925158413** on
+`35281c1` passed backend, frontend and security. The real pinned gitleaks CLI passed
+both the exact public-checksum exception boundary test and the full repository history scan.
+The corresponding push run is separate; Windows light-build completion is not assumed.
+
+The next analysis adapters require trustworthy native tooling/artifacts. Inspection found:
+
+- `scripts/pins.json` still had a floating FFmpeg URL and no archive checksum.
+- Official TransNetV2 inference documentation requires TensorFlow and Git-LFS weights;
+  the inspected repository files are LFS pointers, not usable weights. There is no verified
+  local ONNX model/adapter yet. Do not load a pointer or a random mirror and claim inference.
+- A ready-library alternative for shot candidates is FFmpeg's LGPL `scdet`, already available
+  in full FFmpeg builds. It is not TransNetV2 or semantic scene understanding. A native synthetic
+  one-cut feasibility test is added before considering project/API/UI integration.
+- PySceneDetect adds OpenCV/PyAV/native provisioning and licence review; that is avoidable for
+  an initial candidate-measurement experiment. No new scene detector or custom ML is written.
+
+## Pinned publisher artifact
+
+Selected **BtbN Windows x64 LGPL shared, 9.0 release branch**, dated monthly build
+`autobuild-2026-10-31-12-59`, asset `ffmpeg-n9.0.2-39-g7adfbe40dc-win64-lgpl-shared-9.0.zip`.
+A monthly retained tag avoids the daily build's 14-day retention and the changing `latest` URL;
+upstream retention policy is not an absolute availability guarantee.
+
+Archive SHA-256: `e907b01fa4783913151237e37df2a10fa97d99a1598a021bf59d4ae62ffed4c0`.
+The digest and URL were independently read from the publisher release asset metadata, not
+invented or computed from an unidentified local binary. [Recorded metadata](evidence/native-media/publisher-metadata.json).
+No build-time model or WebView2 placeholder pins are silently filled.
+
+Sources inspected:
+- `https://github.com/BtbN/FFmpeg-Builds/blob/master/README.md`: variants and retention.
+- `https://github.com/BtbN/FFmpeg-Builds/blob/master/scripts.d/50-openh264.sh`: BSD OpenH264 build integration.
+- `https://api.github.com/repos/BtbN/FFmpeg-Builds/releases/tags/autobuild-2026-10-31-12-59`: asset/digest provenance.
+- `https://github.com/soCzech/TransNetV2/blob/master/inference/README.md`: actual dependencies and LFS weights.
+
+## Executed Windows native probe
+
+The existing Windows CI job now checks out the **triggering commit**, not a potentially moved
+branch tip, and runs `scripts/ci/windows-native-media.ps1` before installer compilation.
+Downloads happen on the **build machine only**, never in the application. The sandbox's blocked
+release-asset redirect is not bypassed through a proxy or random mirror.
+
+The probe must:
+
+1. Download that exact archive into a new runner temporary directory and verify its SHA-256.
+2. Run the actual Windows executables and check shared/non-GPL/nonfree configuration,
+   LGPL licence output, shared avcodec DLL presence and absence of forbidden GPL encoders.
+3. Require `libopenh264`; do not substitute libx264 or invent an available fallback.
+4. Encode an owned one-second 160×96 black H.264 fixture using real OpenH264, verify actual
+   ffprobe codec/dimensions/duration, then error-check a real decode.
+5. Require the ready `scdet` filter, use ffprobe's JSON output on an owned black→white
+   filter-source clip and verify exactly one native detector candidate at one second.
+   Absence fails, rather than counting an unperformed test as success. No hand-written detector/parser.
+6. Upload only JSON evidence (configuration/licence/encoders/probe facts), not media or binaries.
+
+**Observed result: PASS on an actual Windows runner.** Push run **41926420920** on
+**`ffd3169`** reports the native probe step SUCCESS and uploaded the JSON artifact. This strict
+revision requires all checks above, including the one-cut scdet fixture. The previous run
+41925991657 on `c157c20` had also passed native OpenH264 encoding/probing/decoding; the later
+revision deliberately strengthens the scene-filter condition from optional to required.
+
+- [Strict native step status](evidence/native-media/windows-native-step-status.json)
+- [Strict JSON artifact metadata](evidence/native-media/windows-native-artifact.json)
+- [Run 41926420920](https://github.com/yousefghorbanian98-create/Cutting-Edge-Studio./actions/runs/41926420920)
+- [Earlier native step status](evidence/native-media/first-native-step-status.json),
+  [earlier artifact metadata](evidence/native-media/first-native-artifact.json)
+
+The raw probe JSON is uploaded on GitHub; its archive contents were not downloaded or
+independently inspected in this restricted sandbox. The evidence here is the actual successful
+assertion-bearing Windows step and artifact metadata, not a fabricated copy of its output.
+The encompassing Windows installer was still building at that observation and run 41926420920
+was later cancelled. **Follow-up:** push **41926876782 on e62f847** subsequently completed with
+SUCCESS, including strict native probe and the NSIS **light** installer job 126913815242.
+[Actual run/steps](evidence/recovery-r2b3/inherited-windows-light-run.json) and
+[artifact metadata](evidence/recovery-r2b3/inherited-windows-artifacts.json) are recorded. This is
+not full-bundle, clean-install or installed/offline acceptance; raw archives were not inspected here.
+
+Local regression after the pin guard: **257 optional-profile backend tests passed, 93.80% coverage**;
+Ruff lint/format passed. [Raw regression](evidence/native-media/backend-pin-regression.txt),
+[lint](evidence/native-media/backend-lint.txt), [git log](evidence/native-media/git-log.txt),
+[diffstat 35281c1..ffd3169](evidence/native-media/git-diff-stat.txt).
+No frontend source changes were made in this native-tool step; the fresh R2b2 report contains
+its 161-test/build output and actual UI screenshots, not a new scene-analysis UI.
+
+This clears a **tool-level feasibility check**, not project scene jobs or pretrained inference.
+The separate full installer still has unfilled model/WebView2 pins, resource layout/routing work,
+optional/native licence review and clean-install/offline/GUI acceptance gates. This probe cannot
+clear those gates, certify every transitive native component, establish NVENC performance or
+replace the application's unimplemented renderer/model orchestration.
+
+
+## Subsequent adapter / next gate
+
+The following planned adapter was subsequently implemented as experimental/default-disabled
+**d16b1b5**: [R2b3 evidence](RECOVERY-R2B3-REPORT.md). It passed real owned-media/native jobs/UI
+locally, not on Windows; abrupt-exit hardlink-cache GC and native crash supervision remain open.
+Next inspect/reuse gate is native crash/cache hardening and approved artifact/resource routing.
+
+Original adapter scope (now locally exercised): reuse FFmpeg's existing `scdet` and ffprobe JSON for a bounded **shot-candidate-only** adapter,
+with original provenance, cancellation/deadline/error handling and explicit unavailable states.
+The successful synthetic native-filter check is not music/sports/video quality acceptance and
+must not be labelled TransNetV2 or StyleDNA. Then integrate measured artifacts into the existing
+project worker/UI only after direct real-media tests; keep missing pretrained models blocked.

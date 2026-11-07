@@ -1,0 +1,112 @@
+import { useEffect, useState } from 'react';
+import { MenuBar } from './components/layout/MenuBar';
+import { Panel } from './components/layout/Panel';
+import { StatusBar } from './components/layout/StatusBar';
+import { CommandPalette, SkipLink, Toaster, type CommandAction } from './components/ui';
+import { MediaPanel } from './features/media/MediaPanel';
+import { SourcePreview } from './features/media/SourcePreview';
+import { PostPanel } from './features/post/PostPanel';
+import { StyleMatchWizard } from './features/stylematch/StyleMatchWizard';
+import { TimelinePanel } from './features/timeline/TimelinePanel';
+import { WorkspaceBar } from './features/workspace/WorkspaceBar';
+import { useWorkspaceStore } from './features/workspace/workspaceStore';
+import { api } from './lib/api';
+import { translate } from './lib/i18n';
+import { useAppStore } from './store/useAppStore';
+
+/** Application shell: menu bar, three-column workspace, timeline, status bar (spec §10). */
+export default function App() {
+  const language = useAppStore((state) => state.language);
+  const theme = useAppStore((state) => state.theme);
+  const setTheme = useAppStore((state) => state.setTheme);
+  const setLanguage = useAppStore((state) => state.setLanguage);
+  const setBackend = useAppStore((state) => state.setBackend);
+  const loadingWorkspace = useWorkspaceStore((state) => state.status === 'loading' || state.navigating);
+  const [paletteOpen, setPaletteOpen] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    api
+      .health()
+      .then((health) => {
+        if (!cancelled) setBackend('online', health.version);
+      })
+      .catch(() => {
+        if (!cancelled) setBackend('offline');
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [setBackend]);
+
+  const actions: CommandAction[] = [
+    {
+      id: 'theme',
+      label: translate(language, 'palette.action.theme'),
+      hint: theme,
+      onRun: () => setTheme(theme === 'pro' ? 'glass' : theme === 'glass' ? 'minimal' : 'pro'),
+    },
+    {
+      id: 'language',
+      label: translate(language, 'palette.action.language'),
+      hint: language,
+      onRun: () => setLanguage(language === 'fa' ? 'en' : 'fa'),
+    },
+    {
+      id: 'wizard',
+      label: translate(language, 'palette.action.wizard'),
+      onRun: () => document.getElementById('style-match-wizard')?.scrollIntoView({ block: 'start' }),
+    },
+  ];
+
+  return (
+    <div className="flex h-full flex-col bg-[var(--bg-primary)] text-[var(--text-primary)]">
+      <SkipLink label={translate(language, 'a11y.skip')} targetId="main-content" />
+      <MenuBar />
+      <WorkspaceBar />
+      <main id="main-content" className="relative flex min-h-0 flex-1 gap-2 p-2" aria-busy={loadingWorkspace}>
+        <fieldset className="contents" disabled={loadingWorkspace}>
+          <Panel title={translate(language, 'panel.media')} as="aside" className="w-[280px] shrink-0">
+            <MediaPanel />
+          </Panel>
+          <div className="flex min-w-0 flex-1 flex-col gap-2">
+            <Panel title={translate(language, 'panel.preview')} className="flex-1">
+              <SourcePreview />
+            </Panel>
+            <Panel title={translate(language, 'panel.timeline')} className="h-[280px] shrink-0">
+              <TimelinePanel />
+            </Panel>
+          </div>
+          <Panel
+            title={translate(language, 'panel.properties')}
+            as="aside"
+            className="flex w-[320px] shrink-0 flex-col gap-2"
+          >
+            <div id="style-match-wizard" className="min-h-0 flex-1 overflow-hidden">
+              <StyleMatchWizard />
+            </div>
+            <div id="post-panel" className="min-h-0 flex-1 overflow-hidden border-t border-[var(--border-subtle)] pt-2">
+              <PostPanel />
+            </div>
+          </Panel>
+        </fieldset>
+        {loadingWorkspace ? (
+          <div
+            className="absolute inset-0 z-20 bg-black/20"
+            onDragOver={(event) => event.preventDefault()}
+            onDrop={(event) => event.preventDefault()}
+          />
+        ) : null}
+      </main>
+      <StatusBar />
+      <CommandPalette
+        open={paletteOpen}
+        onOpenChange={setPaletteOpen}
+        actions={actions}
+        label={translate(language, 'palette.label')}
+        placeholder={translate(language, 'palette.placeholder')}
+      />
+      <Toaster />
+    </div>
+  );
+}

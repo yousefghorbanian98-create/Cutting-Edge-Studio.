@@ -1,0 +1,15 @@
+{
+  "code_commit": "6060832",
+  "scope": "diagnostic Linux owned scratch recovery; not Windows/installed/offline acceptance",
+  "platform": "Linux-6.1.158+-x86_64-with-glibc2.36",
+  "psutil": "7.2.2",
+  "pydantic": "2.14.2",
+  "native_binaries_identical_to": "../recovery-r2b3/runtime-provenance.json",
+  "python_socket_guard_sha256": "46e002fda3592ec563738305558419de247d1b1226b54517bf7186fc80edb9ff",
+  "source_sha256": {
+    "backend/app/services/media/workspaces.py": "a11390a7f0914742abb7fdd1c52e2b4ff3e3aaf211dba4a27b47c8c09e23143b",
+    "backend/app/services/media/runner.py": "f126444876b83d0650027d7dc5cedac162d42d0d1b7ee9d84dc1fd5323c66c0e",
+    "backend/app/services/media/scenes.py": "4de4dad4eae1b7a6d7985eb8048c6e4658bff5ddc2523b8725ef139fc708d7dd",
+    "backend/app/services/audio/processor.py": "a3d0102e3e5a27ffaee2c608cc49aeff2d53bbe34101def71ce074176e7726b6"
+  }
+}

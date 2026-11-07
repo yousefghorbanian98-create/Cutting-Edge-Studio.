@@ -1,0 +1,79 @@
+
+> cutting-edge-ui@1.0.0 build
+> tsc -b && vite build
+
+vite v7.3.7 building client environment for production...
+transforming...
+node_modules/zod/v4/core/util.js (400:0): A comment
+
+"// Wrapped in a `@__PURE__` IIFE: esbuild never tree-shakes a top-level initializer that contains a member access on `Number`, so the bare object literal survived into every bundle."
+
+in "node_modules/zod/v4/core/util.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.
+node_modules/zod/v4/core/regexes.js (74:0): A comment
+
+"/** Anchors a pattern source. The interpolation lives here rather than at the call site because
+ * esbuild will not drop a `@__PURE__` call whose own argument interpolates a variable, but it
+ * will drop `anchor(dateSource)`. Keeping it inline pinned `date` into every bundle. */"
+
+in "node_modules/zod/v4/core/regexes.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.
+✓ 2189 modules transformed.
+Generated an empty chunk: "react".
+rendering chunks...
+computing gzip size...
+dist/index.html                                                   0.90 kB │ gzip:  0.45 kB
+dist/assets/jetbrains-mono-greek-400-normal-C190GLew.woff2        4.23 kB
+dist/assets/inter-vietnamese-400-normal-DMkecbls.woff2            4.97 kB
+dist/assets/inter-vietnamese-600-normal-Cc8MFFhd.woff2            5.10 kB
+dist/assets/inter-greek-ext-400-normal-Bput3-QP.woff2             5.23 kB
+dist/assets/jetbrains-mono-cyrillic-400-normal-BEIGL1Tu.woff2     5.33 kB
+dist/assets/jetbrains-mono-vietnamese-400-normal-BeU3T8wf.woff    5.37 kB
+dist/assets/inter-greek-ext-600-normal-Cnui8OiR.woff2             5.43 kB
+dist/assets/jetbrains-mono-greek-400-normal-CNojz0t3.woff         5.67 kB
+dist/assets/inter-vietnamese-400-normal-BUNmGMP1.woff             6.68 kB
+dist/assets/inter-vietnamese-600-normal-Cm6aH8_k.woff             6.83 kB
+dist/assets/jetbrains-mono-cyrillic-400-normal-CIEtRijs.woff      6.98 kB
+dist/assets/inter-greek-ext-400-normal-DCpCPQOf.woff              7.14 kB
+dist/assets/inter-greek-ext-600-normal-C9WLioJ8.woff              7.30 kB
+dist/assets/jetbrains-mono-latin-ext-400-normal-Bc8Ftmh3.woff2    7.34 kB
+dist/assets/inter-cyrillic-400-normal-BLGc9T1a.woff2              7.71 kB
+dist/assets/inter-greek-400-normal-DxZsaF_h.woff2                 7.84 kB
+dist/assets/inter-greek-600-normal-Dhlb-90d.woff2                 7.96 kB
+dist/assets/inter-cyrillic-600-normal-BGBWG807.woff2              7.97 kB
+dist/assets/vazirmatn-latin-ext-400-normal-Bta7lKea.woff2         9.93 kB
+dist/assets/inter-greek-400-normal-BZzXV7-1.woff                  9.96 kB
+dist/assets/inter-greek-600-normal-CwicyhtI.woff                 10.08 kB
+dist/assets/jetbrains-mono-latin-ext-400-normal-DHMOLxAi.woff    10.12 kB
+dist/assets/inter-cyrillic-400-normal-ZzOtrSSW.woff              10.14 kB
+dist/assets/vazirmatn-latin-ext-600-normal-BDz6fgde.woff2        10.14 kB
+dist/assets/inter-cyrillic-ext-400-normal-Dc4VJyIJ.woff2         10.22 kB
+dist/assets/inter-cyrillic-600-normal-BuzJQFbW.woff              10.32 kB
+dist/assets/inter-cyrillic-ext-600-normal-CaqZN2hq.woff2         10.46 kB
+dist/assets/vazirmatn-latin-ext-400-normal-C557IMjf.woff         13.87 kB
+dist/assets/vazirmatn-latin-ext-600-normal-DqR3gAB3.woff         13.98 kB
+dist/assets/inter-cyrillic-ext-400-normal-BPnxn4xp.woff          14.19 kB
+dist/assets/inter-cyrillic-ext-600-normal-Bt9VVOA-.woff          14.35 kB
+dist/assets/vazirmatn-latin-400-normal-CMpm4HiU.woff2            16.08 kB
+dist/assets/vazirmatn-latin-600-normal-b8oW4QkI.woff2            16.38 kB
+dist/assets/vazirmatn-latin-400-normal-BvmOIyQK.woff             20.93 kB
+dist/assets/vazirmatn-arabic-400-normal-Y0zRA2ij.woff2           21.01 kB
+dist/assets/vazirmatn-latin-600-normal-IWhFsgrD.woff             21.07 kB
+dist/assets/jetbrains-mono-latin-400-normal-V6pRDFza.woff2       21.17 kB
+dist/assets/vazirmatn-arabic-600-normal-BMjeIwG9.woff2           21.73 kB
+dist/assets/inter-latin-400-normal-BOOGhInR.woff2                23.69 kB
+dist/assets/inter-latin-600-normal-D273HNI0.woff2                24.30 kB
+dist/assets/vazirmatn-arabic-400-normal-BxmY-B46.woff            27.23 kB
+dist/assets/vazirmatn-arabic-600-normal-KRTl8kRy.woff            27.84 kB
+dist/assets/jetbrains-mono-latin-400-normal-B11XCQ5g.woff        27.85 kB
+dist/assets/inter-latin-ext-400-normal-hnt3BR84.woff2            30.68 kB
+dist/assets/inter-latin-400-normal-gitzw0hO.woff                 31.20 kB
+dist/assets/inter-latin-600-normal-B5cFAncS.woff                 31.78 kB
+dist/assets/inter-latin-ext-600-normal-BnYJhD27.woff2            31.97 kB
+dist/assets/inter-latin-ext-400-normal-C1t-h-pH.woff             42.88 kB
+dist/assets/inter-latin-ext-600-normal-CAF0vJDd.woff             43.98 kB
+dist/assets/index-BR4rdQUD.css                                   45.15 kB │ gzip: 14.76 kB
+dist/assets/react-l0sNRNKZ.js                                     0.00 kB │ gzip:  0.02 kB
+dist/assets/motion-DzMO0rTW.js                                  113.40 kB │ gzip: 37.47 kB
+dist/assets/radix-8TV3sHxu.js                                   231.04 kB │ gzip: 76.02 kB
+dist/assets/timeline-DnBTciC_.js                                248.34 kB │ gzip: 67.57 kB
+dist/assets/index-B1bLRVCC.js                                   293.57 kB │ gzip: 91.56 kB
+✓ built in 5.61s

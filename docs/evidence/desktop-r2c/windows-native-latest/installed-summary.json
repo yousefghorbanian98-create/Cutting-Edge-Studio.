@@ -1,0 +1,135 @@
+{
+  "install": "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\CE installed smoke نصب با فاصله",
+  "test_only_cdp_policy": {
+    "restored": true,
+    "app_ids": [
+      "com.cuttingedge.v2",
+      "cutting-edge-v2.exe"
+    ]
+  },
+  "paths": {
+    "observed_models": "\\\\?\\C:\\Users\\runneradmin\\AppData\\Local\\Temp\\CE installed smoke نصب با فاصله\\models",
+    "expected_models": "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\CE installed smoke نصب با فاصله\\models",
+    "expected_database": "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\ce-installed-data-524590dfd7d2413982da4ecf41dfd9bd\\cutting-edge.db",
+    "observed_database": "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\ce-installed-data-524590dfd7d2413982da4ecf41dfd9bd\\cutting-edge.db"
+  },
+  "checks": [
+    {
+      "name": "fixed desktop port initially unused",
+      "passed": true
+    },
+    {
+      "name": "installer artifact exists",
+      "passed": true
+    },
+    {
+      "name": "NSIS silent install succeeded",
+      "passed": true
+    },
+    {
+      "name": "installed native shell exists",
+      "passed": true
+    },
+    {
+      "name": "onedir dependency resources installed",
+      "passed": true
+    },
+    {
+      "name": "built UI resources installed",
+      "passed": true
+    },
+    {
+      "name": "light bundle mode explicitly recorded",
+      "passed": true
+    },
+    {
+      "name": "test-only CDP port initially unused",
+      "passed": true
+    },
+    {
+      "name": "machine CDP policy restricted to disposable GitHub Windows runner",
+      "passed": true
+    },
+    {
+      "name": "native shell launched healthy sidecar without Vite",
+      "passed": true
+    },
+    {
+      "name": "native resource_dir overrides inherited home",
+      "passed": true
+    },
+    {
+      "name": "profile is separate from installation",
+      "passed": true
+    },
+    {
+      "name": "installed same-origin built React is served",
+      "passed": true
+    },
+    {
+      "name": "native window is present",
+      "passed": true
+    },
+    {
+      "name": "actual installed WebView DOM and screenshot verified",
+      "passed": true
+    },
+    {
+      "name": "owned installed backend process captured",
+      "passed": true
+    },
+    {
+      "name": "native window accepts orderly close",
+      "passed": true
+    },
+    {
+      "name": "native shell exits within 20 seconds",
+      "passed": true
+    },
+    {
+      "name": "owned backend gone after orderly native exit",
+      "passed": true
+    },
+    {
+      "name": "desktop listening port released",
+      "passed": true
+    }
+  ],
+  "browser_processes": [
+    {
+      "parent": 6448,
+      "pid": 4040,
+      "debug_flag": true
+    },
+    {
+      "parent": 4040,
+      "pid": 6376,
+      "debug_flag": false
+    },
+    {
+      "parent": 4040,
+      "pid": 4228,
+      "debug_flag": false
+    },
+    {
+      "parent": 4040,
+      "pid": 7560,
+      "debug_flag": false
+    },
+    {
+      "parent": 4040,
+      "pid": 2780,
+      "debug_flag": false
+    },
+    {
+      "parent": 4040,
+      "pid": 8384,
+      "debug_flag": true
+    }
+  ],
+  "limitations": [
+    "Light installer only; pretrained artifacts and fixed WebView runtime are absent.",
+    "Native WebView DOM/CDP screenshot gate is separate from full media/render quality acceptance.",
+    "Orderly close only; abrupt shell-death OS containment remains OPEN."
+  ]
+}

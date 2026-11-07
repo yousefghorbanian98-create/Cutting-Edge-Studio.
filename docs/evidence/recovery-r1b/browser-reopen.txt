@@ -1,0 +1,10 @@
+PASS Backend process actually restarted between phases 20979 → 21251
+PASS New browser process plus restarted backend restores byte-equivalent saved state
+PASS Restoring does not re-upload or create replacement projects
+PASS All original names reappear after restart
+PASS Restored source decodes from its original asset-ID route {"duration":6,"src":"/api/v1/assets/0a76e013510a4f8db34f5d0514c7c291/content"}
+PASS Source streaming remains range-capable after backend restart
+PASS Missing managed media produces a warning without discarding saved edits
+PASS Independent empty browser profile has no saved project pointer
+PASS An empty browser profile can reopen all document data from SQLite
+PASS No browser page exceptions in either phase []

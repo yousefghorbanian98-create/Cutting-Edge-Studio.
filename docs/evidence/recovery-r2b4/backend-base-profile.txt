@@ -1,0 +1,10 @@
+...........................sss.......................................... [ 23%]
+........................................................................ [ 46%]
+.......................................................................s [ 69%]
+ss...................................................................... [ 92%]
+......................                                                   [100%]
+=========================== short test summary info ============================
+SKIPPED [2] tests/test_audio_rhythm.py:112: Opt-in audited librosa environment; not a default packaged dependency
+SKIPPED [1] tests/test_audio_rhythm.py:136: Opt-in audited librosa environment; not a default packaged dependency
+SKIPPED [3] tests/test_scenes_native.py:17: Opt-in owned native scene stimuli not provisioned
+304 passed, 6 skipped in 9.17s

@@ -1,0 +1,51 @@
+Processing ./backend
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+  /home/user/Cutting-Edge-Studio./backend/.venv/lib/python3.11/site-packages/setuptools/config/_apply_pyprojecttoml.py:82: BuildBackendWarning: `project.license` as a TOML table is deprecated
+  !!
+  
+          ********************************************************************************
+          Please use a simple string containing a SPDX expression for `project.license`. You can also use `project.license-files`. (Both options available on setuptools>=77.0.0).
+  
+          By 2027-Feb-18, you need to update your project and remove deprecated calls
+          or your builds will no longer be supported.
+  
+          See https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#license for details.
+          ********************************************************************************
+  
+  !!
+    corresp(dist, value, root_dir)
+Building wheels for collected packages: cutting-edge-backend
+  Building wheel for cutting-edge-backend (pyproject.toml): started
+  Building wheel for cutting-edge-backend (pyproject.toml): finished with status 'done'
+  /home/user/Cutting-Edge-Studio./backend/.venv/lib/python3.11/site-packages/setuptools/config/_apply_pyprojecttoml.py:82: BuildBackendWarning: `project.license` as a TOML table is deprecated
+  !!
+  
+          ********************************************************************************
+          Please use a simple string containing a SPDX expression for `project.license`. You can also use `project.license-files`. (Both options available on setuptools>=77.0.0).
+  
+          By 2027-Feb-18, you need to update your project and remove deprecated calls
+          or your builds will no longer be supported.
+  
+          See https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#license for details.
+          ********************************************************************************
+  
+  !!
+    corresp(dist, value, root_dir)
+  Created wheel for cutting-edge-backend: filename=cutting_edge_backend-1.0.0-py3-none-any.whl size=96300 sha256=9bab06f243a9771d26af83dfb760e04b9fff200b3ffb03b779376146fddd83de
+  Stored in directory: /tmp/pip-ephem-wheel-cache-aiebeajd/wheels/79/fb/a3/2d8617e9da0b3a80578cd84d90bac360bd8df49c84103d5f75
+Successfully built cutting-edge-backend
+Default runtime excludes librosa/soxr; internal worker module is packaged.
+wheel sha256: 9bab06f243a9771d26af83dfb760e04b9fff200b3ffb03b779376146fddd83de
+Requires-Dist: fastapi==0.162.0
+Requires-Dist: starlette==1.10.0
+Requires-Dist: uvicorn[standard]==0.54.0
+Requires-Dist: pydantic==2.14.2
+Requires-Dist: pydantic-settings==2.16.2
+Requires-Dist: SQLAlchemy==2.1.8
+Requires-Dist: structlog==26.1.0
+Requires-Dist: httpx==0.28.1
+Requires-Dist: psutil==7.2.2
+Requires-Dist: python-multipart==0.0.33
+Requires-Dist: numpy==2.1.3
+Requires-Dist: scipy==1.14.1

@@ -1,0 +1,188 @@
+[
+  [
+    "POST",
+    "/api/v1/assets/{asset_id}/proxy",
+    404,
+    "{\"detail\":\"Asset not found\"}"
+  ],
+  [
+    "GET",
+    "/api/v1/health",
+    200,
+    "{\"status\":\"ok\",\"version\":\"1.0.0\",\"app_name\":\"CuttingEdgeV2\",\"offline\":true,\"database\":\"/home/user/.local/share"
+  ],
+  [
+    "GET",
+    "/api/v1/jobs",
+    200,
+    "[{\"id\":\"b55b285683b5\",\"kind\":\"proxy\",\"state\":\"done\",\"percent\":100.0,\"message\":\"proxy not required\",\"error\":nul"
+  ],
+  [
+    "GET",
+    "/api/v1/jobs/{job_id}",
+    404,
+    "{\"detail\":\"Job not found\"}"
+  ],
+  [
+    "GET",
+    "/api/v1/media/encoder",
+    200,
+    "{\"encoder\":null,\"hardware\":false,\"note\":\"software/openh264 path\"}"
+  ],
+  [
+    "POST",
+    "/api/v1/post/broll",
+    -1,
+    "skipped (needs body)"
+  ],
+  [
+    "POST",
+    "/api/v1/post/captions",
+    -1,
+    "skipped (needs body)"
+  ],
+  [
+    "POST",
+    "/api/v1/post/comparison",
+    -1,
+    "skipped (needs body)"
+  ],
+  [
+    "GET",
+    "/api/v1/post/layouts",
+    200,
+    "[\"side_by_side\",\"stacked\",\"picture_in_picture\"]"
+  ],
+  [
+    "POST",
+    "/api/v1/post/loudness",
+    -1,
+    "skipped (needs stderr)"
+  ],
+  [
+    "GET",
+    "/api/v1/post/presets",
+    200,
+    "[{\"name\":\"tiktok\",\"label\":\"TikTok / Reels (9:16)\",\"width\":1080,\"height\":1920,\"fps\":30,\"bitrate_kbps\":10000,\"ma"
+  ],
+  [
+    "GET",
+    "/api/v1/post/presets/{name}",
+    404,
+    "{\"detail\":\"unknown preset '{name}' (available: tiktok, youtube, shorts, instagram_feed, archive)\"}"
+  ],
+  [
+    "POST",
+    "/api/v1/post/replay",
+    -1,
+    "skipped (needs body)"
+  ],
+  [
+    "GET",
+    "/api/v1/post/templates",
+    200,
+    "[{\"id\":\"e2e-template\",\"name\":\"e2e-template\",\"size\":151}]"
+  ],
+  [
+    "POST",
+    "/api/v1/post/templates",
+    -1,
+    "skipped (needs body)"
+  ],
+  [
+    "GET",
+    "/api/v1/post/templates/{name}",
+    404,
+    "{\"detail\":\"template not found\"}"
+  ],
+  [
+    "POST",
+    "/api/v1/post/templates/{name}/apply",
+    -1,
+    "skipped (needs body)"
+  ],
+  [
+    "GET",
+    "/api/v1/projects",
+    200,
+    "[{\"id\":\"58075d1c42fb48bdaab63dfb76b0ec27\",\"name\":\"E2E Style Match\",\"mode\":\"style-match\",\"sport\":\"bodybuilding\""
+  ],
+  [
+    "POST",
+    "/api/v1/projects",
+    -1,
+    "skipped (needs body)"
+  ],
+  [
+    "GET",
+    "/api/v1/projects/{project_id}",
+    404,
+    "{\"detail\":\"Project not found\"}"
+  ],
+  [
+    "POST",
+    "/api/v1/projects/{project_id}/assets",
+    -1,
+    "skipped (needs body)"
+  ],
+  [
+    "GET",
+    "/api/v1/projects/{project_id}/assets",
+    404,
+    "{\"detail\":\"Project not found\"}"
+  ],
+  [
+    "GET",
+    "/api/v1/projects/{project_id}/stylematch/artifacts",
+    404,
+    "{\"detail\":\"Project not found\"}"
+  ],
+  [
+    "GET",
+    "/api/v1/projects/{project_id}/stylematch/artifacts/{kind}",
+    404,
+    "{\"detail\":\"Project not found\"}"
+  ],
+  [
+    "POST",
+    "/api/v1/projects/{project_id}/stylematch/dna",
+    -1,
+    "skipped (needs body)"
+  ],
+  [
+    "POST",
+    "/api/v1/projects/{project_id}/stylematch/edl",
+    -1,
+    "skipped (needs body)"
+  ],
+  [
+    "GET",
+    "/api/v1/projects/{project_id}/stylematch/edl/validate",
+    404,
+    "{\"detail\":\"Project not found\"}"
+  ],
+  [
+    "POST",
+    "/api/v1/projects/{project_id}/stylematch/reference",
+    -1,
+    "skipped (needs body)"
+  ],
+  [
+    "POST",
+    "/api/v1/projects/{project_id}/stylematch/score",
+    -1,
+    "skipped (needs body)"
+  ],
+  [
+    "GET",
+    "/api/v1/settings",
+    200,
+    "{\"version\":\"1.0.0\",\"language\":\"fa\",\"theme\":\"pro\",\"offline\":true,\"data_dir\":\"/home/user/.local/share/CuttingEdg"
+  ],
+  [
+    "GET",
+    "/api/v1/system/diagnostics",
+    200,
+    "{\"app\":{\"name\":\"CuttingEdgeV2\",\"version\":\"1.0.0\",\"offline\":true},\"python\":\"3.11.2\",\"platform\":{\"system\":\"Linux"
+  ]
+]

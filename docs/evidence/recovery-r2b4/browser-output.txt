@@ -1,0 +1,30 @@
+PASS Four genuine imported assets, explicit reference/source identity
+PASS Experimental local scdet available; model analysis still blocked
+PASS Actual native scdet subprocess; file-stage progress with no premature report {"pid":93038,"percent":2.5,"message":"Inspecting 1/4: مرجع بدون صوت.mp4"}
+PASS Real cuts at 1s/3s, audio-first video stream, static/no-video and matching original hashes [{"name":"مرجع بدون صوت.mp4","status":"no-candidates","frames":600,"times":[]},{"name":"owned-cuts-audio-first.mp4","status":"candidates","frames":120,"times":[1,3]},{"name":"owned-static.mp4","status":"no-candidates","frames":60,"times":[]},{"name":"owned-audio-only.wav","status":"no-video"}]
+PASS Decode and candidate reports cannot be confused
+PASS Reload restores candidate report without another start
+PASS Cancellation reaps genuine native decoder; no fake report or 100%
+PASS Cancellation removes temporary hardlink workspace
+PASS Real ffprobe failure is visible, without estimated results
+PASS Restored bytes do not silently renew old provenance
+PASS New project has no inherited candidate report and cannot start with no inputs
+PASS Cross-project candidate job reads return 404
+PASS No browser JavaScript errors
+PASS No external browser HTTP requests
+PASS Fresh backend/browser restores same durable report
+PASS Actual native PID and backend owner journalled before crash
+KNOWN OPEN CRASH LIMIT {"elapsed_ms":201,"native_alive_after_parent_kill":false,"orphan_workspace_present":true,"qa_cleanup_native_process":false}
+PASS No browser JavaScript errors
+PASS No external browser HTTP requests
+PASS Startup removes proven inactive native scratch but retains unknown ownership {"removed":1,"retained":1,"scanned":2,"limited":false,"message":"Only proven inactive marked scratch is removed; legacy cache is untouched.","entries":[{"folder":"managed-scenes-korc2pv7","result":"removed","reason":"Inactive owned scratch removed"},{"folder":"managed-scenes-unknown","result":"retained","reason":"[Errno 2] No such file or directory: '/tmp/ce-r2d-data/cache/managed-scenes-unknown/.owner.json'"}]}
+PASS Legacy and unmarked sentinel bytes remain untouched
+PASS Existing measurement panel surfaces startup cleanup and retention
+PASS Crash recovery marks orphaned job interrupted, never done
+PASS Explicit post-crash retry reruns real tools and commits a new report
+PASS Persian candidate labels and RTL render actual recovered results
+PASS No browser JavaScript errors
+PASS No external browser HTTP requests
+PASS Final code reruns real native detection with unchanged candidate truth and source hashes
+PASS No browser JavaScript errors
+PASS No external browser HTTP requests

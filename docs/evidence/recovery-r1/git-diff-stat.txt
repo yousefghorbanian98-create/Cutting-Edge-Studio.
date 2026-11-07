@@ -1,0 +1,36 @@
+ .gitleaks.toml                                     |   16 +
+ backend/app/api/assets.py                          |   11 +
+ backend/app/api/uploads.py                         |  105 +
+ backend/app/main.py                                |    4 +-
+ backend/tests/test_assets_api.py                   |  101 +
+ backend/tests/test_hygiene.py                      |   16 +
+ docs/LOCAL-TEST-REPORT.md                          |    5 +
+ docs/PROGRESS-LEDGER.md                            |    5 +
+ docs/RECOVERY-R1-REPORT.md                         |   85 +
+ docs/RECOVERY-ROADMAP.md                           |   60 +
+ docs/RELEASE-CHECKLIST.md                          |    8 +-
+ .../recovery-r1/01-real-import-and-playback.png    |  Bin 0 -> 197224 bytes
+ .../02-explicit-reference-and-analysis-gate.png    |  Bin 0 -> 151555 bytes
+ docs/evidence/recovery-r1/backend.txt              |   42 +
+ docs/evidence/recovery-r1/browser-output.txt       |   18 +
+ docs/evidence/recovery-r1/browser-results.json     |  524 ++
+ docs/evidence/recovery-r1/frontend.txt             | 6505 ++++++++++++++++++++
+ docs/evidence/recovery-r1/git-log.txt              |    8 +
+ docs/evidence/recovery-r1/pytest.txt               |   40 +
+ frontend/src/App.test.tsx                          |   10 +-
+ frontend/src/App.tsx                               |    5 +-
+ frontend/src/features/media/MediaPanel.tsx         |   79 +-
+ frontend/src/features/media/SourcePreview.test.tsx |   25 +
+ frontend/src/features/media/SourcePreview.tsx      |   39 +
+ frontend/src/features/media/mediaImport.test.ts    |   71 +
+ frontend/src/features/media/mediaStore.ts          |   66 +-
+ frontend/src/features/post/PostPanel.tsx           |    3 +-
+ .../src/features/stylematch/StyleMatchWizard.tsx   |   12 +-
+ .../src/features/timeline/timelineStore.test.ts    |    6 +
+ frontend/src/features/timeline/timelineStore.ts    |    6 +-
+ frontend/src/lib/api.test.ts                       |   11 +
+ frontend/src/lib/api.ts                            |   34 +-
+ frontend/src/lib/i18n.ts                           |   18 +
+ scripts/local-tests/recovery-import.cjs            |   88 +
+ scripts/local-tests/ui-e2e.cjs                     |    1 +
+ 35 files changed, 7982 insertions(+), 45 deletions(-)

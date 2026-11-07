@@ -1,0 +1,609 @@
+{
+  "checks": [
+    {
+      "name": "Ten real uploads complete",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Only one backend project created",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "All ten assets persisted in backend",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Uploaded bytes match original SHA-256",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Backend storage path replaces browser filename",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Content endpoint supports HTTP Range",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Browser decodes imported source",
+      "passed": true,
+      "detail": "{\"readyState\":4,\"duration\":6,\"error\":null}"
+    },
+    {
+      "name": "Native source playback advances",
+      "passed": true,
+      "detail": "0.410008s"
+    },
+    {
+      "name": "Imported source appears on timeline",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Media in use cannot be deleted out from under timeline",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Duplicate import rejected before upload",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Reference imported with explicit role",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Unavailable analysis is blocked, not fake success",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Unavailable edit render is blocked",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Invalid media has visible backend error",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Failed import creates no phantom DB asset",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Deleted reference cannot satisfy analysis gate",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "No browser page exceptions",
+      "passed": true,
+      "detail": "[]"
+    }
+  ],
+  "project": "45c293758a384f8a907712bac65f7b50",
+  "uploads": [
+    {
+      "id": "fe499a62c02f4098ad80e482cefdcdcc",
+      "project_id": "45c293758a384f8a907712bac65f7b50",
+      "name": "clip1.mp4",
+      "size_bytes": 11340561,
+      "available": true,
+      "path": "/tmp/ce-r1b-data/projects/45c293758a384f8a907712bac65f7b50/imports/6d0a846139a0427f8807062d74772b6a.mp4",
+      "role": "source",
+      "kind": "video",
+      "duration": 6,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920,
+      "video_codec": "h264",
+      "audio_codec": "aac",
+      "has_audio": true,
+      "created_at": "2026-11-04T18:45:13.432183Z",
+      "updated_at": "2026-11-04T18:45:13.432192Z"
+    },
+    {
+      "id": "01e393c583ad4751a0fcfc190ff38ad9",
+      "project_id": "45c293758a384f8a907712bac65f7b50",
+      "name": "clip2.mp4",
+      "size_bytes": 12020427,
+      "available": true,
+      "path": "/tmp/ce-r1b-data/projects/45c293758a384f8a907712bac65f7b50/imports/505da455e2cf4d27bb4c08dd6f0e6a9d.mp4",
+      "role": "source",
+      "kind": "video",
+      "duration": 6,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920,
+      "video_codec": "h264",
+      "audio_codec": "aac",
+      "has_audio": true,
+      "created_at": "2026-11-04T18:45:14.481676Z",
+      "updated_at": "2026-11-04T18:45:14.481679Z"
+    },
+    {
+      "id": "bc8eace3ee124238969f814e56c51d56",
+      "project_id": "45c293758a384f8a907712bac65f7b50",
+      "name": "clip3.mp4",
+      "size_bytes": 11362090,
+      "available": true,
+      "path": "/tmp/ce-r1b-data/projects/45c293758a384f8a907712bac65f7b50/imports/6241195303584a219eec02bd44b92144.mp4",
+      "role": "source",
+      "kind": "video",
+      "duration": 6,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920,
+      "video_codec": "h264",
+      "audio_codec": "aac",
+      "has_audio": true,
+      "created_at": "2026-11-04T18:45:14.642873Z",
+      "updated_at": "2026-11-04T18:45:14.642876Z"
+    },
+    {
+      "id": "809cc25bd9a1465488362f2fc4cb9eea",
+      "project_id": "45c293758a384f8a907712bac65f7b50",
+      "name": "clip4.mp4",
+      "size_bytes": 11748392,
+      "available": true,
+      "path": "/tmp/ce-r1b-data/projects/45c293758a384f8a907712bac65f7b50/imports/cd11f3a06df14e1db1c28d766395a3fe.mp4",
+      "role": "source",
+      "kind": "video",
+      "duration": 6,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920,
+      "video_codec": "h264",
+      "audio_codec": "aac",
+      "has_audio": true,
+      "created_at": "2026-11-04T18:45:14.850943Z",
+      "updated_at": "2026-11-04T18:45:14.850946Z"
+    },
+    {
+      "id": "7f9f8abc9de340f6aa5961a92d692bfb",
+      "project_id": "45c293758a384f8a907712bac65f7b50",
+      "name": "clip5.mp4",
+      "size_bytes": 12007543,
+      "available": true,
+      "path": "/tmp/ce-r1b-data/projects/45c293758a384f8a907712bac65f7b50/imports/a8073a16afee402ea91ca453e9e25ed9.mp4",
+      "role": "source",
+      "kind": "video",
+      "duration": 6,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920,
+      "video_codec": "h264",
+      "audio_codec": "aac",
+      "has_audio": true,
+      "created_at": "2026-11-04T18:45:15.116327Z",
+      "updated_at": "2026-11-04T18:45:15.116330Z"
+    },
+    {
+      "id": "476cb59db67846cfbbb5f10802a71dce",
+      "project_id": "45c293758a384f8a907712bac65f7b50",
+      "name": "clip6.mp4",
+      "size_bytes": 10848447,
+      "available": true,
+      "path": "/tmp/ce-r1b-data/projects/45c293758a384f8a907712bac65f7b50/imports/7f0da4f8a89f45aebe18648dc460dfb0.mp4",
+      "role": "source",
+      "kind": "video",
+      "duration": 6,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920,
+      "video_codec": "h264",
+      "audio_codec": "aac",
+      "has_audio": true,
+      "created_at": "2026-11-04T18:45:15.321931Z",
+      "updated_at": "2026-11-04T18:45:15.321934Z"
+    },
+    {
+      "id": "5bfe26c3220943559608de018f952520",
+      "project_id": "45c293758a384f8a907712bac65f7b50",
+      "name": "clip7.mp4",
+      "size_bytes": 11940801,
+      "available": true,
+      "path": "/tmp/ce-r1b-data/projects/45c293758a384f8a907712bac65f7b50/imports/2ba4af9baf2d474ebefad8c4dde46eea.mp4",
+      "role": "source",
+      "kind": "video",
+      "duration": 6,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920,
+      "video_codec": "h264",
+      "audio_codec": "aac",
+      "has_audio": true,
+      "created_at": "2026-11-04T18:45:15.572882Z",
+      "updated_at": "2026-11-04T18:45:15.572885Z"
+    },
+    {
+      "id": "2e521b6d2d7c44759d0df6ee7aa2b773",
+      "project_id": "45c293758a384f8a907712bac65f7b50",
+      "name": "clip8.mp4",
+      "size_bytes": 11661450,
+      "available": true,
+      "path": "/tmp/ce-r1b-data/projects/45c293758a384f8a907712bac65f7b50/imports/849b818ddb1f46d3ae3b53a40938ab1e.mp4",
+      "role": "source",
+      "kind": "video",
+      "duration": 6,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920,
+      "video_codec": "h264",
+      "audio_codec": "aac",
+      "has_audio": true,
+      "created_at": "2026-11-04T18:45:15.884835Z",
+      "updated_at": "2026-11-04T18:45:15.884837Z"
+    },
+    {
+      "id": "889d2c0bddf144b39147a00a1302adf9",
+      "project_id": "45c293758a384f8a907712bac65f7b50",
+      "name": "clip9.mp4",
+      "size_bytes": 11717422,
+      "available": true,
+      "path": "/tmp/ce-r1b-data/projects/45c293758a384f8a907712bac65f7b50/imports/8e7663b919234de78ff93d71a752454a.mp4",
+      "role": "source",
+      "kind": "video",
+      "duration": 6,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920,
+      "video_codec": "h264",
+      "audio_codec": "aac",
+      "has_audio": true,
+      "created_at": "2026-11-04T18:45:16.122670Z",
+      "updated_at": "2026-11-04T18:45:16.122673Z"
+    },
+    {
+      "id": "73418479a25b4f80bfaa63253649e026",
+      "project_id": "45c293758a384f8a907712bac65f7b50",
+      "name": "clip10.mp4",
+      "size_bytes": 12061563,
+      "available": true,
+      "path": "/tmp/ce-r1b-data/projects/45c293758a384f8a907712bac65f7b50/imports/09c12d17e2dd4cb98ea162f06b434a78.mp4",
+      "role": "source",
+      "kind": "video",
+      "duration": 6,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920,
+      "video_codec": "h264",
+      "audio_codec": "aac",
+      "has_audio": true,
+      "created_at": "2026-11-04T18:45:16.331145Z",
+      "updated_at": "2026-11-04T18:45:16.331148Z"
+    },
+    {
+      "id": "881fbf3635e14ba7aeb22d2948dec79c",
+      "project_id": "45c293758a384f8a907712bac65f7b50",
+      "name": "reference.mp4",
+      "size_bytes": 317426,
+      "available": true,
+      "path": "/tmp/ce-r1b-data/references/45c293758a384f8a907712bac65f7b50/227f41fa9fb741eca5a30a95506da1ae.mp4",
+      "role": "reference",
+      "kind": "video",
+      "duration": 20,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920,
+      "video_codec": "h264",
+      "audio_codec": null,
+      "has_audio": false,
+      "created_at": "2026-11-04T18:45:20.469013Z",
+      "updated_at": "2026-11-04T18:45:20.469016Z"
+    }
+  ],
+  "errors": [],
+  "requests": [
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/health"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/health"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects/45c293758a384f8a907712bac65f7b50/uploads"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects/45c293758a384f8a907712bac65f7b50/uploads"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/fe499a62c02f4098ad80e482cefdcdcc/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/fe499a62c02f4098ad80e482cefdcdcc/content"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects/45c293758a384f8a907712bac65f7b50/uploads"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/01e393c583ad4751a0fcfc190ff38ad9/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/01e393c583ad4751a0fcfc190ff38ad9/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/01e393c583ad4751a0fcfc190ff38ad9/content"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects/45c293758a384f8a907712bac65f7b50/uploads"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/bc8eace3ee124238969f814e56c51d56/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/01e393c583ad4751a0fcfc190ff38ad9/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/bc8eace3ee124238969f814e56c51d56/content"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects/45c293758a384f8a907712bac65f7b50/uploads"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/809cc25bd9a1465488362f2fc4cb9eea/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/01e393c583ad4751a0fcfc190ff38ad9/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/809cc25bd9a1465488362f2fc4cb9eea/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/01e393c583ad4751a0fcfc190ff38ad9/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/01e393c583ad4751a0fcfc190ff38ad9/content"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects/45c293758a384f8a907712bac65f7b50/uploads"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/7f9f8abc9de340f6aa5961a92d692bfb/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/809cc25bd9a1465488362f2fc4cb9eea/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/7f9f8abc9de340f6aa5961a92d692bfb/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/809cc25bd9a1465488362f2fc4cb9eea/content"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects/45c293758a384f8a907712bac65f7b50/uploads"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/476cb59db67846cfbbb5f10802a71dce/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/7f9f8abc9de340f6aa5961a92d692bfb/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/809cc25bd9a1465488362f2fc4cb9eea/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/476cb59db67846cfbbb5f10802a71dce/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/7f9f8abc9de340f6aa5961a92d692bfb/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/809cc25bd9a1465488362f2fc4cb9eea/content"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects/45c293758a384f8a907712bac65f7b50/uploads"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/5bfe26c3220943559608de018f952520/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/7f9f8abc9de340f6aa5961a92d692bfb/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/5bfe26c3220943559608de018f952520/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/5bfe26c3220943559608de018f952520/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/7f9f8abc9de340f6aa5961a92d692bfb/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/7f9f8abc9de340f6aa5961a92d692bfb/content"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects/45c293758a384f8a907712bac65f7b50/uploads"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/7f9f8abc9de340f6aa5961a92d692bfb/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/2e521b6d2d7c44759d0df6ee7aa2b773/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/5bfe26c3220943559608de018f952520/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/2e521b6d2d7c44759d0df6ee7aa2b773/content"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects/45c293758a384f8a907712bac65f7b50/uploads"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/2e521b6d2d7c44759d0df6ee7aa2b773/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/5bfe26c3220943559608de018f952520/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/889d2c0bddf144b39147a00a1302adf9/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/889d2c0bddf144b39147a00a1302adf9/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/2e521b6d2d7c44759d0df6ee7aa2b773/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/73418479a25b4f80bfaa63253649e026/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/2e521b6d2d7c44759d0df6ee7aa2b773/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/73418479a25b4f80bfaa63253649e026/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/889d2c0bddf144b39147a00a1302adf9/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/2e521b6d2d7c44759d0df6ee7aa2b773/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/2e521b6d2d7c44759d0df6ee7aa2b773/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/73418479a25b4f80bfaa63253649e026/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/2e521b6d2d7c44759d0df6ee7aa2b773/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/fe499a62c02f4098ad80e482cefdcdcc/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/73418479a25b4f80bfaa63253649e026/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/2e521b6d2d7c44759d0df6ee7aa2b773/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/fe499a62c02f4098ad80e482cefdcdcc/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/73418479a25b4f80bfaa63253649e026/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/73418479a25b4f80bfaa63253649e026/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/fe499a62c02f4098ad80e482cefdcdcc/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/73418479a25b4f80bfaa63253649e026/content"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/projects/45c293758a384f8a907712bac65f7b50/workspace"
+    },
+    {
+      "method": "PUT",
+      "url": "http://127.0.0.1:1421/api/v1/projects/45c293758a384f8a907712bac65f7b50/workspace"
+    },
+    {
+      "method": "PUT",
+      "url": "http://127.0.0.1:1421/api/v1/projects/45c293758a384f8a907712bac65f7b50/workspace"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects/45c293758a384f8a907712bac65f7b50/uploads"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1421/api/v1/assets/881fbf3635e14ba7aeb22d2948dec79c/content"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:1421/api/v1/projects/45c293758a384f8a907712bac65f7b50/uploads"
+    },
+    {
+      "method": "DELETE",
+      "url": "http://127.0.0.1:1421/api/v1/assets/881fbf3635e14ba7aeb22d2948dec79c"
+    }
+  ],
+  "limits": [
+    "Source playback only; not timeline-composited playback.",
+    "No real model analysis, compliant export, or Windows acceptance claimed."
+  ]
+}

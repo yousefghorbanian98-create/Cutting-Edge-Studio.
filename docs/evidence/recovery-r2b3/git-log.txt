@@ -1,0 +1,8 @@
+d16b1b5 feat(media): add default-disabled native scdet candidate jobs
+e62f847 docs: record actual Windows native media assertions and honest release status
+ffd3169 test: require native scene-filter feasibility instead of treating absence as success
+c157c20 build: pin dated LGPL shared tools and probe real Windows native media
+35281c1 security: scope reviewed public-checksum finding and prove exception boundaries
+e4aee09 docs: record real audio job, cancellation and crash-recovery evidence
+d3e9c2a feat: isolate experimental OSS audio rhythm jobs and reuse project measurement UI
+3a1446a security: scan full history with pinned MIT CLI and redacted locations

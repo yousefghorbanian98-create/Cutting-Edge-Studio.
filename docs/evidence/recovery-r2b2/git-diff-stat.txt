@@ -1,0 +1,22 @@
+ backend/app/__main__.py                            |  12 +-
+ backend/app/api/inspection.py                      | 206 ++++++++++--------
+ backend/app/config.py                              |   2 +
+ backend/app/main.py                                |   6 +-
+ backend/app/schemas_inspection.py                  |  13 +-
+ backend/app/schemas_rhythm.py                      |  80 +++++++
+ backend/app/services/audio/processor.py            | 194 +++++++++++++++++
+ backend/app/services/audio/rhythm.py               |   4 +-
+ backend/app/services/audio/worker.py               |  84 ++++++++
+ backend/app/services/media/inspection.py           | 128 ++++++++---
+ backend/app/services/media/runner.py               |   2 +
+ backend/tests/test_rhythm_jobs.py                  | 239 +++++++++++++++++++++
+ backend/tests/test_rhythm_processor.py             | 196 +++++++++++++++++
+ .../src/features/stylematch/InspectionPanel.tsx    |  51 +++--
+ .../src/features/stylematch/StyleMatchWizard.tsx   |  11 +-
+ .../src/features/stylematch/inspectionSchema.ts    |  49 +++--
+ frontend/src/lib/api.ts                            |  13 +-
+ frontend/src/lib/i18n.ts                           |  38 ++++
+ frontend/src/test/inspection.test.tsx              |  56 ++++-
+ licenses/THIRD-PARTY.md                            |  12 +-
+ scripts/local-tests/recovery-rhythm.cjs            | 154 +++++++++++++
+ 21 files changed, 1377 insertions(+), 173 deletions(-)

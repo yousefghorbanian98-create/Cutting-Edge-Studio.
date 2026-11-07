@@ -1,0 +1,6 @@
+2026-11-04 20:12:09 [info     ] audio.rhythm.measured          beats=17 samples=264600 tempo_bpm=89.10290948275862
+PASS owned fixture 90: estimated=89.10290948275862, beats=17
+2026-11-04 20:12:09 [info     ] audio.rhythm.measured          beats=21 samples=264600 tempo_bpm=117.45383522727273
+PASS owned fixture 120: estimated=117.45383522727273, beats=21
+2026-11-04 20:12:09 [info     ] audio.rhythm.measured          beats=0 samples=264600 tempo_bpm=None
+PASS owned fixture None: estimated=None, beats=0

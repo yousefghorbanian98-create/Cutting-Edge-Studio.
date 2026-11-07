@@ -1,0 +1,19 @@
+ backend/app/api/inspection.py                      | 130 +++++++
+ backend/app/main.py                                |   7 +
+ backend/app/schemas_inspection.py                  |  79 ++++
+ backend/app/services/media/inspection.py           | 370 +++++++++++++++++++
+ backend/app/services/media/jobs.py                 |   6 +-
+ backend/app/services/media/runner.py               | 138 ++++---
+ backend/tests/test_hygiene.py                      |   9 +
+ backend/tests/test_inspection.py                   | 400 +++++++++++++++++++++
+ backend/tests/test_runner.py                       |  74 ++++
+ frontend/src/components/ui/Stepper.tsx             |   5 +-
+ .../src/features/stylematch/InspectionPanel.tsx    | 125 +++++++
+ .../src/features/stylematch/StyleMatchWizard.tsx   |  19 +-
+ .../src/features/stylematch/inspectionSchema.ts    |  23 ++
+ frontend/src/lib/api.ts                            |   6 +
+ frontend/src/lib/i18n.ts                           |  52 ++-
+ frontend/src/test/inspection.test.tsx              | 138 +++++++
+ scripts/local-tests/recovery-inspection.cjs        | 155 ++++++++
+ src-tauri/tauri.conf.json                          |   4 +-
+ 18 files changed, 1685 insertions(+), 55 deletions(-)

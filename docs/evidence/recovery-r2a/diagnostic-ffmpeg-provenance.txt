@@ -1,0 +1,37 @@
+ffmpeg version 7.1.1 Copyright (c) 2000-2025 the FFmpeg developers
+built with gcc 12 (Debian 12.2.0-14+deb12u1)
+configuration: --prefix=/tmp/ce-r2a-home/binaries/ffmpeg --disable-everything --disable-autodetect --disable-network --disable-doc --disable-debug --disable-x86asm --enable-shared --disable-static --enable-small --enable-ffmpeg --enable-ffprobe --enable-decoder='h264,aac,hevc' --enable-demuxer=mov --enable-parser='h264,aac' --enable-protocol='file,pipe' --enable-muxer=null --enable-encoder='wrapped_avframe,pcm_s16le' --enable-filter='buffer,abuffer,buffersink,abuffersink,null,anull,aresample,format,aformat' --extra-ldflags='-Wl,-rpath,/tmp/ce-r2a-home/binaries/ffmpeg/lib'
+libavutil      59. 39.100 / 59. 39.100
+libavcodec     61. 19.101 / 61. 19.101
+libavformat    61.  7.100 / 61.  7.100
+libavdevice    61.  3.100 / 61.  3.100
+libavfilter    10.  4.100 / 10.  4.100
+libswscale      8.  3.100 /  8.  3.100
+libswresample   5.  3.100 /  5.  3.100
+ffmpeg is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+ffmpeg is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with ffmpeg; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+	linux-vdso.so.1 (0x00007ffdc8c7b000)
+	libavdevice.so.61 => /tmp/ce-r2a-home/binaries/ffmpeg/lib/libavdevice.so.61 (0x00007f56aad8c000)
+	libavfilter.so.10 => /tmp/ce-r2a-home/binaries/ffmpeg/lib/libavfilter.so.10 (0x00007f56aad67000)
+	libavformat.so.61 => /tmp/ce-r2a-home/binaries/ffmpeg/lib/libavformat.so.61 (0x00007f56aad11000)
+	libavcodec.so.61 => /tmp/ce-r2a-home/binaries/ffmpeg/lib/libavcodec.so.61 (0x00007f56aab76000)
+	libswresample.so.5 => /tmp/ce-r2a-home/binaries/ffmpeg/lib/libswresample.so.5 (0x00007f56aab62000)
+	libswscale.so.8 => /tmp/ce-r2a-home/binaries/ffmpeg/lib/libswscale.so.8 (0x00007f56aaaf4000)
+	libavutil.so.59 => /tmp/ce-r2a-home/binaries/ffmpeg/lib/libavutil.so.59 (0x00007f56a9a00000)
+	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007f56a9920000)
+	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f56a973e000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007f56aaddb000)
+248c1e82aa69f47ea17710973acad746ef334a7c296bc1b6eaf7a95c70de66c8  /tmp/ce-r2a-home/binaries/ffmpeg/bin/ffmpeg
+1041d06ddc957853280fc28869d3871eb51a429f75f2821d9f3626ffad27533d  /tmp/ce-r2a-home/binaries/ffmpeg/bin/ffprobe
+f117507dc501f2a6c11f9241d8d0c3213846cfad91764361af37befd6b6c523d  /tmp/ce-r2a-ffmpeg-source.tar.gz

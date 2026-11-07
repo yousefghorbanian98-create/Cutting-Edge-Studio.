@@ -1,0 +1,8 @@
+b93edd6 fix: harden media pipeline from local E2E findings and configure light runtime before cargo
+7f69f3a fix(shell): surface rustc errors in CI, add the Tauri v2 capability for the sidecar
+a593ddf build(installer): annotate the failing step with the real exit code so CI errors are diagnosable
+4daa1d2 fix(packaging): resolve the sidecar spec root and surface installer build logs
+07ac6a0 docs(ledger): P3-P9 evidence, 260/260 progress, release checklist and verification report
+18f9f6d docs(p9): install guides, quick start, test plan, compatibility, release notes, changelog, verify.py
+942c456 fix(ci): audit-clean dependency bumps and a Windows-safe installer workspace
+2f0d5ff fix(ci): unblock the pipeline (checkout path, trivy tag, dependency CVEs)

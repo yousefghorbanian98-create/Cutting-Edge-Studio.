@@ -1,0 +1,4 @@
+PASS Fresh browser has no last-project shadow document
+PASS Restart marks an orphaned active job interrupted, not completed
+PASS A real retry after crash performs new decodes and stores a new measured report
+PASS No browser page exceptions []

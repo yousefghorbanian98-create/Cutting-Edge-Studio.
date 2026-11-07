@@ -1,0 +1,46 @@
+project created: 1718d84b51cf4f5689a4df2ca018b4f0
+  import clip1.mp4: 1080x1920 h264/aac audio=True
+  import clip10.mp4: 1080x1920 h264/aac audio=True
+  import clip2.mp4: 1080x1920 h264/aac audio=True
+  import clip3.mp4: 1080x1920 h264/aac audio=True
+  import clip4.mp4: 1080x1920 h264/aac audio=True
+  import clip5.mp4: 1080x1920 h264/aac audio=True
+  import clip6.mp4: 1080x1920 h264/aac audio=True
+  import clip7.mp4: 1080x1920 h264/aac audio=True
+  import clip8.mp4: 1080x1920 h264/aac audio=True
+  import clip9.mp4: 1080x1920 h264/aac audio=True
+  import reference: 20.0s role=reference
+
+== stage 1: reference manifest
+  HTTP 201 {'kind': 'reference-manifest', 'revision': 1}
+
+== stage 2: StyleDNA
+  HTTP 201
+  cut stats: {'count': 20.0, 'mean': 1.0, 'median': 1.0, 'stdev': 0.0, 'p10': 1.0, 'p90': 1.0}
+  shot mix:  {'closeup': 5, 'medium': 5, 'wide': 5, 'detail': 5, 'unknown': 0}
+  bpm=120.0 shots/min=60.0 transition=cut
+  colour:    {'r': 115.95, 'g': 160.45, 'b': 131.4, 'contrast': 0.57, 'saturation': 0.5}
+
+== stages 3-6: source analysis, compatibility, EDL, beat snap
+  HTTP 201
+  compatibility ready=True score=1.0
+  findings: []
+  segments=30 total=30.0s
+    clip1.mp4 in=0.8 dur=1.0 at=0.0 type=closeup
+    clip10.mp4 in=0.8 dur=1.0 at=1.0 type=closeup
+    clip2.mp4 in=0.8 dur=1.0 at=2.0 type=closeup
+  problems: []
+
+== G12 metrics
+  HTTP 200 passed=True (4/3 required)
+    cut_length_ks      passed=True  value=1.0
+    shot_type_f1       passed=True  value=0.8534
+    beat_alignment     passed=True  value=0.0
+    pacing_similarity  passed=False value=0.3572
+    color_delta_e      passed=True  value=0.0
+
+== artifacts stored
+  HTTP 200 kinds=['compatibility-report', 'edl', 'edl-v2', 'match-score', 'reference-manifest', 'source-analysis', 'style-dna']
+  edl validation: {'problems': []}
+
+wrote edl-v2.json / dna.json / score.json

@@ -1,0 +1,18 @@
+PASS Ten real uploads complete
+PASS Only one backend project created
+PASS All ten assets persisted in backend
+PASS Uploaded bytes match original SHA-256
+PASS Backend storage path replaces browser filename
+PASS Content endpoint supports HTTP Range
+PASS Browser decodes imported source {"readyState":4,"duration":6,"error":null}
+PASS Native source playback advances 0.410008s
+PASS Imported source appears on timeline
+PASS Media in use cannot be deleted out from under timeline
+PASS Duplicate import rejected before upload
+PASS Reference imported with explicit role
+PASS Unavailable analysis is blocked, not fake success
+PASS Unavailable edit render is blocked
+PASS Invalid media has visible backend error
+PASS Failed import creates no phantom DB asset
+PASS Deleted reference cannot satisfy analysis gate
+PASS No browser page exceptions []

@@ -1,0 +1,70 @@
+R2b2 Linux diagnostic runtime ONLY; not approved Windows redistribution.
+FFmpeg source: n7.1.1, db69d06eeeab4f46da15030a80d539efb4503ca8 (upstream unmodified).
+f117507dc501f2a6c11f9241d8d0c3213846cfad91764361af37befd6b6c523d  /tmp/ce-r2a-ffmpeg-source.tar.gz
+41e71a7fe381b0cd2319f7b7c8e77f8aa6ff4e970ed07f12f83f1b53b40509c3  /tmp/ce-r2a-home/binaries/ffmpeg/bin/ffmpeg
+3e4fae0c9f01f0c35396d06da46a16852c16d80c05115ee0090bf25e6108c457  /tmp/ce-r2a-home/binaries/ffmpeg/bin/ffprobe
+46e002fda3592ec563738305558419de247d1b1226b54517bf7186fc80edb9ff  /tmp/ce-r2b2-offline/sitecustomize.py
+ffmpeg version 7.1.1 Copyright (c) 2000-2025 the FFmpeg developers
+built with gcc 12 (Debian 12.2.0-14+deb12u1)
+configuration: --prefix=/tmp/ce-r2a-home/binaries/ffmpeg --disable-everything --disable-autodetect --disable-network --disable-doc --disable-debug --disable-x86asm --enable-shared --disable-static --enable-small --enable-ffmpeg --enable-ffprobe --enable-decoder='h264,aac,hevc,pcm_s16le' --enable-demuxer='mov,wav' --enable-parser='h264,aac' --enable-protocol='file,pipe' --enable-muxer='null,wav,mp4' --enable-encoder='wrapped_avframe,pcm_s16le,aac' --enable-filter='buffer,abuffer,buffersink,abuffersink,null,anull,aresample,format,aformat' --extra-ldflags='-Wl,-rpath,/tmp/ce-r2a-home/binaries/ffmpeg/lib'
+libavutil      59. 39.100 / 59. 39.100
+libavcodec     61. 19.101 / 61. 19.101
+libavformat    61.  7.100 / 61.  7.100
+libavdevice    61.  3.100 / 61.  3.100
+libavfilter    10.  4.100 / 10.  4.100
+libswscale      8.  3.100 /  8.  3.100
+libswresample   5.  3.100 /  5.  3.100
+ffmpeg version 7.1.1 Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 12 (Debian 12.2.0-14+deb12u1)
+  configuration: --prefix=/tmp/ce-r2a-home/binaries/ffmpeg --disable-everything --disable-autodetect --disable-network --disable-doc --disable-debug --disable-x86asm --enable-shared --disable-static --enable-small --enable-ffmpeg --enable-ffprobe --enable-decoder='h264,aac,hevc,pcm_s16le' --enable-demuxer='mov,wav' --enable-parser='h264,aac' --enable-protocol='file,pipe' --enable-muxer='null,wav,mp4' --enable-encoder='wrapped_avframe,pcm_s16le,aac' --enable-filter='buffer,abuffer,buffersink,abuffersink,null,anull,aresample,format,aformat' --extra-ldflags='-Wl,-rpath,/tmp/ce-r2a-home/binaries/ffmpeg/lib'
+  libavutil      59. 39.100 / 59. 39.100
+  libavcodec     61. 19.101 / 61. 19.101
+  libavformat    61.  7.100 / 61.  7.100
+  libavdevice    61.  3.100 / 61.  3.100
+  libavfilter    10.  4.100 / 10.  4.100
+  libswscale      8.  3.100 /  8.  3.100
+  libswresample   5.  3.100 /  5.  3.100
+ffmpeg is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+ffmpeg is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with ffmpeg; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+	linux-vdso.so.1 (0x00007ffc8c768000)
+	libavdevice.so.61 => /tmp/ce-r2a-home/binaries/ffmpeg/lib/libavdevice.so.61 (0x00007f8b78952000)
+	libavfilter.so.10 => /tmp/ce-r2a-home/binaries/ffmpeg/lib/libavfilter.so.10 (0x00007f8b7892d000)
+	libavformat.so.61 => /tmp/ce-r2a-home/binaries/ffmpeg/lib/libavformat.so.61 (0x00007f8b788b0000)
+	libavcodec.so.61 => /tmp/ce-r2a-home/binaries/ffmpeg/lib/libavcodec.so.61 (0x00007f8b786fc000)
+	libswresample.so.5 => /tmp/ce-r2a-home/binaries/ffmpeg/lib/libswresample.so.5 (0x00007f8b786e8000)
+	libswscale.so.8 => /tmp/ce-r2a-home/binaries/ffmpeg/lib/libswscale.so.8 (0x00007f8b7867a000)
+	libavutil.so.59 => /tmp/ce-r2a-home/binaries/ffmpeg/lib/libavutil.so.59 (0x00007f8b77400000)
+	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007f8b78596000)
+	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f8b7721e000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007f8b789a1000)
+librosa 0.11.0
+soxr 1.1.0
+numpy 2.1.3
+scipy 1.14.1
+numba 0.68.1
+llvmlite 0.50.0
+psutil 7.2.2
+SoXR native extension: /home/user/Cutting-Edge-Studio./backend/.venv/lib/python3.11/site-packages/soxr/soxr_ext.cpython-311-x86_64-linux-gnu.so
+	linux-vdso.so.1 (0x00007fff77f40000)
+	libsoxr.so.0 => /tmp/ce-r2b-audio/lib/libsoxr.so.0 (0x00007f2cadac6000)
+	libstdc++.so.6 => /lib/x86_64-linux-gnu/libstdc++.so.6 (0x00007f2cad800000)
+	libgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 (0x00007f2cadaa2000)
+	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f2cad61e000)
+	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007f2cad53e000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007f2cadb7a000)
+Test backend outgoing Python socket connections denied via external sitecustomize; children inherit PYTHONPATH.
+Final fresh-data server PIDs: 54932 (graceful stop), 55974 (SIGKILL), 56111 (recovery).
+SIGKILL leaves disposable PCM cache; no live library worker remains:
+    PID    PPID STAT   RSS COMMAND
+rhythm-fuprmqv4/audio.wav 530510 bytes

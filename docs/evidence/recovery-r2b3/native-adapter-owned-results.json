@@ -1,0 +1,70 @@
+[
+  {
+    "asset_id": "owned-audio-only.wav",
+    "role": "source",
+    "name": "owned-audio-only.wav",
+    "sha256": "5ba66f0b9a8dd400b3037d65e5febd0620a46b9f03b9f913e00e02fca7830685",
+    "size_bytes": 88244,
+    "mtime_ns": "1793832578264952718",
+    "duration": 2.0,
+    "has_audio": true,
+    "has_video": false,
+    "status": "no-video",
+    "estimate": null
+  },
+  {
+    "asset_id": "owned-cuts-audio-first.mp4",
+    "role": "source",
+    "name": "owned-cuts-audio-first.mp4",
+    "sha256": "3ca80a124dde2a080ef70aba3b95ae62bb800eb5843c2becdc8446dbade1765b",
+    "size_bytes": 6741,
+    "mtime_ns": "1793832578280952798",
+    "duration": 4.0,
+    "has_audio": true,
+    "has_video": true,
+    "status": "candidates",
+    "estimate": {
+      "method": "ffmpeg.scdet",
+      "time_origin": "first-decoded-video-frame",
+      "threshold_percent": 10,
+      "scaled_width": 320,
+      "frames_analyzed": 120,
+      "first_frame_pts_seconds": 0.0,
+      "decoded_span_seconds": 3.966667,
+      "candidates": [
+        {
+          "frame_index": 30,
+          "time_seconds": 1.0,
+          "score_percent": 51.746
+        },
+        {
+          "frame_index": 90,
+          "time_seconds": 3.0,
+          "score_percent": 51.746
+        }
+      ]
+    }
+  },
+  {
+    "asset_id": "owned-static.mp4",
+    "role": "source",
+    "name": "owned-static.mp4",
+    "sha256": "717bb4417d56db26bcdcb38341a6f1c0fa9e2be63c872be3ef1b9c6e81379b2b",
+    "size_bytes": 2887,
+    "mtime_ns": "1793832578288952838",
+    "duration": 2.0,
+    "has_audio": false,
+    "has_video": true,
+    "status": "no-candidates",
+    "estimate": {
+      "method": "ffmpeg.scdet",
+      "time_origin": "first-decoded-video-frame",
+      "threshold_percent": 10,
+      "scaled_width": 320,
+      "frames_analyzed": 60,
+      "first_frame_pts_seconds": 0.0,
+      "decoded_span_seconds": 1.966667,
+      "candidates": []
+    }
+  }
+]

@@ -1,0 +1,10 @@
+linux-vdso.so.1 (0x00007ffea63af000)
+	libsoxr.so.0 => /tmp/ce-r2b-audio/lib/libsoxr.so.0 (0x00007fe1bd4d6000)
+	libstdc++.so.6 => /lib/x86_64-linux-gnu/libstdc++.so.6 (0x00007fe1bd200000)
+	libgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 (0x00007fe1bd4b2000)
+	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007fe1bd01e000)
+	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007fe1bcf3e000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007fe1bd58a000)
+9f228ae21c78fa9359ca98d8a5e8e91f30639e438e574133dace62c5b5309e44  /tmp/soxr-1.1.0.tar.gz
+870e7582e33214df16c1433ede9470860c57fb4af0ff0e592000457be2f7d57d  /tmp/ce-r2b-audio/lib/libsoxr.so.0
+079f76a83c03bdf8dd54c668191e7a0575c346fb4ed1a098c5ffb8b02084f141  backend/.venv/lib/python3.11/site-packages/soxr/soxr_ext.cpython-311-x86_64-linux-gnu.so

@@ -1,0 +1,72 @@
+[
+  [
+    "libx264 rejected",
+    true,
+    "encoder 'libx264' is not allowed (GPL)"
+  ],
+  [
+    "missing ffmpeg raises",
+    true,
+    "ffmpeg not found. Bundle the LGPL shared build under /tmp/does-not-exi"
+  ],
+  [
+    "plan uses an allowed encoder",
+    true,
+    "libopenh264"
+  ],
+  [
+    "render command ran",
+    true,
+    "3.2s"
+  ],
+  [
+    "output is 1080x1920 h264",
+    true,
+    "{'width': 1080, 'height': 1920, 'codec': 'h264', 'duration': 5.966667, 'fps': '30/1'}"
+  ],
+  [
+    "duration matches the EDL",
+    true,
+    "5.97s vs 6.00s"
+  ],
+  [
+    "30 fps kept",
+    true,
+    "30/1"
+  ],
+  [
+    "ASS has RTL marks",
+    true,
+    ""
+  ],
+  [
+    "captions burned in",
+    true,
+    ""
+  ],
+  [
+    "loudnorm measured",
+    true,
+    "{'i': -22.05, 'tp': -18.06, 'lra': 0.0}"
+  ],
+  [
+    "second pass applied",
+    true,
+    "target -14.0 LUFS"
+  ],
+  [
+    "loudness landed near target",
+    true,
+    "after={'i': -13.95, 'tp': -9.91, 'lra': 0.0}"
+  ],
+  [
+    "replay is 2x the window at 0.5x",
+    true,
+    "6.33s"
+  ],
+  [
+    "comparison is 1080x1920",
+    true,
+    "{'width': 1080, 'height': 1920, 'codec': 'h264', 'duration': 3.0, 'fps': '30/1'}"
+  ]
+]

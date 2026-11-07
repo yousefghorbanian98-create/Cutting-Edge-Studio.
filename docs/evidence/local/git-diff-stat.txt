@@ -1,0 +1,39 @@
+ backend/tests/test_hygiene.py                      |   19 +
+ docs/LOCAL-TEST-REPORT.md                          |  145 +
+ docs/PROGRESS-LEDGER.md                            |   12 +-
+ docs/RELEASE-CHECKLIST.md                          |   18 +-
+ docs/evidence/local/01-persian-pro.png             |  Bin 0 -> 108319 bytes
+ docs/evidence/local/02-english-media-timeline.png  |  Bin 0 -> 126303 bytes
+ docs/evidence/local/03-wizard-final.png            |  Bin 0 -> 126750 bytes
+ docs/evidence/local/04-post-controls.png           |  Bin 0 -> 127064 bytes
+ docs/evidence/local/05-command-palette.png         |  Bin 0 -> 124920 bytes
+ docs/evidence/local/06-glass-theme.png             |  Bin 0 -> 140199 bytes
+ docs/evidence/local/07-minimal-theme.png           |  Bin 0 -> 124087 bytes
+ docs/evidence/local/08-rea-capture.png             |  Bin 0 -> 108319 bytes
+ docs/evidence/local/dna.json                       |  133 +
+ docs/evidence/local/edl-v2.json                    |  353 ++
+ docs/evidence/local/frontend.txt                   | 6455 ++++++++++++++++++++
+ docs/evidence/local/git-diff-stat.txt              |    6 +
+ docs/evidence/local/git-log.txt                    |    8 +
+ docs/evidence/local/post-endpoints.txt             |   21 +
+ docs/evidence/local/post-results.json              |   79 +
+ docs/evidence/local/pytest.txt                     |   39 +
+ docs/evidence/local/rea-doctor.json                |    1 +
+ docs/evidence/local/rea-runtime.json               |    1 +
+ docs/evidence/local/rea-screenshot-metadata.json   |   86 +
+ docs/evidence/local/rea-summary.json               |  240 +
+ .../local/render-diagnostic-unaccepted.json        |   72 +
+ docs/evidence/local/route-sweep.json               |  188 +
+ docs/evidence/local/route-sweep.txt                |   33 +
+ docs/evidence/local/ruff-check.txt                 |    1 +
+ docs/evidence/local/ruff-format.txt                |    1 +
+ docs/evidence/local/score.json                     |   45 +
+ docs/evidence/local/stylematch.txt                 |   46 +
+ docs/evidence/local/ui-output.txt                  |   71 +
+ docs/evidence/local/ui-results.json                |   69 +
+ frontend/src/main.tsx                              |    3 +
+ scripts/local-tests/post_flow.py                   |  131 +
+ scripts/local-tests/stylematch_flow.py             |  109 +
+ scripts/local-tests/ui-e2e.cjs                     |   62 +
+ src-tauri/Cargo.toml                               |    5 +
+ 38 files changed, 8446 insertions(+), 6 deletions(-)

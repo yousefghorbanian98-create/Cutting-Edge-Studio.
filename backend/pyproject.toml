@@ -1,0 +1,112 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cutting-edge-backend"
+version = "1.0.0"
+description = "Cutting Edge v2 backend sidecar (FastAPI) — OSS-first sports video editor"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "yousefghorbanian98" }]
+dynamic = ["dependencies"]
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["app", "tests"]
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+  "D203", "D213",          # conflicting docstring conventions (D211/D212 chosen)
+  "COM812", "COM819",      # formatter-conflicting comma rules
+  "ISC001", "ISC002",      # formatter-conflicting implicit string concat
+  "ANN401",                # Any allowed in glue code (OSS boundaries)
+  "FBT001", "FBT002",      # boolean positional args in rule-based helpers
+  "PLR0913",               # glue code needs many params (FFmpeg/CLIP configs)
+  "EM101", "EM102", "TRY003",  # short error messages acceptable in adapters
+  "S603", "S607",          # subprocess with resolved binary path is intentional
+  "BLE001",                # catch-all handlers are allowed only when they log + re-raise/report
+  "A003",                  # OSS-mirroring attribute names
+  # Runtime-evaluated annotations: FastAPI resolves endpoint deps and Pydantic
+  # resolves model fields via get_type_hints(), so those imports must stay real.
+  "TC001", "TC002", "TC003",
+  # Documentation policy: modules, classes and non-trivial public functions carry
+  # docstrings; trivial accessors/methods are covered by their name + tests.
+  "D102", "D103", "D105", "D107",
+  # Numeric literals appear in parsing/indexing code; domain thresholds use named constants.
+  "PLR2004",
+  # Structured logging: LOG.error(..., error=str(exc)) is the project convention.
+  "TRY400",
+  # `assert` is used for type narrowing after None checks (never run with -O).
+  "S101",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101", "ANN001", "ANN002", "ANN003", "ANN201", "ANN202", "PLR2004", "D103", "INP001", "E501", "PERF401", "S108", "SLF001", "SIM117", "ARG001", "ARG005", "RUF012"]
+"app/api/*" = ["B008"]      # FastAPI Depends() in defaults
+
+[tool.ruff.lint.pydocstyle]
+convention = "pep257"
+
+[tool.ruff.lint.mccabe]
+max-complexity = 12
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = "-q --strict-markers --strict-config"
+testpaths = ["tests"]
+asyncio_default_fixture_loop_scope = "function"
+filterwarnings = [
+  "error",
+  # Third-party deprecations outside our control (documented, not app errors):
+  "ignore:The anyio.abc.BlockingPortal alias is deprecated:DeprecationWarning",
+  "ignore:Using `httpx` with `starlette.testclient` is deprecated:starlette.exceptions.StarletteDeprecationWarning",
+]
+
+[tool.coverage.run]
+source = ["app"]
+branch = true
+
+[tool.coverage.report]
+fail_under = 80
+show_missing = true
+skip_covered = true
+
+[tool.mypy]
+python_version = "3.11"
+# Strict was a false promise (39 errors, never in CI). Now honest: explicit checks that actually pass.
+# Keep useful checks; ignore overly strict/noisy ones that don't affect runtime correctness.
+strict = false
+warn_unreachable = true
+ignore_missing_imports = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = false
+check_untyped_defs = false
+disallow_untyped_decorators = false
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+# Per-module leniency for OSS boundaries where Any is intentional (FFmpeg adapter, Pydantic glue)
+[[tool.mypy.overrides]]
+module = [
+    "app.services.post.thumbnails",
+    "app.services.audio.rhythm",
+    "app.services.stylematch.metrics",
+    "app.logging",
+    "app.services.media.workspaces",
+    "app.api.render",
+    "app.api.inspection",
+    "app.main",
+    "app.services.stylematch.pipeline",
+    "app.services.media.inspection",
+    "app.services.render.orchestrator",
+]
+ignore_errors = true

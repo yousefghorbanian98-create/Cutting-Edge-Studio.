@@ -1,0 +1,7 @@
+d3e9c2a feat: isolate experimental OSS audio rhythm jobs and reuse project measurement UI
+3a1446a security: scan full history with pinned MIT CLI and redacted locations
+4fae2f7 docs: record OSS rhythm adapter evidence and remaining integration gates
+d1decc2 feat: validate OSS rhythm adapter and reject unwired model loaders
+d941d87 docs: record R2a decode, cancellation and crash-recovery evidence
+675478c feat: run durable real-media decode inspections with observed progress
+fdcbc26 docs: record R1b restart recovery evidence and advance the recovery queue

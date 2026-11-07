@@ -1,0 +1,69 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+
+# Node
+node_modules/
+dist/
+coverage/
+.vite/
+
+# Rust / Tauri
+target/
+src-tauri/gen/
+
+# Local runtime data (never committed)
+*.db
+*.db-wal
+*.db-shm
+logs/
+backend/.data/
+
+# Build artifacts fetched on the build machine
+models/
+binaries/*.exe
+binaries/*.zip
+src-tauri/binaries/
+backend/build/
+backend/dist/
+webview2-fixed-runtime/
+# Installer outputs (Windows) — not committed; light delivery tarballs ARE committed
+delivery/*.exe
+delivery/CuttingEdgeV2-Setup-*.sha256
+
+# Editors / OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Generated, mode-specific Tauri resource staging
+src-tauri/runtime/
+# Coverage / test artifacts
+coverage.json
+coverage.xml
+backend/coverage.json
+backend/coverage.xml
+backend/.coverage
+frontend/tsconfig.tsbuildinfo
+# Local runtime evidence (generated, not committed - see CI artifacts)
+docs/evidence/desktop-r2c/*.log
+docs/evidence/desktop-r2c/*.jsonl
+docs/evidence/desktop-r2c/*.json
+docs/evidence/desktop-r2c/*.png
+docs/evidence/desktop-r2c/*.mp3
+docs/evidence/desktop-r2c/diagnostics/
+docs/evidence/desktop-r2c/frontend-tests.log
+docs/evidence/desktop-r2c/frontend-verification.log
+docs/evidence/desktop-r2c/source-cli-smoke.log
+docs/evidence/desktop-r2c/windows-cdp-first/
+docs/evidence/desktop-r2c/windows-cdp-retry/
+docs/evidence/desktop-r2c/windows-first/
+docs/evidence/desktop-r2c/windows-path-diagnostic/
+docs/evidence/r2-light-preview-fa.mp3
