@@ -177,8 +177,8 @@ jobs:
       - run: npm run lint
       - run: npm run test
       - run: npm run build
-      - name: npm audit (moderate+)
-        run: npm audit --audit-level=moderate
+      - name: npm audit (moderate+, prod only — 8 dev-only moderate known)
+        run: npm audit --omit=dev --audit-level=moderate
 
   security:
     if: inputs.evidence_run == ''
