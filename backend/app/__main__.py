@@ -63,8 +63,11 @@ def main(argv: list[str] | None = None) -> None:
     from app.main import create_app
 
     args = parse_args(arguments)
-    if not 1 <= args.port <= 65535:
-        raise SystemExit("Port must be between 1 and 65535")
+    if not 0 <= args.port <= 65535:
+        raise SystemExit("Port must be between 0 and 65535")
+    # Random port guard: --port 0 lets OS pick a free port, published via receipt + stdout PORT=...
+    if args.port == 0:
+        print("CES: random port requested — OS will assign free port", file=sys.stderr)
     if args.host not in {"127.0.0.1", "localhost", "::1"}:
         msg = f"refusing to bind {args.host}: the sidecar is loopback-only (LOCK-05)"
         raise SystemExit(msg)
@@ -83,6 +86,13 @@ def main(argv: list[str] | None = None) -> None:
         raise SystemExit(f"Local application could not start: {error}") from error
     if settings.serve_frontend:
         with desktop_listener(settings) as listener:
+            # If --port 0 was requested, update settings with actual OS-assigned port
+            actual_port = listener.getsockname()[1]
+            if actual_port != settings.port:
+                settings = settings.model_copy(update={"port": actual_port})
+                application.state.settings = settings
+                print(f"PORT={actual_port}", flush=True)
+                LOG.info("desktop.listener.random_port", port=actual_port)
             application.state.desktop_listener_owned = True
             server = uvicorn.Server(uvicorn.Config(application, log_config=None, access_log=False))
             server.run(sockets=[listener])

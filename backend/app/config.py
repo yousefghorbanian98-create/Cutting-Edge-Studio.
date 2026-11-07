@@ -64,7 +64,7 @@ class Settings(BaseSettings):
     data_dir: Path = Field(default_factory=user_data_dir)
     home_dir: Path = Field(default_factory=program_dir)
     host: str = "127.0.0.1"
-    port: int = Field(default=8756, ge=1, le=65535)
+    port: int = Field(default=8756, ge=0, le=65535)
     serve_frontend: bool = False
     desktop_instance_id: str | None = Field(default=None, pattern=r"^[0-9]+-[0-9]+$")
     desktop_ready_file: Path | None = None

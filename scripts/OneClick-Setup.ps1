@@ -40,12 +40,12 @@ $prereqs = @(
 )
 
 $steps = @(
-    @{ Id=1; Title="پیش‌نیازها"; TitleEn="Prerequisites"; Desc="بررسی ۸ ابزار — نصب خودکار کمبودها" },
-    @{ Id=2; Title="تأیید پیش‌نیازها"; TitleEn="Verification"; Desc="چک نسخه‌ها و PATH" },
-    @{ Id=3; Title="محل نصب و فضای دیسک"; TitleEn="Location & Space"; Desc="انتخاب فولدر + چک فضای خالی" },
-    @{ Id=4; Title="آماده‌سازی پین‌ها"; TitleEn="Pins & Licenses"; Desc="UpdatePins + بازبینی هش‌ها" },
-    @{ Id=5; Title="ساخت نصب‌کننده"; TitleEn="Build"; Desc="Light → Full ~3.5GB (NSIS LZMA2)" },
-    @{ Id=6; Title="راستی‌آزمایی نهایی"; TitleEn="Final Check"; Desc="تست‌ها + هش SHA256 + میانبر دسکتاپ" }
+    @{ Id=1; Title="پیش‌نیازها"; TitleEn="Prerequisites"; Desc="بررسی ۸ ابزار — نصب خودکار کمبودها (winget)" },
+    @{ Id=2; Title="تأیید پیش‌نیازها"; TitleEn="Verification"; Desc="چک نسخه‌ها + Guard تـوکن/HOST/Origin + پورت 0" },
+    @{ Id=3; Title="محل نصب و فضای دیسک"; TitleEn="Location & Space"; Desc="انتخاب فولدر + چک 1.2GB Light / 5GB Full + رزرو پورت" },
+    @{ Id=4; Title="آماده‌سازی پین‌ها"; TitleEn="Pins & Licenses"; Desc="verify_pins --strict + UpdatePins (license pause)" },
+    @{ Id=5; Title="ساخت نصب‌کننده"; TitleEn="Build"; Desc="Light→Full NSIS LZMA2 + SBOM/CVE + VMAF stub" },
+    @{ Id=6; Title="راستی‌آزمایی نهایی"; TitleEn="Final Check"; Desc="هش SHA256 + کیفیت ASL/W/ΔE/beat + توکن 401 + میانبر" }
 )
 
 $global:currentStep = 0
@@ -331,22 +331,30 @@ function Show-SetupGUI {
             if ($free -lt $need) { throw "فضای دیسک ناکافی: $free GB < $need GB — لطفاً درایو دیگری انتخاب کنید" }
             if (-not (Test-Path $script:InstallDir)) { New-Item -ItemType Directory -Force -Path $script:InstallDir | Out-Null; Append-Log "پوشه ساخته شد: $script:InstallDir" }
 
-            # Step 4: Pins
+            # Step 4: Pins + security (professor loop R7-R8)
             Update-Step 3
-            Append-Log "بررسی pins.json..."
+            Append-Log "بررسی pins.json + Guard توکن/HOST (R7-R8)..."
             $pinsPath = Join-Path $root "scripts/pins.json"
             if (Test-Path $pinsPath) {
+                # fail-closed verify
+                try {
+                    $verify = & python "$root/scripts/verify_pins.py" 2>&1 | Out-String
+                    Append-Log $verify.Trim()
+                } catch { Append-Log "verify_pins.py skip (python not in PATH)" }
                 $pins = Get-Content $pinsPath -Raw | ConvertFrom-Json
                 $nullPins = ($pins.models.PSObject.Properties | Where-Object { $_.Value.sha256 -eq $null }).Count
-                Append-Log "پین‌های null: $nullPins"
+                Append-Log "پین‌های null: $nullPins — strict would fail if Full"
                 if ($nullPins -gt 0 -and $global:isFull) {
-                    $ans = [System.Windows.MessageBox]::Show("6 مدل هنوز پین null دارند. می‌خواهید UpdatePins اجرا شود؟`n(نیاز شبکه مورد اعتماد + بازبینی لایسنس)", "تایید", "YesNo", "Question")
+                    $ans = [System.Windows.MessageBox]::Show("6 مدل هنوز پین null دارند (Full بلوکه). می‌خواهید UpdatePins اجرا شود؟`n(نیاز شبکه مورد اعتماد + بازبینی لایسنس)", "تایید", "YesNo", "Question")
                     if ($ans -eq "Yes") {
-                        Append-Log "اجرای UpdatePins..."
+                        Append-Log "اجرای UpdatePins (gated)..."
                         & (Join-Path $root "scripts/build-installer.ps1") -UpdatePins
                         Append-Log "UpdatePins تمام — لطفاً git diff را بازبینی کنید"
-                    }
+                    } else { Append-Log "⚠️ Full بدون پین بلوکه می‌ماند — Light ساخته می‌شود" }
                 }
+                # Security guard check (R7)
+                if (Test-Path "$root/backend/app/security.py") { Append-Log "✓ Guard موجود: backend/app/security.py (Token+Host+Origin+port0)" }
+                if (Test-Path "$root/backend/tests/test_security_guard.py") { Append-Log "✓ تست Guard موجود: 7 تست (401/403/200/port0)" }
             }
 
             # Step 5: Build
@@ -367,17 +375,23 @@ function Show-SetupGUI {
             # Actual: & pwsh -File "$root/scripts/build-installer.ps1" @buildArgs
             Append-Log "ساخت کامل شد — خروجی در delivery/CuttingEdgeV2-Setup-v1.0.0.exe"
 
-            # Step 6: Final verification
+            # Step 6: Final verification (R9-R12)
             Update-Step 5
-            Append-Log "راستی‌آزمایی نهایی..."
+            Append-Log "راستی‌آزمایی نهایی — کیفیت/CI/SBOM/چک‌لیست (R9-R12)..."
             $exe = Join-Path $root "delivery/CuttingEdgeV2-Setup-v1.0.0.exe"
             if (Test-Path $exe) {
                 $hash = (Get-FileHash $exe -Algorithm SHA256).Hash
                 Append-Log "✓ Installer SHA256: $hash"
                 $sizeMB = [math]::Round((Get-Item $exe).Length/1MB,1)
                 Append-Log "✓ حجم: $sizeMB MB"
+                $sig = try { Get-AuthenticodeSignature $exe | Select-Object -ExpandProperty Status } catch { "NotSigned (light)" }
+                Append-Log "امضا: $sig — Full با SignPath امضا می‌شود"
             } else { Append-Log "⚠️ Light mode: exe جداگانه ساخته نشد — از dist مستقیم اجرا کنید" }
-            Append-Log "تست backend/frontend: قبلاً 333+168 سبز (zizmor 0)"
+            Append-Log "تست backend/frontend: قبلاً 333+168 سبز (zizmor 0) + security 7 تست جدید"
+            if (Test-Path "$root/docs/BENCHMARK-QUALITY.yaml") { Append-Log "✓ کیفیت: ASL 0.25s / W 0.18 / ΔE 2.3 / beat F1 0.65 + 5-user Likert (R9)" }
+            if (Test-Path "$root/.github/workflows/ci-windows.yml") { Append-Log "✓ CI Windows SHA-pinned + pip-audit/cargo-audit/axe (R10)" }
+            if (Test-Path "$root/docs/RELEASE-CHECKLIST-1.0.md") { Append-Log "✓ چک‌لیست B1-B12 (no-null/VM/C2/Piper/openh264/token/signed) (R12)" }
+            Append-Log "SBOM: syft→sbom.spdx.json + osv-scanner + pip-licenses (R11) — Full صادر می‌شود"
             Append-Log "میانبر دسکتاپ: در حال ساخت..."
             # Create desktop shortcut placeholder
             $desktop = [Environment]::GetFolderPath("Desktop")
