@@ -44,7 +44,7 @@ def media_file(tmp_path: Path) -> Path:
 
 
 @pytest.fixture
-def media_client(settings: Settings, media_file: Path):  # noqa: ARG001 - fixture creates the file
+def media_client(settings: Settings, media_file: Path):
     app = create_app(settings, prober=FakeProber(parse_probe(FFPROBE_VIDEO)))
     with TestClient(app) as client:
         yield client

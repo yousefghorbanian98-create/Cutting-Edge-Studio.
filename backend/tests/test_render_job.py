@@ -76,7 +76,7 @@ def test_render_encoder_probe_exposes_gpl_safety(monkeypatch) -> None:
         import app.services.media.ffmpeg as ff
         import app.services.render.orchestrator as orch
 
-        def fake_probe(binaries, timeout=30):  # noqa: ARG001
+        def fake_probe(binaries, timeout=30):
             return {"libx264", "libx265", "h264_nvenc"}
 
         monkeypatch.setattr(orch, "_probe_encoder", fake_probe)
