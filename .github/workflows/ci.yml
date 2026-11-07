@@ -134,8 +134,12 @@ jobs:
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
           ffmpeg -hide_banner -version
-          ffmpeg -f lavfi -i testsrc=duration=1:size=128x128:rate=30 -frames:v 1 -c:v libx264 -pix_fmt yuv420p /tmp/smoke.mp4 -y
-          ffprobe -hide_banner /tmp/smoke.mp4
+          # Project policy is LGPL-only: libx264 is GPL and never shipped (FORBIDDEN_ENCODERS).
+          # Smoke with an encoder the product can actually use, falling back to mpeg4.
+          ENC=$(ffmpeg -hide_banner -encoders 2>/dev/null | grep -q ' libopenh264 ' && echo libopenh264 || echo mpeg4)
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i testsrc=duration=1:size=128x128:rate=30 \
+            -f lavfi -i sine=frequency=440:duration=1 -frames:v 30 -c:v "$ENC" -c:a aac -pix_fmt yuv420p /tmp/smoke.mp4
+          ffprobe -v error -show_entries stream=codec_type -of csv=p=0 /tmp/smoke.mp4 | grep -q '^audio$'
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()
         with:
