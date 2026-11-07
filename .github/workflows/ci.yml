@@ -140,7 +140,7 @@ jobs:
           ffmpeg -hide_banner -loglevel error -y -f lavfi -i testsrc=duration=1:size=128x128:rate=30 \
             -f lavfi -i sine=frequency=440:duration=1 -frames:v 30 -c:v "$ENC" -c:a aac -pix_fmt yuv420p /tmp/smoke.mp4
           ffprobe -v error -show_entries stream=codec_type -of csv=p=0 /tmp/smoke.mp4 | grep -q '^audio$'
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: backend-coverage
@@ -233,7 +233,7 @@ jobs:
         run: python scripts/ci/gitleaks-locations.py
       - name: Upload redacted secret scan
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: gitleaks-results.sarif
           path: results.sarif
@@ -273,7 +273,7 @@ jobs:
         shell: pwsh
         run: ./scripts/ci/windows-native-media.ps1 -OutputDir "${{ runner.temp }}/ce-native-media"
       - name: Upload native tool probe evidence (no media or binaries)
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: windows-native-media-probe
@@ -326,7 +326,7 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Frozen desktop transport/resource gate failed.' }
       - name: Upload frozen desktop evidence
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: desktop-sidecar-smoke
           path: ${{ runner.temp }}/ce-desktop-smoke
@@ -344,18 +344,18 @@ jobs:
         run: ./scripts/ci/windows-installed-desktop.ps1 -OutputDir "${{ runner.temp }}/ce-installed-desktop" -AllowMachineCdpPolicy
       - name: Upload installed native desktop evidence
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: installed-native-desktop-smoke
           path: ${{ runner.temp }}/ce-installed-desktop
           if-no-files-found: warn
       - name: Upload build log on failure
         if: failure()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: installer-build-log
           path: C:\build\build.log
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: CuttingEdgeV2-Setup
           if-no-files-found: error
