@@ -334,6 +334,7 @@ jobs:
       - name: Provision test-only WebView CDP client (no browser/runtime download)
         shell: pwsh
         run: |
+          New-Item -ItemType Directory -Force "$env:RUNNER_TEMP/ce-webview-tools" | Out-Null
           Copy-Item -Path "C:\build\scripts\ci\webview-tools\package.json" -Destination "$env:RUNNER_TEMP/ce-webview-tools/package.json" -Force
           Copy-Item -Path "C:\build\scripts\ci\webview-tools\package-lock.json" -Destination "$env:RUNNER_TEMP/ce-webview-tools/package-lock.json" -Force
           npm ci --prefix "$env:RUNNER_TEMP/ce-webview-tools" --ignore-scripts --no-audit --no-fund
