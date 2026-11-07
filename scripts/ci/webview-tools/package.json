@@ -1,0 +1,9 @@
+{
+  "name": "ce-webview-tools",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Isolated WebView CDP test tools — no browser download, runner temp only",
+  "dependencies": {
+    "playwright-core": "1.64.1"
+  }
+}

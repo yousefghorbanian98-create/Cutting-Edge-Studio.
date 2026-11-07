@@ -12,6 +12,9 @@ on:
         required: false
         default: ''
 
+permissions:
+  contents: read
+
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
@@ -46,7 +49,7 @@ jobs:
           echo "run=$run" >> "$GITHUB_OUTPUT"
       - name: Download existing structured smoke evidence
         if: steps.prior.outputs.run != ''
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           run-id: ${{ steps.prior.outputs.run }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -101,12 +104,16 @@ jobs:
     if: inputs.evidence_run == ''
     name: Backend — lint + tests (Linux)
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     defaults:
       run:
         working-directory: backend
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: '3.11'
           cache: pip
@@ -123,7 +130,13 @@ jobs:
         run: python -m pytest --cov=app --cov-report=term-missing --cov-report=xml
       - name: pip-audit
         run: pip-audit -r requirements.txt --strict
-      - uses: actions/upload-artifact@v4
+      - name: ffmpeg smoke (real binary — not just argv)
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          ffmpeg -hide_banner -version
+          ffmpeg -f lavfi -i testsrc=duration=1:size=128x128:rate=30 -frames:v 1 -c:v libx264 -pix_fmt yuv420p /tmp/smoke.mp4 -y
+          ffprobe -hide_banner /tmp/smoke.mp4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()
         with:
           name: backend-coverage
@@ -133,9 +146,13 @@ jobs:
     if: inputs.evidence_run == ''
     name: Arch — cohesion guardrail (Madge + arch tests)
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '22'
           cache: npm
@@ -148,7 +165,7 @@ jobs:
         run: NODE_PATH=frontend/node_modules npx --yes dependency-cruiser --config .dependency-cruiser.cjs frontend/src --output-type err
         env:
           NODE_PATH: frontend/node_modules
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: '3.11'
           cache: pip
@@ -163,12 +180,16 @@ jobs:
     if: inputs.evidence_run == ''
     name: Frontend — lint + tests + build (Linux)
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     defaults:
       run:
         working-directory: frontend
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '22'
           cache: npm
@@ -184,10 +205,13 @@ jobs:
     if: inputs.evidence_run == ''
     name: Security — gitleaks + trivy fs
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           fetch-depth: 0
+          persist-credentials: false
       # Use the MIT CLI, not the separately licensed gitleaks-action wrapper.
       - name: Install checksum-pinned gitleaks CLI
         shell: bash
@@ -205,13 +229,13 @@ jobs:
         run: python scripts/ci/gitleaks-locations.py
       - name: Upload redacted secret scan
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: gitleaks-results.sarif
           path: results.sarif
           if-no-files-found: ignore
       - name: trivy filesystem (HIGH/CRITICAL)
-        uses: aquasecurity/trivy-action@v0.36.0
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           scan-type: fs
           severity: HIGH,CRITICAL
@@ -222,6 +246,8 @@ jobs:
     name: Installer — Windows NSIS build
     if: inputs.evidence_run == '' && (github.event_name == 'workflow_dispatch' || github.event_name == 'push')
     runs-on: windows-latest
+    permissions:
+      contents: read
     defaults:
       run:
         working-directory: C:\build
@@ -243,7 +269,7 @@ jobs:
         shell: pwsh
         run: ./scripts/ci/windows-native-media.ps1 -OutputDir "${{ runner.temp }}/ce-native-media"
       - name: Upload native tool probe evidence (no media or binaries)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()
         with:
           name: windows-native-media-probe
@@ -261,15 +287,15 @@ jobs:
       - name: Invalid artifact pins fail before files or downloads
         shell: pwsh
         run: ./scripts/ci/windows-pin-guards.ps1
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '22'
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: '3.11'
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
       - name: Rust cache (cargo registry + target, OSS)
-        uses: Swatinem/rust-cache@v2
+        uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
         with:
           workspaces: |
             C:\build\src-tauri -> target
@@ -296,7 +322,7 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Frozen desktop transport/resource gate failed.' }
       - name: Upload frozen desktop evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: desktop-sidecar-smoke
           path: ${{ runner.temp }}/ce-desktop-smoke
@@ -304,25 +330,27 @@ jobs:
       - name: Provision test-only WebView CDP client (no browser/runtime download)
         shell: pwsh
         run: |
-          npm install --prefix "$env:RUNNER_TEMP/ce-webview-tools" --ignore-scripts --no-audit --no-fund playwright-core@1.64.1
+          Copy-Item -Path "C:\build\scripts\ci\webview-tools\package.json" -Destination "$env:RUNNER_TEMP/ce-webview-tools/package.json" -Force
+          Copy-Item -Path "C:\build\scripts\ci\webview-tools\package-lock.json" -Destination "$env:RUNNER_TEMP/ce-webview-tools/package-lock.json" -Force
+          npm ci --prefix "$env:RUNNER_TEMP/ce-webview-tools" --ignore-scripts --no-audit --no-fund
           if ($LASTEXITCODE -ne 0) { throw 'Temporary CDP test tool installation failed.' }
       - name: Install and launch native desktop; verify orderly owned-process exit
         shell: pwsh
         run: ./scripts/ci/windows-installed-desktop.ps1 -OutputDir "${{ runner.temp }}/ce-installed-desktop" -AllowMachineCdpPolicy
       - name: Upload installed native desktop evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: installed-native-desktop-smoke
           path: ${{ runner.temp }}/ce-installed-desktop
           if-no-files-found: warn
       - name: Upload build log on failure
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: installer-build-log
           path: C:\build\build.log
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: CuttingEdgeV2-Setup
           if-no-files-found: error
