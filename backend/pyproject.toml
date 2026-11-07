@@ -68,6 +68,7 @@ filterwarnings = [
   "error",
   # Third-party deprecations outside our control (documented, not app errors):
   "ignore:The anyio.abc.BlockingPortal alias is deprecated:DeprecationWarning",
+  "ignore:Using `httpx` with `starlette.testclient` is deprecated:StarletteDeprecationWarning",
 ]
 
 [tool.coverage.run]
