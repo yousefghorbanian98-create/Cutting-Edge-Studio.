@@ -23,6 +23,7 @@ from app.api import (
     workspace,
 )
 from app.config import ALLOWED_ORIGINS, API_PREFIX, Settings, get_settings
+from app.security import SecurityMiddleware
 from app.db import create_db_engine, create_session_factory, init_db
 from app.desktop import clear_receipt, mount_frontend, publish_receipt
 from app.logging import configure_logging, get_logger
@@ -93,12 +94,13 @@ def create_app(settings: Settings | None = None, prober: Prober | None = None) -
     app.state.settings = resolved
     app.state.media_service = MediaService(resolved, prober)
     app.state.jobs = JobRegistry()
+    app.add_middleware(SecurityMiddleware)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=list(ALLOWED_ORIGINS),
         allow_credentials=False,
         allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE"],
-        allow_headers=["content-type"],
+        allow_headers=["content-type", "x-ces-token", "origin"],
     )
     for module in (
         health,

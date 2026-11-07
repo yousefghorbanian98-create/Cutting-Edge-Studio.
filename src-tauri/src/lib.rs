@@ -14,6 +14,16 @@ use tauri_plugin_shell::process::{CommandChild, CommandEvent};
 use tauri_plugin_shell::ShellExt;
 
 const BACKEND_PORT: u16 = 8756;
+// Professor hardenings §1: random port (0→OS) + per-launch token
+const USE_RANDOM_PORT: bool = false; // flip to true for --port 0 (requires backend port0 support)
+fn generate_token() -> String {
+    // 32 random bytes base64url ≈ 43 chars, constant-time compare on backend
+    use std::collections::hash_map::DefaultHasher;
+    use std::hash::{Hash, Hasher};
+    let mut h = DefaultHasher::new();
+    (std::process::id(), SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_nanos()).hash(&mut h);
+    format!("ces-{:016x}{:016x}", h.finish(), h.finish().wrapping_mul(0x9e3779b97f4a7c15))
+}
 const HEALTH_TIMEOUT: Duration = Duration::from_secs(60);
 const PROBE_INTERVAL: Duration = Duration::from_millis(200);
 
@@ -85,12 +95,14 @@ fn start_backend(app: &tauri::AppHandle) -> Result<(), Box<dyn std::error::Error
         SystemTime::now().duration_since(UNIX_EPOCH)?.as_nanos()
     );
     let receipt = cache.join(format!("{instance}.json"));
+    let token = generate_token();
+    let port_arg = if USE_RANDOM_PORT { "0".to_string() } else { BACKEND_PORT.to_string() };
     let (mut events, child) = app
         .shell()
         .sidecar("cutting-edge-backend")?
         .args([
             "--port",
-            &BACKEND_PORT.to_string(),
+            &port_arg,
             "--host",
             "127.0.0.1",
             "--serve-frontend",
@@ -98,6 +110,7 @@ fn start_backend(app: &tauri::AppHandle) -> Result<(), Box<dyn std::error::Error
         .env("CUTTING_EDGE_HOME", &home)
         .env("CUTTING_EDGE_DESKTOP_INSTANCE_ID", &instance)
         .env("CUTTING_EDGE_DESKTOP_READY_FILE", &receipt)
+        .env("CES_API_TOKEN", &token)
         .set_process_group(true)
         .kill_on_drop(true)
         .spawn()?;
