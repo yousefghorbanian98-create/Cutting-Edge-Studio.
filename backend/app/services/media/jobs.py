@@ -16,7 +16,7 @@ from app.logging import get_logger
 
 LOG = get_logger(__name__)
 
-JobState = Literal["queued", "running", "done", "failed", "cancelled"]
+JobState = Literal["queued", "running", "done", "failed", "cancelled", "interrupted"]
 
 
 @dataclass

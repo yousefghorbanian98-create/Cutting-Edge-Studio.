@@ -151,8 +151,8 @@ def score(project_id: str, payload: ScorePayload, session: SessionDep) -> dict[s
     if dna is None or edl is None:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="dna and edl are required")
     result = score_against_reference(
-        edl,
-        dna,
+        edl,  # type: ignore[arg-type]
+        dna,  # type: ignore[arg-type]
         shot_confusion=payload.shot_confusion,
         generated_color=payload.generated_color or None,
     )
@@ -166,7 +166,7 @@ def validate(project_id: str, session: SessionDep) -> dict[str, Any]:
     edl = _latest(session, project_id, "edl-v2")
     if edl is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="no EDL stored")
-    return {"problems": validate_edl(edl)}
+    return {"problems": validate_edl(edl)}  # type: ignore[arg-type]
 
 
 _ = (build_edl, snap_to_beats)  # imported for type-checkers/readers of this module

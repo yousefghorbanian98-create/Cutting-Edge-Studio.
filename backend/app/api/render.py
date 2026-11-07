@@ -108,7 +108,15 @@ def start(
         LOG.warning("render.unavailable", project_id=project_id, error=str(exc))
         raise HTTPException(status_code=503, detail=str(exc)) from exc
     try:
-        return request.app.state.render.start(session, project_id, edl, quality=payload.quality)
+        return request.app.state.render.start(
+            session,
+            project_id,
+            edl,
+            quality=payload.quality,
+            subtitles_ass=payload.subtitles_ass,
+            loudness_filter=payload.loudness_filter,
+            has_audio=payload.has_audio,
+        )
     except InspectionBusyError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
     except Exception as exc:

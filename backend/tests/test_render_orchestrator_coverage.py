@@ -109,7 +109,7 @@ def test_render_start_busy_second_call_rejected() -> None:
         svc = RenderService(factory=factory, jobs=jobs, settings=s)  # type: ignore[arg-type]
 
         # make _run do nothing but keep thread alive briefly so active stays
-        def _fake_run(self, job, initial, edl, quality):
+        def _fake_run(self, job, initial, edl, quality, *args, **kwargs):  # noqa: ANN001, ARG001
             time.sleep(0.5)
 
         with mock.patch.object(RenderService, "_run", _fake_run):

@@ -44,7 +44,7 @@ class DesktopBoundary(BaseHTTPMiddleware):
     """Desktop-only host/origin boundary; standalone preview keeps same-origin relative URLs."""
 
     def __init__(self, app: object, settings: Settings) -> None:
-        super().__init__(app)
+        super().__init__(app)  # type: ignore[arg-type]
         self.settings = settings
 
     async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:

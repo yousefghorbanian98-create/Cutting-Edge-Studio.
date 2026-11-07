@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -14,8 +14,13 @@ class RenderRequest(BaseModel):
     """EDL payload plus quality. EDL must be the validated output of /stylematch/edl."""
 
     model_config = ConfigDict(extra="forbid")
-    edl: dict = Field(..., description="Validated EDL dict from stylematch pipeline")
+    edl: dict[str, Any] = Field(..., description="Validated EDL dict from stylematch pipeline")
     quality: RenderQuality = "preview"
+    subtitles_ass: str | None = Field(default=None, description="ASS subtitles content to burn in")
+    loudness_filter: str | None = Field(
+        default=None, description="FFmpeg loudnorm/volume filter for audio"
+    )
+    has_audio: bool | None = Field(default=None, description="Whether to include audio (None=auto)")
 
 
 class RenderReport(BaseModel):

@@ -1,4 +1,4 @@
-# ruff: noqa: TRY301, C901, PLR0915
+# ruff: noqa: TRY301, C901, PLR0912, PLR0915
 """Honest EDL-to-render orchestrator — approved encoder only, observed progress."""
 
 from __future__ import annotations
@@ -32,7 +32,7 @@ ACTIVE = {"queued", "running"}
 KIND = "render-job"
 
 
-def _probe_encoder(binaries: object, timeout: float = 30) -> set[str]:
+def _probe_encoder(binaries: Any, timeout: float = 30) -> set[str]:
     """Run ffmpeg -encoders and parse; never shells out."""
     result = run_command([str(binaries.ffmpeg), "-hide_banner", "-encoders"], timeout=timeout)
     return parse_encoders(result.stdout + result.stderr)
@@ -80,7 +80,14 @@ class RenderService:
         self.worker: threading.Thread | None = None
 
     def start(
-        self, session: Session, project_id: str, edl: dict[str, Any], quality: str = "preview"
+        self,
+        session: Session,
+        project_id: str,
+        edl: dict[str, Any],
+        quality: str = "preview",
+        subtitles_ass: str | None = None,
+        loudness_filter: str | None = None,
+        has_audio: bool | None = None,
     ) -> RenderRead:
         with self.lock:
             if self.active is not None and self.active.state in ACTIVE:
@@ -94,7 +101,7 @@ class RenderService:
                 state="queued",
                 percent=0,
                 message="Render queued",
-                quality=quality,  # type: ignore[arg-type]
+                quality=quality,
             )
             # Persist EDL + initial state so restart can mark interrupted
             _ = {
@@ -121,7 +128,7 @@ class RenderService:
             self.active = job
             self.worker = threading.Thread(
                 target=self._run,
-                args=(job, initial, edl, quality),
+                args=(job, initial, edl, quality, subtitles_ass, loudness_filter, has_audio),
                 daemon=True,
                 name=f"render-{job.id}",
             )
@@ -168,7 +175,16 @@ class RenderService:
                 job.id, state=state, percent=result.percent, error=error, message=result.message
             )
 
-    def _run(self, job: Job, initial: RenderRead, edl: dict[str, Any], quality: str) -> None:
+    def _run(
+        self,
+        job: Job,
+        initial: RenderRead,
+        edl: dict[str, Any],
+        quality: str,
+        subtitles_ass: str | None = None,
+        loudness_filter: str | None = None,
+        has_audio: bool | None = None,
+    ) -> None:
         try:
             self.jobs.update(job.id, state="running", message="Probing encoder")
             # Validate EDL has segments
@@ -191,22 +207,37 @@ class RenderService:
             else:
                 bitrate = 6000
                 cmd_encoder = encoder
+            # Handle subtitles: write ASS to temp file if provided
+            subtitles_path = None
+            if subtitles_ass:
+                subtitles_path = out_dir / f"{job.id}.ass"
+                subtitles_path.write_text(subtitles_ass, encoding="utf-8")
+            # Loudness: already a filter string like loudnorm=... or volume=...
             command = build_edl_command(
-                binaries, edl, output, encoder=cmd_encoder, bitrate_kbps=bitrate
+                binaries,
+                edl,
+                output,
+                encoder=cmd_encoder,
+                bitrate_kbps=bitrate,
+                subtitles_path=subtitles_path,
+                loudness_filter=loudness_filter,
+                has_audio=has_audio,
             )
             total = float(edl.get("total_duration", 10.0) or 10.0)
 
             def on_progress(event: object) -> None:
                 # event.percent is 0-100 of ffmpeg progress; map to 0-99
-                pct = event.percent if event.percent is not None else 0
+                pct = event.percent if event.percent is not None else 0  # type: ignore[attr-defined]
                 self.jobs.update(job.id, percent=min(99, pct), message=f"Rendering {pct:.1f}%")
 
             if job.cancel_event.is_set():
                 raise CommandCancelledError("Render cancelled before start")
             self.jobs.update(job.id, message="Rendering EDL")
+            # Timeout scales with content: 10 min base + 20x duration (e.g. 60s clip → 30 min max)
+            timeout = max(600.0, total * 20.0)
             run_command(
                 command,
-                timeout=600,
+                timeout=timeout,
                 cancel_event=job.cancel_event,
                 on_progress=on_progress,
                 total_seconds=total,

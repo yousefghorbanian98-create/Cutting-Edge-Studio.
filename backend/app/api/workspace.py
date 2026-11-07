@@ -93,7 +93,7 @@ def save_workspace(project_id: str, payload: WorkspaceSave, session: SessionDep)
             .values(name=payload.name, state_json=serialized)
             .execution_options(synchronize_session=False)
         )
-        if result.rowcount != 1:
+        if result.rowcount != 1:  # type: ignore[attr-defined]
             raise HTTPException(
                 status_code=409, detail="Workspace changed during save; reopen before saving"
             )

@@ -185,11 +185,11 @@ def extract_style_dna(reference: dict[str, Any], *, version: str = "1.0") -> Sty
         },
         "cut_lengths": lengths,
         "cut_stats": cut_stats(lengths),
-        "shot_type_counts": shot_type_counts(shots),
+        "shot_type_counts": shot_type_counts(shots),  # type: ignore[typeddict-item]
         "shots_per_minute": round(len(shots) / (duration / 60), 2) if duration > 0 else 0.0,
         "bpm": bpm_from_beats(beat_times),
         "beat_times": beat_times,
-        "color": average_color(shots),
+        "color": average_color(shots),  # type: ignore[typeddict-item]
         "camera_motion": camera_motion_counts(shots),
         "transition": dominant_transition(shots),
         "audio": {

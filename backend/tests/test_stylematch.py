@@ -402,7 +402,10 @@ def test_edl_render_command_trims_and_concats(tmp_path: Path) -> None:
     assert command[1] == "-y"
     assert joined.count("-ss") == 2
     assert command.count("-i") == 2  # one input per segment, no stray input flags
-    assert "concat=n=2:v=1:a=0" in joined
+    assert "concat=n=2:v=1:a=1" in joined
+    assert "-c:a" in command
+    assert "-map" in command
+    assert joined.count("-map") == 2
     assert "s=1080x1920" in joined
     assert "-s" not in command
     assert "-vf" not in command

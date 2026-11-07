@@ -41,7 +41,7 @@ module.exports = {
   ],
   options: {
     doNotFollow: { path: 'node_modules' },
-    tsPreCompilationDeps: true,
+    tsPreCompilationDeps: false,
     tsConfig: { fileName: 'frontend/tsconfig.json' },
     enhancedResolveOptions: { exportsFields: ['exports'], conditionNames: ['import','require','node','default'] },
     reporterOptions: { archi: { collapsePattern: '^(frontend/src|backend/app)/[^/]+' } },

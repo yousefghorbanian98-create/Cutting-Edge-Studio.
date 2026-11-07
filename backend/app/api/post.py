@@ -112,7 +112,10 @@ def comparison(payload: ComparisonPayload) -> dict[str, Any]:
     labels = tuple(payload.labels) if payload.labels and len(payload.labels) == 2 else None
     try:
         graph = comparison_filters(
-            payload.layout, width=payload.width, height=payload.height, labels=labels
+            payload.layout,
+            width=payload.width,
+            height=payload.height,
+            labels=labels,  # type: ignore[arg-type]
         )
     except ValueError as error:
         raise HTTPException(

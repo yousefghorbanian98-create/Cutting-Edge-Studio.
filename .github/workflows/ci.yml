@@ -117,6 +117,8 @@ jobs:
         run: ruff check --output-format=github .
       - name: ruff format --check
         run: ruff format --check .
+      - name: mypy — type check (honest, non-strict)
+        run: python -m mypy app
       - name: pytest + coverage (>=80%)
         run: python -m pytest --cov=app --cov-report=term-missing --cov-report=xml
       - name: pip-audit
@@ -143,7 +145,9 @@ jobs:
       - name: Madge — no circular JS/TS deps
         run: npx --yes madge --circular --extensions js,ts,tsx frontend/src
       - name: Dependency Cruiser — validate arch rules
-        run: npx --yes dependency-cruiser --config .dependency-cruiser.cjs frontend/src --output-type err || true
+        run: NODE_PATH=frontend/node_modules npx --yes dependency-cruiser --config .dependency-cruiser.cjs frontend/src --output-type err
+        env:
+          NODE_PATH: frontend/node_modules
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -173,8 +177,8 @@ jobs:
       - run: npm run lint
       - run: npm run test
       - run: npm run build
-      - name: npm audit (high+)
-        run: npm audit --audit-level=high
+      - name: npm audit (moderate+)
+        run: npm audit --audit-level=moderate
 
   security:
     if: inputs.evidence_run == ''
@@ -210,8 +214,8 @@ jobs:
         uses: aquasecurity/trivy-action@v0.36.0
         with:
           scan-type: fs
-          severity: CRITICAL
-          ignore-unfixed: true
+          severity: HIGH,CRITICAL
+          ignore-unfixed: false
           exit-code: '1'
 
   installer:

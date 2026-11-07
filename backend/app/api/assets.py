@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import threading
 from pathlib import Path
+from typing import Any
 
 from fastapi import APIRouter, HTTPException, Request, Response, status
 from fastapi.responses import FileResponse
@@ -47,8 +48,12 @@ def _to_read(asset: MediaAsset) -> AssetRead:
         LOG.warning("media.asset.probe_cache_corrupt", asset_id=asset.id, error=str(error))
         cached = {}
     streams = cached.get("streams") or []
-    video = next((item for item in streams if item.get("codec_type") == "video"), {})
-    audio = next((item for item in streams if item.get("codec_type") == "audio"), {})
+    video: dict[str, Any] = next(
+        (item for item in streams if item.get("codec_type") == "video"), {}
+    )
+    audio: dict[str, Any] = next(
+        (item for item in streams if item.get("codec_type") == "audio"), {}
+    )
     imported = cached.get("ce_import") or {}
     path = Path(asset.path)
     try:

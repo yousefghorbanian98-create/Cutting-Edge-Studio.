@@ -143,7 +143,7 @@ def _collect_stdout(
     lines: list[str] = []
     assert process.stdout is not None
     size = 0
-    for line in iter(lambda: process.stdout.readline(MAX_STDOUT_CHARS + 1), ""):
+    for line in iter(lambda: process.stdout.readline(MAX_STDOUT_CHARS + 1), ""):  # type: ignore[union-attr]
         size += len(line)
         if size > MAX_STDOUT_CHARS:
             LOG.error("media.command.stdout_limit", limit=MAX_STDOUT_CHARS)

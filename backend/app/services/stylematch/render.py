@@ -166,7 +166,23 @@ def build_preview_plan(
     return RenderPlan(command=command, filter_chain=plan.filter_chain, output=output)
 
 
-def build_edl_command(
+def _atempo_chain(speed: float) -> str:
+    """Build atempo filter chain for arbitrary speed (FFmpeg atempo is 0.5-2.0 per instance)."""
+    if speed == 1.0:
+        return ""
+    filters: list[str] = []
+    s = speed
+    while s < 0.5:
+        filters.append("atempo=0.5")
+        s /= 0.5
+    while s > 2.0:
+        filters.append("atempo=2.0")
+        s /= 2.0
+    filters.append(f"atempo={s:.4f}")
+    return "," + ",".join(filters)
+
+
+def build_edl_command(  # noqa: PLR0912, PLR0915
     binaries: FFmpegBinaries,
     edl: EDL,
     output: Path,
@@ -175,16 +191,33 @@ def build_edl_command(
     bitrate_kbps: int = 12000,
     face_center: tuple[float, float] | None = None,
     source_color: dict[str, float] | None = None,
+    subtitles_path: Path | None = None,
+    loudness_filter: str | None = None,
+    has_audio: bool | None = None,
+    audio_bitrate_kbps: int = 192,
 ) -> list[str]:
     """One command that renders the whole EDL (trim per segment, then concat).
 
     Each segment is an independent input with ``-ss``/``-t`` so long source files are
     never decoded twice, and ``concat`` stitches the normalised streams together.
+    Audio is preserved via atrim/asetpts (+atempo for speed) and concatenated with
+    ``a=1`` to AAC. When ``has_audio`` is explicitly False (or EDL declares no audio),
+    output is ``-an``. Subtitles and loudness filters are wired when provided.
     """
     segments = list(edl.get("segments") or [])
     if not segments:
         msg = "cannot render an empty EDL"
         raise ValueError(msg)
+
+    # Determine audio presence: explicit param > EDL flag > per-segment flag > default True
+    if has_audio is None:
+        has_audio = bool(edl.get("has_audio", True))
+        if (
+            has_audio
+            and any(seg.get("has_audio") is False for seg in segments)
+            and all(seg.get("has_audio") is False for seg in segments)
+        ):
+            has_audio = False
 
     width = int(edl.get("width", 1080))
     height = int(edl.get("height", 1920))
@@ -203,12 +236,34 @@ def build_edl_command(
             f"scale={width}:{height}:force_original_aspect_ratio=decrease,"
             f"pad={width}:{height}:(ow-iw)/2:(oh-ih)/2,setsar=1,fps={fps}[s{index}]"
         )
+        if has_audio:
+            atempo = _atempo_chain(speed)
+            graph.append(
+                f"[{index}:a]atrim=start=0:end={length:.3f},asetpts=PTS-STARTPTS{atempo}[a{index}]"
+            )
 
-    stream_labels = "".join(f"[s{index}]" for index in range(len(segments)))
-    graph.append(f"{stream_labels}concat=n={len(segments)}:v=1:a=0[cat]")
-    graph.append(
-        f"[cat]{build_filter_chain(edl, face_center=face_center, source_color=source_color)}[vout]"
-    )
+    if has_audio:
+        v_labels = "".join(f"[s{index}]" for index in range(len(segments)))
+        a_labels = "".join(f"[a{index}]" for index in range(len(segments)))
+        graph.append(f"{v_labels}{a_labels}concat=n={len(segments)}:v=1:a=1[vcat][acat]")
+    else:
+        stream_labels = "".join(f"[s{index}]" for index in range(len(segments)))
+        graph.append(f"{stream_labels}concat=n={len(segments)}:v=1:a=0[cat]")
+
+    # Video filter chain (with optional subtitles burn-in)
+    video_filter = build_filter_chain(edl, face_center=face_center, source_color=source_color)
+    if subtitles_path is not None:
+        sub_path = str(subtitles_path).replace("\\", "/").replace(":", r"\:").replace("'", r"\'")
+        video_filter = f"{video_filter},subtitles='{sub_path}'"
+
+    if has_audio:
+        graph.append(f"[vcat]{video_filter}[vout]")
+        if loudness_filter:
+            graph.append(f"[acat]{loudness_filter}[aout]")
+        else:
+            graph.append("[acat]anull[aout]")
+    else:
+        graph.append(f"[cat]{video_filter}[vout]")
 
     # Validate the encoder choice through the media layer (GPL encoders raise here), then
     # build the output flags explicitly: the EDL graph owns resolution/frame rate.
@@ -227,6 +282,14 @@ def build_edl_command(
         video_args += ["-preset", "p5", "-tune", "hq", "-rc", "vbr"]
     else:
         video_args += ["-maxrate", f"{bitrate_kbps}k", "-bufsize", f"{bitrate_kbps * 2}k"]
+
+    if has_audio:
+        audio_args = ["-c:a", "aac", "-b:a", f"{audio_bitrate_kbps}k"]
+        maps = ["-map", "[vout]", "-map", "[aout]"]
+    else:
+        audio_args = ["-an"]
+        maps = ["-map", "[vout]"]
+
     return [
         str(binaries.ffmpeg),
         "-y",
@@ -236,9 +299,9 @@ def build_edl_command(
         *inputs,
         "-filter_complex",
         ";".join(graph),
-        "-map",
-        "[vout]",
+        *maps,
         *video_args,
+        *audio_args,
         "-pix_fmt",
         "yuv420p",
         "-profile:v",
