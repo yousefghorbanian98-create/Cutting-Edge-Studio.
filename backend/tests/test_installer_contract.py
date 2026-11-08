@@ -134,3 +134,30 @@ def test_hook_script_is_pure_ascii() -> None:
     raw = HOOKS.read_bytes()
     offenders = [(i, b) for i, b in enumerate(raw) if b > 0x7F]
     assert offenders == [], f"non-ASCII bytes at offsets {[o[0] for o in offenders[:5]]}"
+
+
+def test_no_dialog_can_block_a_silent_install(hooks: str) -> None:
+    """A MessageBox still renders under `/S`, where nobody can dismiss it.
+
+    CI installs with `/S /D=...` and waits, so an unguarded dialog turns a failed
+    install into a job that hangs until the runner times out. Every MessageBox must
+    therefore sit behind a Silent check; CE_Abort is the sanctioned wrapper.
+    """
+    lines = hooks.splitlines()
+    guarded: list[int] = []
+    for index, line in enumerate(lines):
+        if "MessageBox" not in line or line.lstrip().startswith(";"):
+            continue
+        window = "\n".join(lines[max(0, index - 4) : index])
+        if "${IfNot} ${Silent}" in window or "${If} ${Silent}" in window:
+            guarded.append(index)
+            continue
+        pytest.fail(f"unguarded MessageBox on line {index + 1}: {line.strip()}")
+    assert guarded, "expected at least one guarded MessageBox (the CE_Abort wrapper)"
+
+
+def test_aborts_set_a_nonzero_exit_code(hooks: str) -> None:
+    """A silent install that aborts must tell the caller, not just the log."""
+    abort_macro = hooks.split("!macro CE_Abort", 1)[1].split("!macroend", 1)[0]
+    assert "SetErrorLevel" in abort_macro, "CE_Abort must set a non-zero exit code"
+    assert "Abort" in abort_macro

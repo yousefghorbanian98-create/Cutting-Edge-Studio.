@@ -11,6 +11,10 @@ on:
         description: 'Read only: surface existing desktop-smoke JSON from this repository run (no build)'
         required: false
         default: ''
+      publish_release:
+        description: 'Tag to publish the built installer under (e.g. v1.0.0-light). Empty = do not publish.'
+        required: false
+        default: ''
 
 permissions:
   contents: read
@@ -442,3 +446,62 @@ jobs:
           path: |
             C:\build\delivery\*.exe
             C:\build\delivery\*.sha256
+
+  release:
+    # Only on an explicit dispatch that names a tag, so the write permission is
+    # never active on ordinary pushes. Reuses the artifact the installer job
+    # already produced rather than building the app a second time.
+    if: inputs.evidence_run == '' && inputs.publish_release != ''
+    name: Publish installer to a GitHub Release
+    needs: installer
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Download the installer built by this run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh run download "${{ github.run_id }}" -R "${{ github.repository }}" -n CuttingEdgeV2-Setup -D dist
+      - name: Show what will be published
+        run: |
+          ls -l dist
+          test -n "$(find dist -name '*.exe' -print -quit)" || { echo "::error::no installer .exe in the artifact"; exit 1; }
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.publish_release }}
+        run: |
+          set -euo pipefail
+          # The light build carries no FFmpeg or models; say so on the release itself
+          # rather than letting someone discover it after downloading.
+          notes=$(cat <<'NOTES'
+          Windows installer built by CI from this commit.
+
+          Staged setup: system requirements (x64, Windows build, AVX2, RAM, disk) ->
+          install the bundled Visual C++ runtime if missing -> verify it registered ->
+          install the application -> verify the installed payload. Progress is reported
+          in a single details view. The installer performs no network access.
+
+          **This is the `light` build.** FFmpeg and the analysis models are not embedded,
+          because their SHA-256 pins in `scripts/pins.json` are still null. The app
+          resolves FFmpeg from PATH in this configuration. Run
+          `scripts/build-installer.ps1 -UpdatePins` on a trusted network and commit the
+          pins to produce the full offline package.
+
+          Verify the download against the published .sha256 before running.
+          NOTES
+          )
+          if gh release view "$TAG" -R "${{ github.repository }}" >/dev/null 2>&1; then
+            gh release upload "$TAG" dist/* -R "${{ github.repository }}" --clobber
+          else
+            gh release create "$TAG" dist/* -R "${{ github.repository }}" \
+              --title "Cutting Edge v2 $TAG - Windows installer (light)" \
+              --notes "$notes" \
+              --target "${{ github.sha }}"
+          fi
+          echo "### Download" >> "$GITHUB_STEP_SUMMARY"
+          gh release view "$TAG" -R "${{ github.repository }}" \
+            --json assets --jq '.assets[] | "- \(.name) (\(.size) bytes)\n  \(.url)"' >> "$GITHUB_STEP_SUMMARY"

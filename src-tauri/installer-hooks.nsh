@@ -52,6 +52,20 @@ Var CE_Warnings
   SetDetailsPrint listonly
 !macroend
 
+; Stop the install with a reason.
+;
+; A plain MessageBox still renders under /S, where nobody can dismiss it, so an
+; unattended install would hang forever instead of failing. Silent runs therefore
+; get the log line and a non-zero error level; only interactive runs get a dialog.
+!macro CE_Abort TEXT
+  !insertmacro CE_Fail "${TEXT}"
+  ${IfNot} ${Silent}
+    MessageBox MB_ICONSTOP|MB_OK "${TEXT}"
+  ${EndIf}
+  SetErrorLevel 2
+  Abort "${TEXT}"
+!macroend
+
 ; ---------------------------------------------------------------------------
 ; Reports whether the Visual C++ 2015-2022 x64 runtime is registered.
 ; Both registry views are probed so the result does not depend on whether the
@@ -87,10 +101,7 @@ Function CEPreflightSystem
 
   ; -- architecture ---------------------------------------------------------
   ${IfNot} ${RunningX64}
-    !insertmacro CE_Fail "This build requires 64-bit Windows (x64)."
-    MessageBox MB_ICONSTOP|MB_OK \
-      "Cutting Edge v2 requires 64-bit Windows.$\r$\nWindows on ARM and 32-bit Windows are not supported."
-    Abort "Unsupported architecture"
+    !insertmacro CE_Abort "Cutting Edge v2 requires 64-bit Windows.$\r$\nWindows on ARM and 32-bit Windows are not supported."
   ${EndIf}
   !insertmacro CE_Ok "Architecture: x64"
 
@@ -109,18 +120,13 @@ Function CEPreflightSystem
       ${EndIf}
     ${EndIf}
   ${Else}
-    !insertmacro CE_Fail "Windows 10 or later is required."
-    MessageBox MB_ICONSTOP|MB_OK "Cutting Edge v2 requires Windows 10 (21H2) or Windows 11."
-    Abort "Unsupported Windows version"
+    !insertmacro CE_Abort "Cutting Edge v2 requires Windows 10 (21H2) or Windows 11."
   ${EndIf}
 
   ; -- AVX2 -----------------------------------------------------------------
   System::Call "kernel32::IsProcessorFeaturePresent(i ${CE_PF_AVX2}) i .r0"
   ${If} $0 == 0
-    !insertmacro CE_Fail "This CPU does not report AVX2 support."
-    MessageBox MB_ICONSTOP|MB_OK \
-      "Cutting Edge v2 requires a CPU with AVX2.$\r$\nThe pose and embedding models cannot run without it."
-    Abort "CPU without AVX2"
+    !insertmacro CE_Abort "Cutting Edge v2 requires a CPU with AVX2.$\r$\nThe pose and embedding models cannot run without it."
   ${EndIf}
   !insertmacro CE_Ok "CPU supports AVX2"
 
@@ -150,10 +156,7 @@ Function CEPreflightSystem
   ${DriveSpace} "$0\" "/D=F /S=M" $1
   ${If} $1 > 0
     ${If} $1 < ${CE_REQUIRED_DISK_MB}
-      !insertmacro CE_Fail "Only $1 MB free on $0; ${CE_REQUIRED_DISK_MB} MB are required."
-      MessageBox MB_ICONSTOP|MB_OK \
-        "Not enough free space on $0.$\r$\nRequired: ${CE_REQUIRED_DISK_MB} MB$\r$\nAvailable: $1 MB"
-      Abort "Insufficient disk space"
+      !insertmacro CE_Abort "Not enough free space on $0.$\r$\nRequired: ${CE_REQUIRED_DISK_MB} MB$\r$\nAvailable: $1 MB"
     ${EndIf}
     !insertmacro CE_Ok "Free space on $0: $1 MB"
   ${Else}
@@ -198,10 +201,7 @@ Function CEPrerequisiteVCRuntime
     !insertmacro CE_Warn "Runtime installed but Windows requests a restart (exit 3010)."
     SetRebootFlag true
   ${Else}
-    !insertmacro CE_Fail "Runtime installer returned exit code $1."
-    MessageBox MB_ICONSTOP|MB_OK \
-      "The Visual C++ runtime could not be installed (exit code $1).$\r$\nInstall it manually and run this setup again."
-    Abort "Prerequisite installation failed"
+    !insertmacro CE_Abort "The Visual C++ runtime could not be installed (exit code $1).$\r$\nInstall it manually and run this setup again."
   ${EndIf}
 !else
   !warning "vc_redist.x64.exe was not staged; the installer will only report its absence."
@@ -226,10 +226,7 @@ Function CEVerifyPrerequisites
     !insertmacro CE_Ok "Visual C++ x64 runtime present $1"
   ${Else}
   !if /FileExists "$%CE_PREREQ_DIR%\vc_redist.x64.exe"
-    !insertmacro CE_Fail "The runtime still does not register after installation."
-    MessageBox MB_ICONSTOP|MB_OK \
-      "The Visual C++ runtime did not register after installation.$\r$\nSetup cannot continue safely."
-    Abort "Prerequisite verification failed"
+    !insertmacro CE_Abort "The Visual C++ runtime did not register after installation.$\r$\nSetup cannot continue safely."
   !else
     !insertmacro CE_Warn "Visual C++ x64 runtime is still absent (nothing was bundled to install)."
   !endif
@@ -257,18 +254,25 @@ Function CEVerifyInstallation
   !insertmacro CE_Stage "Verifying the installed application"
 
   ${IfNot} ${FileExists} "$INSTDIR\${MAINBINARYNAME}.exe"
-    !insertmacro CE_Fail "${MAINBINARYNAME}.exe is missing from $INSTDIR."
-    MessageBox MB_ICONSTOP|MB_OK "Installation incomplete: ${MAINBINARYNAME}.exe was not written."
-    Abort "Application verification failed"
+    !insertmacro CE_Abort "Installation incomplete: ${MAINBINARYNAME}.exe was not written."
   ${EndIf}
   !insertmacro CE_Ok "${MAINBINARYNAME}.exe"
 
+  ; Tauri strips the target triple from externalBin, but do not bet an install on
+  ; that: fall back to a wildcard before declaring the sidecar missing.
   ${If} ${FileExists} "$INSTDIR\cutting-edge-backend.exe"
     !insertmacro CE_Ok "cutting-edge-backend.exe (processing sidecar)"
   ${Else}
-    !insertmacro CE_Fail "cutting-edge-backend.exe is missing; the app would start with no processing core."
-    MessageBox MB_ICONSTOP|MB_OK "Installation incomplete: the processing sidecar was not written."
-    Abort "Sidecar verification failed"
+    ClearErrors
+    FindFirst $0 $1 "$INSTDIR\cutting-edge-backend*.exe"
+    ${If} ${Errors}
+    ${OrIf} $1 == ""
+      FindClose $0
+      !insertmacro CE_Abort "Installation incomplete: the processing sidecar was not written."
+    ${Else}
+      !insertmacro CE_Ok "$1 (processing sidecar)"
+      FindClose $0
+    ${EndIf}
   ${EndIf}
 
   ${If} ${FileExists} "$INSTDIR\frontend\index.html"
