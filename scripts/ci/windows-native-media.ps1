@@ -26,12 +26,16 @@ foreach ($attempt in 1..4) {
         $downloaded = $true
         break
     } catch {
-        Write-Host "Download attempt $attempt failed: $($_.Exception.Message)"
+        $lastError = $_.Exception.Message
+        Write-Host "::warning title=Pinned tool download retry::attempt $attempt failed: $lastError"
         if (Test-Path $archive) { Remove-Item $archive -Force }
         if ($attempt -lt 4) { Start-Sleep -Seconds (5 * $attempt) }
     }
 }
-if (-not $downloaded) { throw 'Could not download the pinned native-tool archive after 4 attempts.' }
+if (-not $downloaded) {
+    Write-Host "::error title=Pinned tool download failed::url=$($pin.url)%0Alast error: $lastError"
+    throw "Could not download the pinned native-tool archive after 4 attempts: $lastError"
+}
 $actualHash = (Get-FileHash $archive -Algorithm SHA256).Hash.ToLowerInvariant()
 if ($actualHash -ne $pin.sha256) { throw 'Downloaded native-tool archive does not match its reviewed checksum.' }
 $unpacked = Join-Path $OutputDir 'unpacked'
