@@ -206,3 +206,22 @@ Note that `concurrency.cancel-in-progress` is on and keyed to the ref. Pushing t
 branch while its Windows build is running cancels that build before the artifact is
 uploaded. Tags get their own concurrency group, so a release build is not affected
 by branch activity.
+
+## The pinned-tool download is an availability risk, not a trust one
+
+The Windows job verifies the real FFmpeg tooling against a reviewed SHA-256 in
+`scripts/pins.json` before the installer is built. That archive is served from the
+upstream release CDN, which has been observed returning HTTP 504 for sustained
+periods — measured at 0 successes in 6 attempts from outside CI, and 0 in 8 inside
+it, for the same asset that was downloading normally an hour earlier.
+
+Two mitigations, in order:
+
+1. `actions/cache`, keyed by the reviewed hash (`ce-ffmpeg-<sha256>`). A changed pin
+   cannot collide with a stale entry.
+2. A deadline-bounded retry, ten minutes, for the cold-cache case.
+
+Neither relaxes verification. The checksum is re-checked on whatever the cache
+returns and again on anything downloaded, so an outage can delay a build but can
+never cause an unverified binary to be used. If the pin ever needs to move, update
+`pins.json` and the cache key follows automatically.

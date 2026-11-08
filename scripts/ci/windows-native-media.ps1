@@ -16,10 +16,10 @@ if (Test-Path $OutputDir) { throw 'Use a fresh disposable probe directory; exist
 New-Item -ItemType Directory -Path $OutputDir | Out-Null
 $OutputDir = (Resolve-Path $OutputDir).Path
 $archive = Join-Path $OutputDir 'ffmpeg.zip'
-# A 76 MB fetch over the release CDN intermittently returns 504 for minutes at
-# a time. Retry patiently rather than losing a 60-minute Windows build to an
-# upstream outage; the checksum below is still the gate and an unverified
-# archive never proceeds.
+# The release CDN serves this 76 MB asset with sustained 504s at times. Prefer a
+# checksum-verified cache hit, then fall back to a deadline-bounded retry. The
+# checksum below is still the gate either way: an unverified archive never
+# proceeds, so availability work can never become a trust shortcut.
 $downloaded = $false
 $cached = ''
 if ($CacheDir) { $cached = Join-Path $CacheDir 'ffmpeg.zip' }
@@ -35,18 +35,26 @@ if ($cached -and (Test-Path $cached)) {
         Remove-Item $cached -Force
     }
 }
-if (-not $downloaded) { foreach ($attempt in 1..8) {
-    try {
-        Invoke-WebRequest -Uri $pin.url -OutFile $archive -UseBasicParsing
-        $downloaded = $true
-        break
-    } catch {
-        $lastError = $_.Exception.Message
-        Write-Host "::warning title=Pinned tool download retry::attempt $attempt failed: $lastError"
-        if (Test-Path $archive) { Remove-Item $archive -Force }
-        if ($attempt -lt 8) { Start-Sleep -Seconds @(10, 20, 30, 45, 60, 60, 60)[$attempt - 1] }
+if (-not $downloaded) {
+    # Deadline rather than a fixed attempt count: the outage lasts as long as it
+    # lasts, and a ten-minute wait is cheap against a sixty-minute build that is
+    # otherwise thrown away. Whichever run wins seeds the cache for the rest.
+    $deadline = (Get-Date).AddMinutes(10)
+    $attempt = 0
+    while (-not $downloaded -and (Get-Date) -lt $deadline) {
+        $attempt++
+        try {
+            Invoke-WebRequest -Uri $pin.url -OutFile $archive -UseBasicParsing
+            $downloaded = $true
+        } catch {
+            $lastError = $_.Exception.Message
+            Write-Host "attempt ${attempt}: $lastError"
+            if (Test-Path $archive) { Remove-Item $archive -Force }
+            if ((Get-Date) -lt $deadline) { Start-Sleep -Seconds 30 }
+        }
     }
-} }
+    Write-Host "::warning title=Pinned tool download::$attempt attempt(s); downloaded=$downloaded"
+}
 if (-not $downloaded) {
     Write-Host "::error title=Pinned tool download failed::url=$($pin.url)%0Alast error: $lastError"
     throw "Could not download the pinned native-tool archive after 8 attempts: $lastError"
