@@ -525,8 +525,8 @@ jobs:
           name: CuttingEdgeV2-Setup
           if-no-files-found: error
           path: |
-            C:\build\delivery\*.exe
-            C:\build\delivery\*.sha256
+            C:\build\delivery\CuttingEdgeV2-Setup-*.exe
+            C:\build\delivery\CuttingEdgeV2-Setup-*.exe.sha256
 
   release:
     # Only on an explicit dispatch that names a tag, so the write permission is

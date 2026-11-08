@@ -58,6 +58,15 @@ cd src-tauri && cargo build --release
 
 ## Installer
 
+A built Windows installer is published on the
+[`v1.0.0-light` release](https://github.com/yousefghorbanian98-create/Cutting-Edge-Studio./releases/tag/v1.0.0-light):
+`CuttingEdgeV2-Setup-v1.0.0.exe` with a `.sha256` to check it against. It is a
+staged setup — system requirements, Visual C++ runtime, verification, application,
+then verification of what landed — reported in one progress view, with no network
+access. See [docs/INSTALLER-DESIGN.md](docs/INSTALLER-DESIGN.md).
+
+Pushing a `v*` tag builds and publishes a new one.
+
 ```powershell
 pwsh -File scripts/build-installer.ps1 -WithoutPinnedBinaries  # light CI/smoke build ONLY
 ```

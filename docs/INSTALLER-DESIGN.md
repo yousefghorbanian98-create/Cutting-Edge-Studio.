@@ -234,25 +234,72 @@ never cause an unverified binary to be used. If the pin ever needs to move, upda
 
 ## Verification status
 
-What is proven on a real `windows-latest` runner, not asserted:
+Proven end to end on a real `windows-latest` runner, run `42474112884`:
 
 | Claim | Evidence |
 | --- | --- |
-| `installer-hooks.nsh` compiles under real `makensis` | `Build installer` succeeded in runs `42456620247` and `42464689399` with the hooks wired in |
-| The hooks do not hang a silent install | The install step now fails in minutes with a non-zero exit code; before `CE_Abort` it hung past 60 minutes in two consecutive runs |
-| The installer `.exe` is actually produced | `installer artifact exists: true` in the installed-desktop summary, and run `42453783707` uploaded a `CuttingEdgeV2-Setup` artifact |
-| The hooks were never the build failure | The failing build log shows `Built application at: ...cutting-edge-v2.exe` followed by `failed to bundle project: http status: 504` |
+| The hooks compile under real `makensis` | `Build installer` succeeded with the hooks wired in |
+| The staged install completes silently | `NSIS silent install succeeded: true`; all 20 installed-desktop checks passed |
+| The installed app runs and shuts down cleanly | `native shell launched healthy sidecar`, `native window is present`, `owned backend gone after orderly native exit` |
+| An installer is actually published | `CuttingEdgeV2-Setup-v1.0.0.exe`, 45,431,230 bytes, with its `.sha256`, on release `v1.0.0-light` |
+| The hooks never hang a silent install | The step now completes in minutes; before `CE_Abort` it hung past 60 minutes twice |
 
-Still open: the silent install returns a non-zero exit code, and the stage that
-rejects it has not yet been captured. The instrumentation for that is in place —
-`CE_Log` writes every stage line to `%TEMP%\cutting-edge-setup.log` and the CI
-harness echoes it as an annotation — but no run has reached that step since, because
-the GitHub release CDN began returning sustained 504s. Measured during this work:
-0 of 4 for the FFmpeg asset and 1 of 3 for Tauri's `nsis-3.13.zip`, from outside CI,
-so the degradation is not specific to one project.
+The stage log from a passing install, as the installer itself recorded it:
 
-The two likely candidates, both in stage 1, are the AVX2 probe and the 6 GB free
-space rule. The 6 GB figure in `COMPATIBILITY.md` describes working space for the
-full product with models, which a light build does not need; if the stage log
-confirms that, the hard floor should be the payload size and 6 GB should become a
-warning. That change should be made from the log, not from a guess.
+```
+[1/5] Checking system requirements
+        OK    Architecture: x64
+        OK    Windows build 26100
+        OK    CPU supports AVX2
+        OK    Installed RAM: 16378 MB
+        OK    Free space on C:: 25540 MB
+[2/5] Checking Visual C++ 2015-2022 x64 runtime
+        OK    Already installed; nothing to do.
+[3/5] Verifying prerequisites
+        OK    Visual C++ x64 runtime present v14.51.36247.00
+        OK    WebView2 runtime detected: 156.0.4314.58
+[4/5] Installing application files
+[5/5] Verifying the installed application
+```
+
+The gate installs into `...\CE installed smoke نصب با فاصله` — spaces and non-ASCII
+on purpose, so the hooks are exercised against a hostile path, not a tidy one.
+
+### The bug this log found
+
+An earlier run produced the same log ending in:
+
+```
+        FAIL  Installation incomplete: ${MAINBINARYNAME}.exe was not written.
+```
+
+printed literally. The template `!include`s this file at line 36 and defines
+`PRODUCTNAME` at 42, `VERSION` at 43 and `MAINBINARYNAME` at 53. NSIS compiles a
+`Function` where it appears, so inside one those defines were still empty.
+`makensis` accepted it without complaint — an undefined `${...}` is just text — and
+every silent install failed with exit code 2. The hook *macros* were unaffected,
+because they expand at insertion inside `Section Install`, after the defines exist.
+
+The three values are now captured into `Var`s in the hook macro, and the functions
+read those. Two contract tests cover it: no template define may appear inside a
+`Function`, and the capture must be present. Reintroducing the original expression
+fails them.
+
+This is the reason stage 5 exists. A step that reports success without verifying
+what actually landed is the failure mode the design set out to catch, and here it
+caught the installer's own.
+
+## Remaining work
+
+`scripts/pins.json` still carries `sha256: null` for `vc_redist_x64`, WebView2 and
+the six models, and the build script refuses to build on a null hash. Until an
+operator runs `pwsh -File scripts/build-installer.ps1 -UpdatePins` once on a trusted
+network and commits the reviewed pins, only the **light** build is producible: no
+embedded FFmpeg, no models, and stage 2 reports the Visual C++ runtime rather than
+installing it. The published `v1.0.0-light` release is that build, and its notes say
+so.
+
+The Rust job is also still red, for a cause that predates this work:
+`src-tauri/Cargo.lock` is not committed, so the job resolves crates fresh and fails
+at the end by design. `cargo fmt --check` and `cargo clippy` cannot be run or fixed
+without a Rust toolchain and crates.io access.
