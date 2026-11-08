@@ -134,6 +134,10 @@ function Get-PinnedArtifact {
 
     if ($archive -like '*.zip') {
         Expand-Archive -Path $archive -DestinationPath $target -Force
+    } else {
+        # Plain payloads (vc_redist.x64.exe) are staged verbatim so the NSIS hook can
+        # embed them. Build-machine only; the installed app still never downloads.
+        Copy-Item -Path $archive -Destination (Join-Path $target ([System.IO.Path]::GetFileName($Pin.url))) -Force
     }
 }
 
@@ -143,6 +147,7 @@ if ($WithoutPinnedBinaries) {
     Write-Host '[warn] -WithoutPinnedBinaries: FFmpeg/models/WebView2 runtime are NOT embedded.'
 } else {
     Get-PinnedArtifact -Name 'ffmpeg' -Pin $pins.ffmpeg
+    Get-PinnedArtifact -Name 'vc_redist_x64' -Pin $pins.vc_redist_x64
     foreach ($entry in $pins.models.PSObject.Properties) {
         Get-PinnedArtifact -Name $entry.Name -Pin $entry.Value
     }
@@ -245,6 +250,17 @@ try {
         Write-Host '[4/4] skipped installer (-SkipInstaller)'
     } else {
         Write-Host '[4/4] nsis installer'
+        # installer-hooks.nsh embeds the redistributable from this directory at compile
+        # time via $%CE_PREREQ_DIR%. When it is empty the hook compiles without a payload
+        # and reports the missing prerequisite instead of downloading anything.
+        $prereqDir = Join-Path $root 'src-tauri/prerequisites'
+        if (Test-Path (Join-Path $prereqDir 'vc_redist.x64.exe')) {
+            $env:CE_PREREQ_DIR = $prereqDir
+            Write-Host "[ok  ] staged prerequisite: vc_redist.x64.exe"
+        } else {
+            $env:CE_PREREQ_DIR = ''
+            Write-Host '[warn] vc_redist.x64.exe not staged; installer will report it as a prerequisite instead of installing it.'
+        }
         Push-Location (Join-Path $root 'src-tauri')
         try {
             $tauriLog = 'tauri-build.log'

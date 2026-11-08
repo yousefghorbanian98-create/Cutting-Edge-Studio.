@@ -1,18 +1,17 @@
+import { useEffect } from 'react';
 import { Check } from 'lucide-react';
 import { Badge, Button, Switch } from '../../components/ui';
 import { cn } from '../../lib/cn';
 import { translate } from '../../lib/i18n';
 import { useAppStore } from '../../store/useAppStore';
 import {
-  COMPARISON_LAYOUTS,
   POST_FEATURES,
-  POST_PRESETS,
   canRender,
   enabledFeatures,
   summarize,
   usePostStore,
   type ComparisonLayout,
-} from './postStore';
+} from '../../store/postStore';
 
 const LAYOUT_KEY: Record<ComparisonLayout, string> = {
   side_by_side: 'post.layout.side',
@@ -33,9 +32,19 @@ export function PostPanel() {
   const setLayout = usePostStore((state) => state.setLayout);
   const setCaptionFormat = usePostStore((state) => state.setCaptionFormat);
   const setQuality = usePostStore((state) => state.setQuality);
+  const presets = usePostStore((state) => state.presets);
+  const layouts = usePostStore((state) => state.layouts);
+  const hydrateFromBackend = usePostStore((state) => state.hydrateFromBackend);
+
+  // The sidecar owns the preset table; the bundled copy is only a startup fallback.
+  useEffect(() => {
+    const controller = new AbortController();
+    void hydrateFromBackend(controller.signal);
+    return () => controller.abort();
+  }, [hydrateFromBackend]);
 
   const active = enabledFeatures(enabled);
-  const summary = summarize({ enabled, presetId, captionFormat, quality });
+  const summary = summarize({ enabled, presetId, captionFormat, quality, presets });
 
   return (
     <section aria-labelledby="post-panel-title" className="flex h-full flex-col gap-3 overflow-y-auto pe-1">
@@ -71,7 +80,7 @@ export function PostPanel() {
       <div className="flex flex-col gap-1">
         <span className="text-[10px] font-medium text-[var(--text-secondary)]">{translate(language, 'post.preset')}</span>
         <div className="flex flex-wrap gap-1">
-          {POST_PRESETS.map((preset) => (
+          {presets.map((preset) => (
             <Button
               key={preset.id}
               size="sm"
@@ -88,7 +97,7 @@ export function PostPanel() {
       <div className="flex flex-col gap-1">
         <span className="text-[10px] font-medium text-[var(--text-secondary)]">{translate(language, 'post.layout')}</span>
         <div className="flex flex-wrap gap-1">
-          {COMPARISON_LAYOUTS.map((option) => (
+          {layouts.map((option) => (
             <Button
               key={option}
               size="sm"

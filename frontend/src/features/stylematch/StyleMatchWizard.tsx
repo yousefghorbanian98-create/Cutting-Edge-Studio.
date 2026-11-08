@@ -4,12 +4,12 @@ import { ShieldCheck } from 'lucide-react';
 import { Badge, Button, ProgressBar, Stepper, type Step } from '../../components/ui';
 import { translate } from '../../lib/i18n';
 import { useAppStore } from '../../store/useAppStore';
-import { useWorkspaceStore } from '../workspace/workspaceStore';
+import { useWorkspaceStore } from '../../store/workspaceStore';
 import type { InspectionOperation } from './inspectionSchema';
 import { InspectionPanel } from './InspectionPanel';
 import { RenderPanel } from '../render/RenderPanel';
-import { useMediaStore } from '../media/mediaStore';
-import { useWizardStore, WIZARD_STEPS, canAdvance } from './wizardStore';
+import { useMediaStore } from '../../store/mediaStore';
+import { useWizardStore, WIZARD_STEPS, canAdvance } from '../../store/wizardStore';
 
 const STEP_LABEL_KEYS = ['wizard.step.1', 'wizard.step.2', 'wizard.step.3', 'wizard.step.4', 'wizard.step.5'];
 

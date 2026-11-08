@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 import { Button, Select } from '../../components/ui';
 import { translate } from '../../lib/i18n';
 import { useAppStore } from '../../store/useAppStore';
-import { useMediaStore } from '../media/mediaStore';
-import { useWorkspaceStore, watchWorkspaceChanges } from './workspaceStore';
+import { useMediaStore } from '../../store/mediaStore';
+import { useWorkspaceStore, watchWorkspaceChanges } from '../../store/workspaceStore';
 
 /** Local SQLite is authoritative; browser storage holds only the last project ID. */
 export function WorkspaceBar() {

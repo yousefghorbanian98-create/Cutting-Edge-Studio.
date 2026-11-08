@@ -54,7 +54,8 @@
           "English",
           "Farsi"
         ],
-        "displayLanguageSelector": true
+        "displayLanguageSelector": true,
+        "installerHooks": "./installer-hooks.nsh"
       },
       "webviewInstallMode": {
         "type": "fixedRuntime",

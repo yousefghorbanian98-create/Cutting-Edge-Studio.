@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 
 export const WIZARD_STEPS = ['reference', 'dna', 'analysis', 'compatibility', 'edl'] as const;
-export type WizardStepId = (typeof WIZARD_STEPS)[number];
 
 export interface WizardRequirements {
   referenceSelected: boolean;

@@ -1,12 +1,12 @@
 import { create } from 'zustand';
 import { z } from 'zod';
-import { api, ApiError, type AssetResponse, type ProjectResponse } from '../../lib/api';
-import { useAppStore } from '../../store/useAppStore';
-import { useMediaStore, type MediaClip } from '../media/mediaStore';
-import { usePostStore } from '../post/postStore';
-import { useWizardStore } from '../stylematch/wizardStore';
-import { useTimelineStore } from '../timeline/timelineStore';
-import { snapshotSchema, workspaceSchema, type WorkspaceSnapshot } from './schema';
+import { api, ApiError, type AssetResponse, type ProjectResponse } from '../lib/api';
+import { useAppStore } from './useAppStore';
+import { useMediaStore, type MediaClip } from './mediaStore';
+import { usePostStore } from './postStore';
+import { useWizardStore } from './wizardStore';
+import { useTimelineStore } from './timelineStore';
+import { snapshotSchema, workspaceSchema, type WorkspaceSnapshot } from '../features/workspace/schema';
 
 export const LAST_PROJECT_STORAGE = 'cutting-edge.last-project';
 interface WorkspaceState {

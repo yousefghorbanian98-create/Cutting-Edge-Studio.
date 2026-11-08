@@ -67,3 +67,6 @@ docs/evidence/desktop-r2c/windows-cdp-retry/
 docs/evidence/desktop-r2c/windows-first/
 docs/evidence/desktop-r2c/windows-path-diagnostic/
 docs/evidence/r2-light-preview-fa.mp3
+
+# Bundled Microsoft redistributable staged by build-installer.ps1 (never committed)
+src-tauri/prerequisites/

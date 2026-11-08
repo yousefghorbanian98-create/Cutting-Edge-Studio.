@@ -10,7 +10,7 @@ import {
   findFreeSlot,
   splitClipAt,
   trimClipEdge,
-} from './timelineMath';
+} from '../features/timeline/timelineMath';
 
 export interface Bookmark {
   id: string;

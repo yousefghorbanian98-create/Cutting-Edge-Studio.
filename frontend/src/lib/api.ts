@@ -74,7 +74,22 @@ const measurementPath = (operation:InspectionOperation) => ({decode:'inspection'
 export type RenderQuality = 'preview' | 'final';
 export interface RenderResponse { id:string; project_id:string; state:'queued'|'running'|'done'|'failed'|'cancelled'|'interrupted'; percent:number; message:string; error:string|null; quality:RenderQuality; report:{version:1; method:'ffmpeg-edl-render'; scope:'render-only'; output_path:string; duration:number; width:number; height:number; fps:number; encoder:string; size_bytes:number}|null }
 export interface RenderCapabilities { render:{available:boolean; reason:string|null}; encoder:string|null; cache_recovery:unknown }
+
+/** One platform export target, as owned by the backend (`services/post/presets.py`). */
+export interface PostPresetResponse {
+  name: string;
+  label: string;
+  width: number;
+  height: number;
+  fps: number;
+  bitrate_kbps: number;
+  max_seconds: number | null;
+  options: string[];
+}
+
 export const api = {
+  postPresets: (signal?: AbortSignal) => request<PostPresetResponse[]>('/post/presets', { signal }),
+  postLayouts: (signal?: AbortSignal) => request<string[]>('/post/layouts', { signal }),
   inspectionCapabilities: (id:string, signal?:AbortSignal, operation:InspectionOperation="decode") => request<InspectionCapabilities>(`/projects/${encodeURIComponent(id)}/${measurementPath(operation)}/capabilities`,{signal}),
   latestInspection: (id:string, signal?:AbortSignal, operation:InspectionOperation="decode") => request<InspectionResponse>(`/projects/${encodeURIComponent(id)}/${measurementPath(operation)}/latest`,{signal}),
   getInspection: (id:string, job:string, signal?:AbortSignal, operation:InspectionOperation="decode") => request<InspectionResponse>(`/projects/${encodeURIComponent(id)}/${measurementPath(operation)}/jobs/${encodeURIComponent(job)}`,{signal}),

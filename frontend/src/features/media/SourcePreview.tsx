@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { assetContentUrl } from '../../lib/api';
 import { translate } from '../../lib/i18n';
 import { useAppStore } from '../../store/useAppStore';
-import { type MediaClip, useMediaStore } from './mediaStore';
+import { type MediaClip, useMediaStore } from '../../store/mediaStore';
 
 /** Native browser playback only; never implies that the edit has been rendered. */
 function Player({ clip }: { clip: MediaClip }) {

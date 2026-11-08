@@ -9,7 +9,7 @@ import {
   findPreset,
   summarize,
   usePostStore,
-} from './postStore';
+} from '../store/postStore';
 
 beforeEach(() => {
   usePostStore.getState().reset();

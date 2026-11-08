@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { api, type AssetResponse } from '../../lib/api';
-import { useMediaStore } from './mediaStore';
+import { useMediaStore } from '../../store/mediaStore';
 
 const asset: AssetResponse = {
   id: 'asset-real', project_id: 'project-real', path: '/data/imports/a.mp4', role: 'source',
