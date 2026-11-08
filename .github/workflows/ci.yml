@@ -433,8 +433,25 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Continue'
-          & pwsh -NoProfile -File C:\build\scripts\build-installer.ps1 -WithoutPinnedBinaries *>&1 |
-            Tee-Object -FilePath C:\build\build.log
+          # tauri-bundler downloads its NSIS toolchain from a GitHub release at
+          # package time and has no retry of its own, so a 5xx from that CDN throws
+          # away a build whose app binary already linked successfully. Retry only
+          # that specific failure: anything else fails on the first attempt, so a
+          # real build error is never masked by a retry.
+          $attempt = 0
+          while ($true) {
+            $attempt++
+            & pwsh -NoProfile -File C:\build\scripts\build-installer.ps1 -WithoutPinnedBinaries *>&1 |
+              Tee-Object -FilePath C:\build\build.log
+            if ($LASTEXITCODE -eq 0) { break }
+            $transient = Select-String -Path C:\build\build.log -Pattern 'failed to bundle project: .http status: 5' -Quiet
+            if ($transient -and $attempt -lt 4) {
+              Write-Output "::warning title=Bundler download retry::attempt $attempt hit a transient bundler download failure; retrying"
+              Start-Sleep -Seconds 45
+              continue
+            }
+            break
+          }
           if ($LASTEXITCODE -ne 0) {
             Get-Content C:\build\build.log -Tail 80 | ForEach-Object { Write-Host $_ }
             # Also emit the tail as an annotation: the run log and the artifact are
