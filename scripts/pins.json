@@ -12,6 +12,13 @@
     "license": "Microsoft proprietary redistribution (fixed-version runtime, offline)",
     "target": "src-tauri/webview2-fixed-runtime"
   },
+  "vc_redist_x64": {
+    "url": "https://aka.ms/vs/17/release/vc_redist.x64.exe",
+    "sha256": null,
+    "license": "Microsoft Visual C++ Redistributable (redistribution permitted)",
+    "target": "src-tauri/prerequisites",
+    "note": "Embedded in the installer so the Visual C++ runtime installs offline. Run -UpdatePins once to pin the hash."
+  },
   "models": {
     "mediapipe_pose": { "url": "bundled-in-mediapipe-wheel", "sha256": null, "license": "Apache-2.0" },
     "clip_vit_b32_onnx": { "url": "https://github.com/.../clip-vit-b32.onnx", "sha256": null, "license": "MIT" },

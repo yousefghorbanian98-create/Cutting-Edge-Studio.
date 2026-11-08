@@ -44,8 +44,6 @@
   --radius-control: 12px;
   --duration-fast: 180ms;
   --duration-base: 350ms;
-  --glass-blur: 16px;
-  --glass-bg: rgba(255, 255, 255, 0.05);
 }
 
 /* THEME MINIMAL — Linear/Vercel */
@@ -85,10 +83,4 @@ body {
 :focus-visible {
   outline: 2px solid var(--accent-primary);
   outline-offset: 2px;
-}
-
-.glass-panel {
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  border: 1px solid rgba(255, 255, 255, 0.08);
 }
