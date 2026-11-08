@@ -231,3 +231,28 @@ Neither relaxes verification. The checksum is re-checked on whatever the cache
 returns and again on anything downloaded, so an outage can delay a build but can
 never cause an unverified binary to be used. If the pin ever needs to move, update
 `pins.json` and the cache key follows automatically.
+
+## Verification status
+
+What is proven on a real `windows-latest` runner, not asserted:
+
+| Claim | Evidence |
+| --- | --- |
+| `installer-hooks.nsh` compiles under real `makensis` | `Build installer` succeeded in runs `42456620247` and `42464689399` with the hooks wired in |
+| The hooks do not hang a silent install | The install step now fails in minutes with a non-zero exit code; before `CE_Abort` it hung past 60 minutes in two consecutive runs |
+| The installer `.exe` is actually produced | `installer artifact exists: true` in the installed-desktop summary, and run `42453783707` uploaded a `CuttingEdgeV2-Setup` artifact |
+| The hooks were never the build failure | The failing build log shows `Built application at: ...cutting-edge-v2.exe` followed by `failed to bundle project: http status: 504` |
+
+Still open: the silent install returns a non-zero exit code, and the stage that
+rejects it has not yet been captured. The instrumentation for that is in place —
+`CE_Log` writes every stage line to `%TEMP%\cutting-edge-setup.log` and the CI
+harness echoes it as an annotation — but no run has reached that step since, because
+the GitHub release CDN began returning sustained 504s. Measured during this work:
+0 of 4 for the FFmpeg asset and 1 of 3 for Tauri's `nsis-3.13.zip`, from outside CI,
+so the degradation is not specific to one project.
+
+The two likely candidates, both in stage 1, are the AVX2 probe and the 6 GB free
+space rule. The 6 GB figure in `COMPATIBILITY.md` describes working space for the
+full product with models, which a light build does not need; if the stage log
+confirms that, the hard floor should be the payload size and 6 GB should become a
+warning. That change should be made from the log, not from a guess.
