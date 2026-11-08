@@ -3,6 +3,7 @@ name: CI
 on:
   push:
     branches: ['arena/**', main]
+    tags: ['v*']
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -451,7 +452,7 @@ jobs:
     # Only on an explicit dispatch that names a tag, so the write permission is
     # never active on ordinary pushes. Reuses the artifact the installer job
     # already produced rather than building the app a second time.
-    if: inputs.evidence_run == '' && inputs.publish_release != ''
+    if: startsWith(github.ref, 'refs/tags/v') || (inputs.evidence_run == '' && inputs.publish_release != '')
     name: Publish installer to a GitHub Release
     needs: installer
     runs-on: ubuntu-latest
@@ -472,7 +473,7 @@ jobs:
       - name: Publish the release
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ inputs.publish_release }}
+          TAG: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || inputs.publish_release }}
         run: |
           set -euo pipefail
           # The light build carries no FFmpeg or models; say so on the release itself

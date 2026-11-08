@@ -151,3 +151,58 @@ executed on a Windows machine.
 to build while a hash is null. An operator must run
 `pwsh -File scripts/build-installer.ps1 -UpdatePins` once on a trusted network, review
 the diff and commit the pin before the first full delivery build.
+
+## Silent installs must never open a dialog
+
+CI installs the bundle headlessly with `/S /D=<dir>` and waits for the process to
+exit (`scripts/ci/windows-installed-desktop.ps1`). NSIS still renders a `MessageBox`
+under `/S`, so an unguarded dialog does not fail the install, it *suspends* it: the
+first version of these hooks hung the Windows job for over an hour until the runner
+timed out, with no error anywhere in the log.
+
+Every failure path therefore goes through one macro:
+
+```nsis
+!macro CE_Abort TEXT
+  !insertmacro CE_Fail "${TEXT}"
+  ${IfNot} ${Silent}
+    MessageBox MB_ICONSTOP|MB_OK "${TEXT}"
+  ${EndIf}
+  SetErrorLevel 2
+  Abort "${TEXT}"
+!macroend
+```
+
+An interactive user still gets the dialog; an automated caller gets exit code 2 and
+the reason in `$INSTDIR\install-report.txt`. `test_installer_contract.py` fails the
+build if any `MessageBox` appears outside a `Silent` guard, or if `CE_Abort` stops
+setting an exit code, so this cannot regress silently.
+
+For the same reason stage 5 does not hard-code the sidecar's filename. Tauri strips
+the target triple from `externalBin`, but the check falls back to a
+`cutting-edge-backend*.exe` wildcard before it declares the payload incomplete.
+
+## Getting a built installer
+
+The installer is built by the `installer` job on `windows-latest`; that job is the
+only place where `makensis` actually compiles `installer-hooks.nsh`. Every run
+uploads the result as the `CuttingEdgeV2-Setup` artifact, which is retained for the
+repository's artifact window and requires a GitHub login to download.
+
+To produce a permanent, public download link, push a version tag:
+
+```sh
+git tag v1.0.0-light
+git push origin v1.0.0-light
+```
+
+The `release` job then attaches the `.exe` and its `.sha256` to a GitHub Release.
+It reuses the artifact the `installer` job already produced rather than building a
+second time, and it is the only job granted `contents: write` — the permission is
+scoped to tag pushes and to an explicit `workflow_dispatch` that names a tag, so it
+is never active on an ordinary branch push.
+
+Note that `concurrency.cancel-in-progress` is on and keyed to the ref. Pushing to a
+branch while its Windows build is running cancels that build before the artifact is
+uploaded. Tags get their own concurrency group, so a release build is not affected
+by branch activity.
