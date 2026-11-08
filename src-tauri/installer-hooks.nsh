@@ -33,13 +33,13 @@ Var CE_Warnings
 ; Mirror every stage line into %TEMP%\cutting-edge-setup.log.
 ; A silent install prints nowhere, so without this a failure leaves no trace at
 ; all - which is exactly how the first CI failure cost an hour to diagnose.
-!macro CE_Log TEXT
+!macro CE_Log LINE
   Push $9
   ClearErrors
   FileOpen $9 "$TEMP\cutting-edge-setup.log" a
   ${IfNot} ${Errors}
     FileSeek $9 0 END
-    FileWrite $9 "${TEXT}$\r$\n"
+    FileWrite $9 "${LINE}$\r$\n"
     FileClose $9
   ${EndIf}
   Pop $9

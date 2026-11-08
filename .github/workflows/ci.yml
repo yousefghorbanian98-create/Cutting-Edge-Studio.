@@ -399,6 +399,11 @@ jobs:
             Tee-Object -FilePath C:\build\build.log
           if ($LASTEXITCODE -ne 0) {
             Get-Content C:\build\build.log -Tail 80 | ForEach-Object { Write-Host $_ }
+            # Also emit the tail as an annotation: the run log and the artifact are
+            # not reachable from every environment, and a build error that is only
+            # in the log is an error nobody can act on.
+            $tail = ((Get-Content C:\build\build.log -Tail 60) -join "`n") -replace '%','%25' -replace "`r",'' -replace "`n",'%0A'
+            Write-Output "::error title=Installer build log tail::exit=$LASTEXITCODE%0A$tail"
             Write-Output "::error::installer build failed with exit code $LASTEXITCODE"
             exit 1
           }
