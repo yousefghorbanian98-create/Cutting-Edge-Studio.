@@ -402,8 +402,15 @@ jobs:
             # Also emit the tail as an annotation: the run log and the artifact are
             # not reachable from every environment, and a build error that is only
             # in the log is an error nobody can act on.
-            $tail = ((Get-Content C:\build\build.log -Tail 60) -join "`n") -replace '%','%25' -replace "`r",'' -replace "`n",'%0A'
-            Write-Output "::error title=Installer build log tail::exit=$LASTEXITCODE%0A$tail"
+            # Annotations are length-capped, so strip ANSI colouring and send a
+            # tight slice: the error lines themselves, then the final few lines.
+            $esc = [char]27
+            $clean = Get-Content C:\build\build.log | ForEach-Object { $_ -replace "$esc\[[0-9;]*[A-Za-z]", '' }
+            $errors = @($clean | Select-String -Pattern 'error|fail|panic|cannot|not found' -CaseSensitive:$false | Select-Object -Last 12 | ForEach-Object { $_.Line })
+            $last = @($clean | Select-Object -Last 12)
+            $msg = (@('-- matching lines --') + $errors + @('-- final lines --') + $last) -join "`n"
+            $msg = $msg -replace '%','%25' -replace "`r",'' -replace "`n",'%0A'
+            Write-Output "::error title=Installer build log tail::exit=$LASTEXITCODE%0A$msg"
             Write-Output "::error::installer build failed with exit code $LASTEXITCODE"
             exit 1
           }
