@@ -161,3 +161,41 @@ def test_aborts_set_a_nonzero_exit_code(hooks: str) -> None:
     abort_macro = hooks.split("!macro CE_Abort", 1)[1].split("!macroend", 1)[0]
     assert "SetErrorLevel" in abort_macro, "CE_Abort must set a non-zero exit code"
     assert "Abort" in abort_macro
+
+
+# Defines the Tauri NSIS template introduces *after* it !includes the hooks file.
+TEMPLATE_DEFINES = frozenset(
+    {"MAINBINARYNAME", "PRODUCTNAME", "VERSION", "VERSIONWITHBUILD", "BUNDLEID", "INSTALLMODE"}
+)
+
+
+def test_functions_do_not_use_defines_that_do_not_exist_yet(hooks: str) -> None:
+    """The template !includes this file before it defines these.
+
+    NSIS compiles a Function where it appears in the source, so a template define
+    introduced later is still empty inside one and expands to literal text. That is
+    not a compile error: stage 5 silently looked for a file called
+    "${MAINBINARYNAME}.exe", found nothing, and aborted every install. Macros are
+    fine because they expand at insertion, inside Section Install.
+    """
+    for match in re.finditer(
+        r"^Function\s+(\S+)(.*?)^FunctionEnd", hooks, re.MULTILINE | re.DOTALL
+    ):
+        used = {d for d in re.findall(r"\$\{(\w+)\}", match.group(2)) if d in TEMPLATE_DEFINES}
+        assert not used, (
+            f"Function {match.group(1)} uses {sorted(used)}, which the template defines "
+            "only after it includes this file. Capture it into a Var inside a hook macro."
+        )
+
+
+def test_the_hook_macro_captures_those_defines_for_the_functions(hooks: str) -> None:
+    """The counterpart: the capture must actually happen, or the Vars stay empty."""
+    preinstall = hooks.split("!macro NSIS_HOOK_PREINSTALL", 1)[1].split("!macroend", 1)[0]
+    for var, define in (
+        ("$CE_MainBinary", "MAINBINARYNAME"),
+        ("$CE_ProductName", "PRODUCTNAME"),
+        ("$CE_Version", "VERSION"),
+    ):
+        assert (
+            f'StrCpy {var} "${{{define}}}"' in preinstall
+        ), f"{var} is never captured from ${define}"

@@ -29,6 +29,16 @@
 
 Var CE_Stage
 Var CE_Warnings
+; The template !includes this file at line 36 but only defines PRODUCTNAME,
+; VERSION and MAINBINARYNAME at lines 42-53. Functions are compiled where they
+; appear, so those defines are still empty inside them and expand to literal
+; text - which is exactly how stage 5 came to look for a file named
+; "${MAINBINARYNAME}.exe". Macros are expanded at insertion, deep inside
+; Section Install, where the defines do exist; capture them there and have the
+; functions read these variables instead.
+Var CE_MainBinary
+Var CE_ProductName
+Var CE_Version
 
 ; Mirror every stage line into %TEMP%\cutting-edge-setup.log.
 ; A silent install prints nowhere, so without this a failure leaves no trace at
@@ -272,10 +282,10 @@ FunctionEnd
 Function CEVerifyInstallation
   !insertmacro CE_Stage "Verifying the installed application"
 
-  ${IfNot} ${FileExists} "$INSTDIR\${MAINBINARYNAME}.exe"
-    !insertmacro CE_Abort "Installation incomplete: ${MAINBINARYNAME}.exe was not written."
+  ${IfNot} ${FileExists} "$INSTDIR\$CE_MainBinary.exe"
+    !insertmacro CE_Abort "Installation incomplete: $CE_MainBinary.exe was not written."
   ${EndIf}
-  !insertmacro CE_Ok "${MAINBINARYNAME}.exe"
+  !insertmacro CE_Ok "$CE_MainBinary.exe"
 
   ; Tauri strips the target triple from externalBin, but do not bet an install on
   ; that: fall back to a wildcard before declaring the sidecar missing.
@@ -310,8 +320,8 @@ Function CEVerifyInstallation
   ClearErrors
   FileOpen $0 "$INSTDIR\install-report.txt" w
   ${IfNot} ${Errors}
-    FileWrite $0 "product=${PRODUCTNAME}$\r$\n"
-    FileWrite $0 "version=${VERSION}$\r$\n"
+    FileWrite $0 "product=$CE_ProductName$\r$\n"
+    FileWrite $0 "version=$CE_Version$\r$\n"
     FileWrite $0 "install_dir=$INSTDIR$\r$\n"
     FileWrite $0 "preflight_warnings=$CE_Warnings$\r$\n"
     FileClose $0
@@ -333,6 +343,9 @@ FunctionEnd
 
   StrCpy $CE_Stage 0
   StrCpy $CE_Warnings 0
+  StrCpy $CE_MainBinary "${MAINBINARYNAME}"
+  StrCpy $CE_ProductName "${PRODUCTNAME}"
+  StrCpy $CE_Version "${VERSION}"
   ; Start a fresh stage log; a stale one from an earlier attempt misleads.
   Delete "$TEMP\cutting-edge-setup.log"
 
