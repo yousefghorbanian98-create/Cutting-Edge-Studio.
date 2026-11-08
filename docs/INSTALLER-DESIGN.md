@@ -221,6 +221,12 @@ Two mitigations, in order:
    cannot collide with a stale entry.
 2. A deadline-bounded retry, ten minutes, for the cold-cache case.
 
+The bundler has the same exposure: `tauri-bundler` downloads `nsis-3.13.zip` from
+a GitHub release when it packages the app, with no retry of its own. A build that
+had already produced `cutting-edge-v2.exe` still died with
+`failed to bundle project: http status: 504`. That toolchain is cached under
+`~\AppData\Local\tauri` for the same reason.
+
 Neither relaxes verification. The checksum is re-checked on whatever the cache
 returns and again on anything downloaded, so an outage can delay a build but can
 never cause an unverified binary to be used. If the pin ever needs to move, update

@@ -406,6 +406,14 @@ jobs:
             C:\build\scripts\ci\readiness-contract -> target
           cache-all-crates: true
           save-if: ${{ github.event_name == 'push' }}
+      - name: Cache the Tauri NSIS bundler toolchain
+        # tauri-bundler fetches nsis-3.13.zip from a GitHub release at bundle time,
+        # on the same CDN that has been returning 504s. The app compiled fine and
+        # the build still died here, so cache the toolchain rather than re-fetch it.
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~\AppData\Local\tauri
+          key: tauri-bundler-nsis-${{ runner.os }}-3.13
       - name: Build installer (light build, no pinned FFmpeg/models)
         shell: pwsh
         run: |
