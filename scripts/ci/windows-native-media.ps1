@@ -16,7 +16,22 @@ if (Test-Path $OutputDir) { throw 'Use a fresh disposable probe directory; exist
 New-Item -ItemType Directory -Path $OutputDir | Out-Null
 $OutputDir = (Resolve-Path $OutputDir).Path
 $archive = Join-Path $OutputDir 'ffmpeg.zip'
-Invoke-WebRequest -Uri $pin.url -OutFile $archive -UseBasicParsing
+# A 76 MB fetch over the public CDN fails often enough to lose a 60-minute
+# Windows build to a network blip. Retry the transfer only; the checksum below
+# is still the gate and an unverified archive never proceeds.
+$downloaded = $false
+foreach ($attempt in 1..4) {
+    try {
+        Invoke-WebRequest -Uri $pin.url -OutFile $archive -UseBasicParsing
+        $downloaded = $true
+        break
+    } catch {
+        Write-Host "Download attempt $attempt failed: $($_.Exception.Message)"
+        if (Test-Path $archive) { Remove-Item $archive -Force }
+        if ($attempt -lt 4) { Start-Sleep -Seconds (5 * $attempt) }
+    }
+}
+if (-not $downloaded) { throw 'Could not download the pinned native-tool archive after 4 attempts.' }
 $actualHash = (Get-FileHash $archive -Algorithm SHA256).Hash.ToLowerInvariant()
 if ($actualHash -ne $pin.sha256) { throw 'Downloaded native-tool archive does not match its reviewed checksum.' }
 $unpacked = Join-Path $OutputDir 'unpacked'
