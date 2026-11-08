@@ -16,11 +16,12 @@ if (Test-Path $OutputDir) { throw 'Use a fresh disposable probe directory; exist
 New-Item -ItemType Directory -Path $OutputDir | Out-Null
 $OutputDir = (Resolve-Path $OutputDir).Path
 $archive = Join-Path $OutputDir 'ffmpeg.zip'
-# A 76 MB fetch over the public CDN fails often enough to lose a 60-minute
-# Windows build to a network blip. Retry the transfer only; the checksum below
-# is still the gate and an unverified archive never proceeds.
+# A 76 MB fetch over the release CDN intermittently returns 504 for minutes at
+# a time. Retry patiently rather than losing a 60-minute Windows build to an
+# upstream outage; the checksum below is still the gate and an unverified
+# archive never proceeds.
 $downloaded = $false
-foreach ($attempt in 1..4) {
+foreach ($attempt in 1..6) {
     try {
         Invoke-WebRequest -Uri $pin.url -OutFile $archive -UseBasicParsing
         $downloaded = $true
@@ -29,12 +30,12 @@ foreach ($attempt in 1..4) {
         $lastError = $_.Exception.Message
         Write-Host "::warning title=Pinned tool download retry::attempt $attempt failed: $lastError"
         if (Test-Path $archive) { Remove-Item $archive -Force }
-        if ($attempt -lt 4) { Start-Sleep -Seconds (5 * $attempt) }
+        if ($attempt -lt 6) { Start-Sleep -Seconds @(15, 30, 45, 60, 60)[$attempt - 1] }
     }
 }
 if (-not $downloaded) {
     Write-Host "::error title=Pinned tool download failed::url=$($pin.url)%0Alast error: $lastError"
-    throw "Could not download the pinned native-tool archive after 4 attempts: $lastError"
+    throw "Could not download the pinned native-tool archive after 6 attempts: $lastError"
 }
 $actualHash = (Get-FileHash $archive -Algorithm SHA256).Hash.ToLowerInvariant()
 if ($actualHash -ne $pin.sha256) { throw 'Downloaded native-tool archive does not match its reviewed checksum.' }
