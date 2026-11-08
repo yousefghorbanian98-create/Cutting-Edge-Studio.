@@ -219,10 +219,6 @@ jobs:
       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
         with:
           workspaces: src-tauri -> target
-      # Cheapest signal first: rustfmt parses source only, no deps and no lockfile.
-      - name: cargo fmt --check
-        run: cargo fmt --all --check
-        working-directory: src-tauri
       - name: Record whether Cargo.lock is committed
         id: lockfile
         run: |
@@ -245,6 +241,13 @@ jobs:
         working-directory: src-tauri
       - name: cargo test
         run: cargo test --locked
+        working-directory: src-tauri
+      # Formatting runs after the checks that can actually break the product. As a
+      # first gate it aborted the job before clippy and the tests ever ran, hiding
+      # the signal that matters behind a whitespace diff.
+      - name: cargo fmt --check
+        if: always()
+        run: cargo fmt --all --check
         working-directory: src-tauri
       # Runs last so the checks above still publish results, but the job is red until
       # the lockfile is committed: without it the shipped installer is not reproducible.
