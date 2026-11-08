@@ -40,6 +40,17 @@ try {
     Check 'fixed desktop port initially unused' (-not (Get-NetTCPConnection -LocalPort 8756 -State Listen -ErrorAction SilentlyContinue))
     Check 'installer artifact exists' ($null -ne $installer)
     $setup = Start-Process $installer.FullName -ArgumentList "/S /D=$install" -PassThru -Wait
+    if ($setup.ExitCode -ne 0) {
+        # Surface the installer's own stage log as an annotation: workflow logs and
+        # artifacts are not always reachable, and a silent install reports nothing.
+        $stageLog = Join-Path $env:TEMP 'cutting-edge-setup.log'
+        if (Test-Path $stageLog) {
+            $encoded = ((Get-Content $stageLog -Raw) -replace "`r", '') -replace "`n", '%0A'
+            Write-Host "::error title=Installer stage log::exit=$($setup.ExitCode)%0A$encoded"
+        } else {
+            Write-Host "::error title=Installer stage log::exit=$($setup.ExitCode); no stage log written to $stageLog"
+        }
+    }
     Check 'NSIS silent install succeeded' ($setup.ExitCode -eq 0)
     $shell = Join-Path $install 'cutting-edge-v2.exe'
     Check 'installed native shell exists' (Test-Path $shell)

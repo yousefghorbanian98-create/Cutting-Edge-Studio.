@@ -30,25 +30,44 @@
 Var CE_Stage
 Var CE_Warnings
 
+; Mirror every stage line into %TEMP%\cutting-edge-setup.log.
+; A silent install prints nowhere, so without this a failure leaves no trace at
+; all - which is exactly how the first CI failure cost an hour to diagnose.
+!macro CE_Log TEXT
+  Push $9
+  ClearErrors
+  FileOpen $9 "$TEMP\cutting-edge-setup.log" a
+  ${IfNot} ${Errors}
+    FileSeek $9 0 END
+    FileWrite $9 "${TEXT}$\r$\n"
+    FileClose $9
+  ${EndIf}
+  Pop $9
+!macroend
+
 !macro CE_Stage TEXT
   IntOp $CE_Stage $CE_Stage + 1
   SetDetailsPrint both
   DetailPrint "[$CE_Stage/${CE_TOTAL_STAGES}] ${TEXT}"
+  !insertmacro CE_Log "[$CE_Stage/${CE_TOTAL_STAGES}] ${TEXT}"
   SetDetailsPrint listonly
 !macroend
 
 !macro CE_Ok TEXT
   DetailPrint "        OK    ${TEXT}"
+  !insertmacro CE_Log "        OK    ${TEXT}"
 !macroend
 
 !macro CE_Warn TEXT
   IntOp $CE_Warnings $CE_Warnings + 1
   DetailPrint "        WARN  ${TEXT}"
+  !insertmacro CE_Log "        WARN  ${TEXT}"
 !macroend
 
 !macro CE_Fail TEXT
   SetDetailsPrint both
   DetailPrint "        FAIL  ${TEXT}"
+  !insertmacro CE_Log "        FAIL  ${TEXT}"
   SetDetailsPrint listonly
 !macroend
 
@@ -314,6 +333,8 @@ FunctionEnd
 
   StrCpy $CE_Stage 0
   StrCpy $CE_Warnings 0
+  ; Start a fresh stage log; a stale one from an earlier attempt misleads.
+  Delete "$TEMP\cutting-edge-setup.log"
 
   SetDetailsPrint both
   DetailPrint "=============================================="
