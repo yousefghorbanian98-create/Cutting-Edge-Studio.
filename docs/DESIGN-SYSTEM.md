@@ -3,7 +3,7 @@
 Stack: **Radix UI primitives (MIT)** + Tailwind 3 + CSS variables. No component library is
 built from scratch (LOCK-00): primitives come from Radix, styling from a single token layer.
 
-## Tokens (`frontend/src/lib/tokens.ts` + `index.css`)
+## Tokens (`frontend/src/index.css`)
 
 | Group | Rule |
 |---|---|

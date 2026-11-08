@@ -9,7 +9,7 @@ import { PostPanel } from './features/post/PostPanel';
 import { StyleMatchWizard } from './features/stylematch/StyleMatchWizard';
 import { TimelinePanel } from './features/timeline/TimelinePanel';
 import { WorkspaceBar } from './features/workspace/WorkspaceBar';
-import { useWorkspaceStore } from './features/workspace/workspaceStore';
+import { useWorkspaceStore } from './store/workspaceStore';
 import { api } from './lib/api';
 import { translate } from './lib/i18n';
 import { useAppStore } from './store/useAppStore';

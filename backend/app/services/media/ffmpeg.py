@@ -74,8 +74,45 @@ def parse_encoders(output: str) -> set[str]:
 
 
 def available_h264_encoder(encoders: set[str]) -> str | None:
-    """Pick the first allowed H.264 encoder that the build actually ships."""
+    """Pick the first allowed H.264 encoder that the build actually ships.
+
+    Shipping an encoder is necessary but **not sufficient**: NVENC also needs a
+    driver and a usable device at runtime. Callers that advertise hardware
+    support must confirm with :func:`encoder_smoke_command` before trusting this.
+    """
     return next((name for name in H264_ENCODERS if name in encoders), None)
+
+
+def candidate_h264_encoders(encoders: set[str]) -> list[str]:
+    """Return the allowed H.264 encoders present in the build, in preference order."""
+    return [name for name in H264_ENCODERS if name in encoders]
+
+
+def encoder_smoke_command(binaries: FFmpegBinaries, encoder: str) -> list[str]:
+    """Argv that opens ``encoder`` on one synthetic frame and discards the output.
+
+    ``ffmpeg -encoders`` only reports what the build was compiled with, so a build
+    with NVENC support lists ``h264_nvenc`` even on a machine with no NVIDIA GPU.
+    Opening the encoder is the only honest availability test: without a device it
+    fails with ``Cannot load libcuda.so.1`` and a non-zero exit code.
+    """
+    return [
+        str(binaries.ffmpeg),
+        "-hide_banner",
+        "-loglevel",
+        "error",
+        "-f",
+        "lavfi",
+        "-i",
+        "color=c=black:s=320x240:r=15:d=0.1",
+        "-frames:v",
+        "1",
+        "-c:v",
+        encoder,
+        "-f",
+        "null",
+        "-",
+    ]
 
 
 def forbidden_encoders_present(encoders: set[str]) -> set[str]:

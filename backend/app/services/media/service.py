@@ -9,7 +9,8 @@ from app.config import Settings
 from app.logging import get_logger
 from app.services.media.ffmpeg import (
     FFmpegBinaries,
-    available_h264_encoder,
+    candidate_h264_encoders,
+    encoder_smoke_command,
     export_command,
     parse_encoders,
     probe_command,
@@ -48,6 +49,8 @@ class MediaService:
     def __init__(self, settings: Settings, prober: Prober | None = None) -> None:
         self._settings = settings
         self._prober: Prober = prober or FFmpegProber(settings)
+        self._h264_encoder: str | None = None
+        self._h264_probed = False
 
     def probe(self, path: Path) -> MediaInfo:
         if not path.is_file():
@@ -59,7 +62,21 @@ class MediaService:
         return resolve_binaries(self._settings)
 
     def detect_h264_encoder(self) -> str | None:
-        """Ask FFmpeg which allowed H.264 encoder is present (NVENC first)."""
+        """Return the first allowed H.264 encoder that actually opens on this machine.
+
+        Listing is not availability: a build compiled with NVENC lists ``h264_nvenc``
+        even with no NVIDIA device present, so each candidate is opened once before
+        it is advertised. The answer is cached for the process lifetime because the
+        probe costs an FFmpeg spawn and the hardware cannot change under us.
+        A cached ``None`` is honoured, so an unusable build is not re-probed.
+        """
+        if self._h264_probed:
+            return self._h264_encoder
+        self._h264_encoder = self._detect_h264_encoder_uncached()
+        self._h264_probed = True
+        return self._h264_encoder
+
+    def _detect_h264_encoder_uncached(self) -> str | None:
         try:
             binaries = self.binaries()
         except Exception as error:
@@ -70,7 +87,25 @@ class MediaService:
         except Exception as error:
             LOG.warning("media.encoder.probe_failed", reason=str(error))
             return None
-        return available_h264_encoder(parse_encoders(result.stdout))
+
+        candidates = candidate_h264_encoders(parse_encoders(result.stdout))
+        for name in candidates:
+            if self._encoder_opens(binaries, name):
+                LOG.info("media.encoder.selected", encoder=name)
+                return name
+            LOG.warning("media.encoder.listed_but_unusable", encoder=name)
+        if candidates:
+            LOG.error("media.encoder.none_usable", listed=candidates)
+        return None
+
+    def _encoder_opens(self, binaries: FFmpegBinaries, encoder: str) -> bool:
+        """Report whether FFmpeg can actually open ``encoder`` on this machine."""
+        try:
+            result = run_command(encoder_smoke_command(binaries, encoder), timeout=30)
+        except Exception as error:
+            LOG.warning("media.encoder.smoke_failed", encoder=encoder, reason=str(error))
+            return False
+        return result.returncode == 0
 
     def proxy_plan(self, source: Path, info: MediaInfo, out_dir: Path) -> list[str]:
         """Command list for a 960x540/30fps proxy."""

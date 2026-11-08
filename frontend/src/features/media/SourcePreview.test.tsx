@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 import { SourcePreview } from './SourcePreview';
-import { useMediaStore } from './mediaStore';
+import { useMediaStore } from '../../store/mediaStore';
 
 afterEach(() => useMediaStore.getState().clear());
 function select() {

@@ -7,8 +7,8 @@ import { Badge, Button, EmptyState, Tooltip } from '../../components/ui';
 import { translate } from '../../lib/i18n';
 import { formatBytes } from '../../lib/files';
 import { useAppStore } from '../../store/useAppStore';
-import { useTimelineStore } from '../timeline/timelineStore';
-import { type MediaClip, useMediaStore } from './mediaStore';
+import { useTimelineStore } from '../../store/timelineStore';
+import { type MediaClip, useMediaStore } from '../../store/mediaStore';
 
 function SortableClip({
   clip,

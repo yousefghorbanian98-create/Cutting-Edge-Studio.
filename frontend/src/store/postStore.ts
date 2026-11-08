@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { api } from '../lib/api';
 
 export type PostFeatureId = 'replay' | 'comparison' | 'captions' | 'broll' | 'loudness' | 'thumbnail' | 'templates';
 
@@ -31,7 +32,12 @@ export interface PresetOption {
   maxSeconds: number | null;
 }
 
-/** Mirrors backend PRESETS so the UI can show the target without a round-trip. */
+/** Offline fallback mirroring backend PRESETS, used until `hydratePresets` resolves.
+ *
+ * The backend owns this table (`services/post/presets.py`); these values exist only so
+ * the panel renders before the sidecar answers and when it is unreachable. A contract
+ * test (`backend/tests/test_post_contract.py`) fails the build if the two ever diverge.
+ */
 export const POST_PRESETS: PresetOption[] = [
   { id: 'tiktok', labelKey: 'post.preset.tiktok', width: 1080, height: 1920, maxSeconds: 180 },
   { id: 'shorts', labelKey: 'post.preset.shorts', width: 1080, height: 1920, maxSeconds: 60 },
@@ -45,8 +51,19 @@ export type ComparisonLayout = (typeof COMPARISON_LAYOUTS)[number];
 export type CaptionFormat = 'srt' | 'ass';
 export type RenderQuality = 'preview' | 'final';
 
+const PRESET_LABEL_KEY: Record<string, string> = {
+  tiktok: 'post.preset.tiktok',
+  shorts: 'post.preset.shorts',
+  youtube: 'post.preset.youtube',
+  instagram_feed: 'post.preset.feed',
+  archive: 'post.preset.archive',
+};
+
 interface PostState {
   enabled: Record<PostFeatureId, boolean>;
+  /** Backend-owned preset table; seeded from POST_PRESETS until hydration lands. */
+  presets: PresetOption[];
+  layouts: ComparisonLayout[];
   presetId: string;
   layout: ComparisonLayout;
   captionFormat: CaptionFormat;
@@ -56,6 +73,8 @@ interface PostState {
   setLayout: (layout: ComparisonLayout) => void;
   setCaptionFormat: (format: CaptionFormat) => void;
   setQuality: (quality: RenderQuality) => void;
+  /** Replace the local fallback with the backend's authoritative preset table. */
+  hydrateFromBackend: (signal?: AbortSignal) => Promise<void>;
   reset: () => void;
 }
 
@@ -66,15 +85,8 @@ function defaults(): Record<PostFeatureId, boolean> {
   );
 }
 
-export function findPreset(id: string): PresetOption {
-  const fallback: PresetOption = {
-    id: 'tiktok',
-    labelKey: 'post.preset.tiktok',
-    width: 1080,
-    height: 1920,
-    maxSeconds: 180,
-  };
-  return POST_PRESETS.find((preset) => preset.id === id) ?? fallback;
+export function findPreset(id: string, presets: PresetOption[] = POST_PRESETS): PresetOption {
+  return presets.find((preset) => preset.id === id) ?? presets[0] ?? POST_PRESETS[0]!;
 }
 
 export function enabledFeatures(enabled: Record<PostFeatureId, boolean>): PostFeatureId[] {
@@ -87,8 +99,9 @@ export function summarize(settings: {
   presetId: string;
   captionFormat: CaptionFormat;
   quality: RenderQuality;
+  presets?: PresetOption[];
 }): string {
-  const preset = findPreset(settings.presetId);
+  const preset = findPreset(settings.presetId, settings.presets ?? POST_PRESETS);
   const count = enabledFeatures(settings.enabled).length;
   return `${preset.id} · ${preset.width}x${preset.height} · ${settings.captionFormat} · ${settings.quality} · ${count}/${POST_FEATURES.length}`;
 }
@@ -107,6 +120,8 @@ export function canRender(settings: { enabled: Record<PostFeatureId, boolean>; q
 
 export const usePostStore = create<PostState>((set, get) => ({
   enabled: defaults(),
+  presets: POST_PRESETS,
+  layouts: [...COMPARISON_LAYOUTS],
   presetId: 'tiktok',
   layout: 'side_by_side',
   captionFormat: 'ass',
@@ -118,9 +133,29 @@ export const usePostStore = create<PostState>((set, get) => ({
         [id]: !get().enabled[id],
       },
     }),
-  setPreset: (presetId) => set({ presetId: findPreset(presetId).id }),
+  setPreset: (presetId) => set({ presetId: findPreset(presetId, get().presets).id }),
   setLayout: (layout) => set({ layout }),
   setCaptionFormat: (captionFormat) => set({ captionFormat }),
   setQuality: (quality) => set({ quality }),
+  hydrateFromBackend: async (signal) => {
+    try {
+      const [presets, layouts] = await Promise.all([api.postPresets(signal), api.postLayouts(signal)]);
+      if (presets.length === 0) return;
+      set({
+        presets: presets.map((preset) => ({
+          id: preset.name,
+          labelKey: PRESET_LABEL_KEY[preset.name] ?? preset.label,
+          width: preset.width,
+          height: preset.height,
+          maxSeconds: preset.max_seconds,
+        })),
+        layouts: layouts.filter((name): name is ComparisonLayout =>
+          (COMPARISON_LAYOUTS as readonly string[]).includes(name),
+        ),
+      });
+    } catch {
+      // Offline-first: keep the bundled fallback rather than emptying the panel.
+    }
+  },
   reset: () => set({ enabled: defaults(), presetId: 'tiktok', layout: 'side_by_side', captionFormat: 'ass', quality: 'preview' }),
 }));

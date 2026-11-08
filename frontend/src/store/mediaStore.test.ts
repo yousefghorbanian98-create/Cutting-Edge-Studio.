@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { selectReferences, useMediaStore } from './mediaStore';
+import { selectReferences, useMediaStore } from '../store/mediaStore';
 
 const clip = (name: string, path = `/media/${name}`) => ({ name, size: 2048, path });
 

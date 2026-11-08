@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { useTimelineStore } from './timelineStore';
+import { useTimelineStore } from '../../store/timelineStore';
 
 // The editor renders a virtualized canvas-ish surface; in jsdom we assert our own
 // wiring (data mapping, toolbar, hotkeys) and stub the third-party surface.

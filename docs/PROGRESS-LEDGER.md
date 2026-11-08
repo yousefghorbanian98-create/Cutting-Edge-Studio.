@@ -86,7 +86,7 @@ bounded base64 JSON recovery and pin guards (PASS) with metadata-only screenshot
 
 | Step | Item | Status | Evidence |
 |---|---|---|---|
-| P1-S01 | Design tokens: 4px spacing, 1.25 type scale, per-theme radii, motion | GREEN | `frontend/src/lib/tokens.ts` |
+| P1-S01 | Design tokens: 4px spacing, 1.25 type scale, per-theme radii, motion | GREEN | `frontend/src/index.css` |
 | P1-S02 | Fonts bundled OFL-1.1 (Vazirmatn/Inter/JetBrains Mono) — no CDN | GREEN | `@fontsource/*` imports in `main.tsx`, `dist/assets/*.woff2` |
 | P1-S03 | Button (4 variants × 3 sizes, loading/error/success) | GREEN | `ui/Button.tsx` |
 | P1-S04 | Badge (5 tones) | GREEN | `ui/Badge.tsx` |

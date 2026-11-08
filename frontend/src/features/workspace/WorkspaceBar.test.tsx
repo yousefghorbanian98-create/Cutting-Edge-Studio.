@@ -2,12 +2,12 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { api, ApiError } from '../../lib/api';
 import { useAppStore } from '../../store/useAppStore';
-import { useMediaStore } from '../media/mediaStore';
-import { useTimelineStore } from '../timeline/timelineStore';
-import { usePostStore } from '../post/postStore';
-import { useWizardStore } from '../stylematch/wizardStore';
+import { useMediaStore } from '../../store/mediaStore';
+import { useTimelineStore } from '../../store/timelineStore';
+import { usePostStore } from '../../store/postStore';
+import { useWizardStore } from '../../store/wizardStore';
 import { WorkspaceBar } from './WorkspaceBar';
-import { useWorkspaceStore } from './workspaceStore';
+import { useWorkspaceStore } from '../../store/workspaceStore';
 
 beforeEach(() => {
   vi.useFakeTimers();

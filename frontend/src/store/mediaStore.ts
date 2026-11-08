@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import { api } from '../../lib/api';
-import { type CandidateFile, kindOf, validateFiles } from '../../lib/files';
+import { api } from '../lib/api';
+import { type CandidateFile, kindOf, validateFiles } from '../lib/files';
 
 export interface MediaClip {
   id: string;

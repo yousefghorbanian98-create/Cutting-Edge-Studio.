@@ -1,5 +1,9 @@
 # ECC Full-Repository Review — 2026-11-08
 
+> **Status:** F1–F5 are all addressed — see [`ECC-FIXES-2026-11-08.md`](./ECC-FIXES-2026-11-08.md).
+> The "no correctness defect" conclusion below is **superseded**: a later review found one
+> (C2, the false `h264_nvenc` report), now fixed.
+
 Methodology: ECC `ecc@ecc` v2.2.3 reviewer rubrics (`security-reviewer`, `fastapi-reviewer`,
 `python-reviewer`, `typescript-reviewer`, `react-reviewer`, `rust-reviewer`) applied against the
 whole tree, combined with real execution of every static and dynamic gate the repository defines.

@@ -1,5 +1,9 @@
 # Frontend ↔ Backend Coupling Review — 2026-11-08
 
+> **Status:** C1, C2 and C5 are fixed, C4 was verified to be a non-defect, and C3 is
+> partially reduced — see [`ECC-FIXES-2026-11-08.md`](./ECC-FIXES-2026-11-08.md).
+> One figure below was corrected on review: the post API has **12** operations, not 9.
+
 Method: ECC `fastapi-reviewer` + `typescript-reviewer` + `architect` rubrics, applied as a
 two-way contract diff between the live FastAPI OpenAPI schema (64 routes) and every call site in
 `frontend/src`, then confirmed dynamically by driving the real UI in a headless browser against
@@ -69,8 +73,8 @@ surface that is *not* wired.
 
 ### C1 — The entire post-production feature is disconnected · severity HIGH
 
-Backend implements 9 `/api/v1/post/*` endpoints (`api/post.py`, 216 lines, plus 841 lines of
-services) and they work — `GET /post/presets` returns real data, `/post/layouts` and
+Backend implements 12 `/api/v1/post/*` operations across 11 paths (`api/post.py`, 216
+lines, plus 841 lines of services) and they work — `GET /post/presets` returns real data, `/post/layouts` and
 `/post/templates` return 200.
 
 The frontend renders `PostPanel.tsx` (154 lines) driven by `postStore.ts` (126 lines) and shows

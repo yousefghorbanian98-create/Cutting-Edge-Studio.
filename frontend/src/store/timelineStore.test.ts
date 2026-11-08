@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { snapTargets, useTimelineStore } from './timelineStore';
+import { snapTargets, useTimelineStore } from '../store/timelineStore';
 
 const add = (name = 'a.mp4', at = 0, kind: 'video' | 'audio' = 'video') =>
   useTimelineStore.getState().addClip({ mediaId: `/m/${name}`, name, kind, at });

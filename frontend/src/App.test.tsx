@@ -2,8 +2,8 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import App from './App';
-import { useMediaStore } from './features/media/mediaStore';
-import { useWizardStore } from './features/stylematch/wizardStore';
+import { useMediaStore } from './store/mediaStore';
+import { useWizardStore } from './store/wizardStore';
 import { useAppStore } from './store/useAppStore';
 
 const HEALTH = {

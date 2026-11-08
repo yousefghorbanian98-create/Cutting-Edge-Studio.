@@ -169,6 +169,27 @@ jobs:
         run: NODE_PATH=frontend/node_modules npx --yes dependency-cruiser --config .dependency-cruiser.cjs frontend/src --output-type err
         env:
           NODE_PATH: frontend/node_modules
+      # `frontend-features-isolation` is a warn-level rule, so it never failed the build
+      # and the count silently grew to 18. Cross-feature stores now live in src/store/;
+      # the single remaining warning is the Style Match wizard composing RenderPanel.
+      # This ratchet fails the build if that count ever increases again.
+      - name: Dependency Cruiser — warning ratchet (budget 1)
+        run: |
+          BUDGET=1
+          COUNT=$(NODE_PATH=frontend/node_modules npx --yes dependency-cruiser \
+            --config .dependency-cruiser.cjs frontend/src --output-type err 2>&1 \
+            | grep -c '^  warn ' || true)
+          echo "feature-isolation warnings: $COUNT (budget $BUDGET)"
+          if [ "$COUNT" -gt "$BUDGET" ]; then
+            echo "::error::dependency-cruiser warnings rose to $COUNT (budget $BUDGET)."
+            echo "Put state shared by two features in frontend/src/store/, not in a sibling feature folder."
+            exit 1
+          fi
+          if [ "$COUNT" -lt "$BUDGET" ]; then
+            echo "::notice::warnings dropped to $COUNT — lower BUDGET in .github/workflows/ci.yml to lock it in."
+          fi
+        env:
+          NODE_PATH: frontend/node_modules
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: '3.11'
@@ -179,6 +200,62 @@ jobs:
       - name: pytest-archon — backend layer checks
         run: python -m pytest tests/test_arch.py -v
         working-directory: backend
+
+  rust:
+    if: inputs.evidence_run == ''
+    name: Desktop shell — Rust lint + tests (Linux)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      # src-tauri was previously compiled only by the Windows installer job, which does
+      # not run on pull_request. Its unit tests had therefore never executed in CI.
+      - uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
+        with:
+          components: clippy, rustfmt
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
+        with:
+          workspaces: src-tauri -> target
+      # Cheapest signal first: rustfmt parses source only, no deps and no lockfile.
+      - name: cargo fmt --check
+        run: cargo fmt --all --check
+        working-directory: src-tauri
+      - name: Record whether Cargo.lock is committed
+        id: lockfile
+        run: |
+          if [ -f src-tauri/Cargo.lock ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "::warning file=src-tauri/Cargo.toml::src-tauri/Cargo.lock is missing; \
+            resolving crates fresh so clippy and tests can still run. This job fails at the end."
+            cd src-tauri && cargo generate-lockfile
+          fi
+      - name: Tauri v2 Linux system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libwebkit2gtk-4.1-dev libsoup-3.0-dev libjavascriptcoregtk-4.1-dev \
+            libgtk-3-dev librsvg2-dev patchelf
+      - name: cargo clippy -D warnings
+        run: cargo clippy --all-targets --locked -- -D warnings
+        working-directory: src-tauri
+      - name: cargo test
+        run: cargo test --locked
+        working-directory: src-tauri
+      # Runs last so the checks above still publish results, but the job is red until
+      # the lockfile is committed: without it the shipped installer is not reproducible.
+      - name: Cargo.lock must be committed (reproducible installer)
+        if: always() && steps.lockfile.outputs.present == 'false'
+        run: |
+          echo "::error file=src-tauri/Cargo.toml::src-tauri/Cargo.lock is not committed."
+          echo "Rust is the only ecosystem in this repo without a lockfile, so every"
+          echo "installer build resolves crate versions afresh and is not reproducible."
+          echo "Fix: cd src-tauri && cargo generate-lockfile && git add Cargo.lock"
+          exit 1
 
   frontend:
     if: inputs.evidence_run == ''

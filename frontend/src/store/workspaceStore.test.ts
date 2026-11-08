@@ -1,12 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { api, ApiError, type AssetResponse } from '../../lib/api';
-import { useAppStore } from '../../store/useAppStore';
-import { useMediaStore } from '../media/mediaStore';
-import { usePostStore } from '../post/postStore';
-import { useWizardStore } from '../stylematch/wizardStore';
-import { useTimelineStore } from '../timeline/timelineStore';
-import { snapshotSchema } from './schema';
-import { captureSnapshot, LAST_PROJECT_STORAGE, useWorkspaceStore, watchWorkspaceChanges } from './workspaceStore';
+import { api, ApiError, type AssetResponse } from '../lib/api';
+import { useAppStore } from './useAppStore';
+import { useMediaStore } from './mediaStore';
+import { usePostStore } from './postStore';
+import { useWizardStore } from './wizardStore';
+import { useTimelineStore } from './timelineStore';
+import { snapshotSchema } from '../features/workspace/schema';
+import { captureSnapshot, LAST_PROJECT_STORAGE, useWorkspaceStore, watchWorkspaceChanges } from '../store/workspaceStore';
 
 const revision = 'a'.repeat(64);
 const nextRevision = 'b'.repeat(64);

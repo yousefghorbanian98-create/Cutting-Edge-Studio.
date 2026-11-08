@@ -5,11 +5,11 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { Magnet, Minus, Pause, Play, Plus, Scissors, Trash2, Undo2, Redo2, Bookmark } from 'lucide-react';
 import { Badge, Button, Tooltip } from '../../components/ui';
 import { translate } from '../../lib/i18n';
-import { useWorkspaceStore } from '../workspace/workspaceStore';
+import { useWorkspaceStore } from '../../store/workspaceStore';
 import { useAppStore } from '../../store/useAppStore';
 import { EFFECT_IDS, fromEditorData, toEditorData } from './timelineAdapter';
 import { clamp, rulerTicks, snapTime, timecode } from './timelineMath';
-import { snapTargets, useTimelineStore } from './timelineStore';
+import { snapTargets, useTimelineStore } from '../../store/timelineStore';
 
 /**
  * Effects are plain descriptors: the code/audio classes are rendered by

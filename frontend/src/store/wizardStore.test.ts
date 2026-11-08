@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { WIZARD_STEPS, canAdvance, useWizardStore } from './wizardStore';
+import { WIZARD_STEPS, canAdvance, useWizardStore } from '../store/wizardStore';
 
 const ok = { referenceSelected: true, clipCount: 3 };
 
