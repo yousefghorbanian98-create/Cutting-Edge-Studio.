@@ -361,17 +361,31 @@ jobs:
           $sha = (Get-Content C:\build\scripts\pins.json -Raw | ConvertFrom-Json).ffmpeg.sha256
           if ($sha -notmatch '^[a-f0-9]{64}$') { throw 'pins.json has no reviewed ffmpeg SHA-256.' }
           "sha=$sha" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
-      - name: Cache the checksum-pinned native tool archive
-        # The release CDN serves this 76 MB asset with intermittent 504s. Keyed by
-        # the reviewed hash, so a changed pin can never hit a stale entry, and the
-        # probe re-verifies the checksum before trusting whatever the cache returns.
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      - name: Restore the cached native tool archive
+        id: toolcache
+        # Split restore/save: the combined action only saves when the whole job
+        # succeeds, so a build that fails after the download threw the 76 MB
+        # archive away and the next run hit the failing CDN all over again.
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ${{ runner.temp }}/ce-tool-cache
           key: ce-ffmpeg-${{ steps.toolpin.outputs.sha }}
       - name: Probe pinned LGPL shared tools on Windows (build machine only)
         shell: pwsh
         run: ./scripts/ci/windows-native-media.ps1 -OutputDir "${{ runner.temp }}/ce-native-media" -CacheDir "${{ runner.temp }}/ce-tool-cache"
+      - name: Save the verified native tool archive
+        # Only after the probe has checksum-verified it, and only if it is really there.
+        if: always() && steps.toolcache.outputs.cache-hit != 'true'
+        shell: pwsh
+        run: |
+          $zip = Join-Path "${{ runner.temp }}" 'ce-tool-cache/ffmpeg.zip'
+          "present=$((Test-Path $zip).ToString().ToLower())" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+        id: toolsave
+      - uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        if: always() && steps.toolcache.outputs.cache-hit != 'true' && steps.toolsave.outputs.present == 'true'
+        with:
+          path: ${{ runner.temp }}/ce-tool-cache
+          key: ce-ffmpeg-${{ steps.toolpin.outputs.sha }}
       - name: Upload native tool probe evidence (no media or binaries)
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()
@@ -406,11 +420,12 @@ jobs:
             C:\build\scripts\ci\readiness-contract -> target
           cache-all-crates: true
           save-if: ${{ github.event_name == 'push' }}
-      - name: Cache the Tauri NSIS bundler toolchain
+      - name: Restore the Tauri NSIS bundler toolchain
+        id: nsiscache
         # tauri-bundler fetches nsis-3.13.zip from a GitHub release at bundle time,
         # on the same CDN that has been returning 504s. The app compiled fine and
         # the build still died here, so cache the toolchain rather than re-fetch it.
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~\AppData\Local\tauri
           key: tauri-bundler-nsis-${{ runner.os }}-3.13
@@ -439,6 +454,19 @@ jobs:
           }
           exit 0
       # Rust cache via Swatinem/rust-cache automatically saves on push; no manual save step needed.
+      - name: Note whether the bundler toolchain was fetched
+        if: always() && steps.nsiscache.outputs.cache-hit != 'true'
+        id: nsissave
+        shell: pwsh
+        run: |
+          $dir = Join-Path $env:LOCALAPPDATA 'tauri'
+          $has = (Test-Path $dir) -and (@(Get-ChildItem $dir -Recurse -File -ErrorAction SilentlyContinue).Count -gt 0)
+          "present=$($has.ToString().ToLower())" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+      - uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        if: always() && steps.nsiscache.outputs.cache-hit != 'true' && steps.nsissave.outputs.present == 'true'
+        with:
+          path: ~\AppData\Local\tauri
+          key: tauri-bundler-nsis-${{ runner.os }}-3.13
       - name: Frozen sidecar same-origin resource smoke (no Vite)
         shell: pwsh
         run: |
