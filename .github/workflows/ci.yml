@@ -354,9 +354,24 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw "git fetch of triggering revision failed" }
           git -C C:\build reset --hard $env:GITHUB_SHA
           if ($LASTEXITCODE -ne 0) { throw "git reset to triggering revision failed" }
+      - name: Resolve the pinned archive hash for the cache key
+        id: toolpin
+        shell: pwsh
+        run: |
+          $sha = (Get-Content C:\build\scripts\pins.json -Raw | ConvertFrom-Json).ffmpeg.sha256
+          if ($sha -notmatch '^[a-f0-9]{64}$') { throw 'pins.json has no reviewed ffmpeg SHA-256.' }
+          "sha=$sha" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+      - name: Cache the checksum-pinned native tool archive
+        # The release CDN serves this 76 MB asset with intermittent 504s. Keyed by
+        # the reviewed hash, so a changed pin can never hit a stale entry, and the
+        # probe re-verifies the checksum before trusting whatever the cache returns.
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/ce-tool-cache
+          key: ce-ffmpeg-${{ steps.toolpin.outputs.sha }}
       - name: Probe pinned LGPL shared tools on Windows (build machine only)
         shell: pwsh
-        run: ./scripts/ci/windows-native-media.ps1 -OutputDir "${{ runner.temp }}/ce-native-media"
+        run: ./scripts/ci/windows-native-media.ps1 -OutputDir "${{ runner.temp }}/ce-native-media" -CacheDir "${{ runner.temp }}/ce-tool-cache"
       - name: Upload native tool probe evidence (no media or binaries)
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()

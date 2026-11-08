@@ -4,7 +4,7 @@ Downloads only the reviewed checksum-pinned LGPL shared archive from pins.json,
 keeps all tools/media outside the checkout, and executes the actual Windows tools.
 #>
 [CmdletBinding()]
-param([Parameter(Mandatory=$true)][string]$OutputDir)
+param([Parameter(Mandatory=$true)][string]$OutputDir, [string]$CacheDir = '')
 $ErrorActionPreference = 'Stop'
 $repo = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $pin = (Get-Content (Join-Path $repo 'scripts/pins.json') -Raw | ConvertFrom-Json).ffmpeg
@@ -21,7 +21,21 @@ $archive = Join-Path $OutputDir 'ffmpeg.zip'
 # upstream outage; the checksum below is still the gate and an unverified
 # archive never proceeds.
 $downloaded = $false
-foreach ($attempt in 1..6) {
+$cached = ''
+if ($CacheDir) { $cached = Join-Path $CacheDir 'ffmpeg.zip' }
+# A cached copy is trusted only after it matches the reviewed hash, so a stale
+# or tampered cache entry can never substitute for the pinned archive.
+if ($cached -and (Test-Path $cached)) {
+    if ((Get-FileHash $cached -Algorithm SHA256).Hash.ToLowerInvariant() -eq $pin.sha256) {
+        Copy-Item $cached $archive
+        $downloaded = $true
+        Write-Host 'Reusing the cached pinned archive (checksum verified).'
+    } else {
+        Write-Host '::warning title=Pinned tool cache::cached archive failed its checksum; re-downloading.'
+        Remove-Item $cached -Force
+    }
+}
+if (-not $downloaded) { foreach ($attempt in 1..8) {
     try {
         Invoke-WebRequest -Uri $pin.url -OutFile $archive -UseBasicParsing
         $downloaded = $true
@@ -30,15 +44,19 @@ foreach ($attempt in 1..6) {
         $lastError = $_.Exception.Message
         Write-Host "::warning title=Pinned tool download retry::attempt $attempt failed: $lastError"
         if (Test-Path $archive) { Remove-Item $archive -Force }
-        if ($attempt -lt 6) { Start-Sleep -Seconds @(15, 30, 45, 60, 60)[$attempt - 1] }
+        if ($attempt -lt 8) { Start-Sleep -Seconds @(10, 20, 30, 45, 60, 60, 60)[$attempt - 1] }
     }
-}
+} }
 if (-not $downloaded) {
     Write-Host "::error title=Pinned tool download failed::url=$($pin.url)%0Alast error: $lastError"
-    throw "Could not download the pinned native-tool archive after 6 attempts: $lastError"
+    throw "Could not download the pinned native-tool archive after 8 attempts: $lastError"
 }
 $actualHash = (Get-FileHash $archive -Algorithm SHA256).Hash.ToLowerInvariant()
 if ($actualHash -ne $pin.sha256) { throw 'Downloaded native-tool archive does not match its reviewed checksum.' }
+if ($cached -and -not (Test-Path $cached)) {
+    New-Item -ItemType Directory -Force -Path $CacheDir | Out-Null
+    Copy-Item $archive $cached -Force
+}
 $unpacked = Join-Path $OutputDir 'unpacked'
 Expand-Archive -Path $archive -DestinationPath $unpacked
 $executables = @(Get-ChildItem $unpacked -Recurse -Filter ffmpeg.exe)
