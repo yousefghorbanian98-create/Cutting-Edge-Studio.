@@ -67,3 +67,7 @@ docs/evidence/desktop-r2c/windows-cdp-retry/
 docs/evidence/desktop-r2c/windows-first/
 docs/evidence/desktop-r2c/windows-path-diagnostic/
 docs/evidence/r2-light-preview-fa.mp3
+
+# FINN Loop runtime (ECC clone, state) and installed ECC components
+.finn/
+.claude/
